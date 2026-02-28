@@ -3,12 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 
 function NavMenu() {
   const location = useLocation();
-  
+
   const tabs = [
     { name: 'Home', path: '/' },
     { name: 'Ghép đôi', path: '/match' },
-    { name: 'Bạn bè', path: '/friends' },
-    { name: 'Thông báo', path: '/notifications' }
+    { name: 'Bạn bè', path: '/friends' }
   ];
 
   return (
