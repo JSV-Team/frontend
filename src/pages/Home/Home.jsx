@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import CreatePost from '../../components/Post/CreatePost';
-import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import useListPost from '../../hooks/useListPost';
-import { Activity, Clock, Settings, Star, MessageSquare } from 'lucide-react';
+import { Activity, Clock, Settings, Star, MessageSquare, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import './Home.css';
 
@@ -10,7 +9,6 @@ const CURRENT_USER_ID = 2; // Tạm thời hardcode, thay bằng auth sau
 
 function Home() {
   const [reload, setReload] = useState(0);
-  const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
@@ -37,8 +35,6 @@ function Home() {
       }
 
       alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
-      // FIX: reload cả danh sách pending sau khi join
-      setPendingReload(prev => prev + 1);
     } catch (err) {
       console.error('Join error:', err);
       alert('Lỗi kết nối: ' + err.message);
@@ -64,13 +60,6 @@ function Home() {
   return (
     <div className="home-container">
       <div className="home-main">
-        {/* Left Sidebar */}
-        <aside className="home-sidebar">
-
-          {/* FIX: Dùng PendingGroups thực thay vì skeleton hardcode */}
-          <PendingGroups reload={pendingReload} />
-        </aside>
-
         {/* Main Feed */}
         <div className="home-content">
           <CreatePost onPostCreated={reloadPosts} />
@@ -100,55 +89,78 @@ function Home() {
                         </div>
                       </div>
                       <div className="user-info">
-                        <h2>
-                          {post.full_name || post.username || 'Người dùng'}
-                          <span className="user-badge">Hoạt động</span>
+                        <div className="user-info-top">
+                          <h2>{post.full_name || post.username || 'Người dùng'}</h2>
+                          <span className="dot-separator">•</span>
+                          <span className="post-time">{getTimeAgo(post.created_at)}</span>
+                        </div>
+                        <div className="user-info-bottom">
+                          <span className="user-badge">{post.category || 'HOẠT ĐỘNG'}</span>
+                          <span className="dot-separator">•</span>
                           <span className="online-dot" />
-                        </h2>
-                        <span className="post-time">{getTimeAgo(post.created_at)}</span>
+                        </div>
                       </div>
                     </div>
-                    <button className="star-button">
-                      <Star size={32} />
+                    <button className="more-button">
+                      <MoreHorizontal size={24} />
                     </button>
                   </div>
 
                   {/* Post info */}
-                  <div className="post-media">
-                    {post.image_url ? (
-                      <img src={post.image_url} alt="Post" />
-                    ) : (
-                      <span className="post-placeholder">{post.content || 'Hoạt động'}</span>
+                  <div className="post-content-wrapper">
+                    <div className="post-text-content">
+                      <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
+                      {post.extra_content && (
+                        <p className="post-description">{post.extra_content}</p>
+                      )}
+                    </div>
+
+                    {post.image_url && (
+                      <div className="post-media-container">
+                        <img src={post.image_url} alt="Post" className="post-media-img" />
+                        <button className="floating-comment-btn">
+                          <MessageSquare size={24} />
+                        </button>
+                      </div>
                     )}
                   </div>
 
-                  {post.extra_content && (
-                    <p className="post-content-text">{post.extra_content}</p>
-                  )}
-
-                  {/* Post meta: địa điểm, số người */}
+                  {/* Post meta: địa điểm, số người (nếu có) */}
                   {(post.location || post.max_participants) && (
-                    <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: '#64748b', marginBottom: '1rem', justifyContent: 'center' }}>
+                    <div className="post-optional-meta">
                       {post.location && <span>📍 {post.location}</span>}
                       {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
                       {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
                     </div>
                   )}
 
-                  <div className="post-actions">
-                    {/* FIX: Chủ bài không thấy nút Tham gia */}
+                  {/* Post Stats */}
+                  <div className="post-stats">
+                    <div className="stats-left">
+                      <Star size={16} className="star-icon" />
+                      <span>{post.interested_count || 12} người quan tâm</span>
+                    </div>
+                    <div className="stats-right">
+                      <span>{post.comment_count || 5} bình luận</span>
+                    </div>
+                  </div>
+
+                  <div className="post-actions-divider" />
+
+                  <div className="post-actions-bar">
+                    {/* Chủ bài không thấy nút Tham gia */}
                     {isOwner ? (
                       <span className="post-creator-label">✓ Bài viết của bạn</span>
                     ) : (
                       <button
-                        className="btn-join"
+                        className="action-btn join-btn"
                         onClick={() => handleJoinPost(post.status_id)}
                         disabled={isJoining}
                       >
                         {isJoining ? 'Đang gửi...' : 'Tham gia'}
                       </button>
                     )}
-                    <button className="btn-message">Nhắn tin</button>
+                    <button className="action-btn message-btn">Nhắn tin</button>
                   </div>
                 </div>
               );
