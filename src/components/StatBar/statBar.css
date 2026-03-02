@@ -1,0 +1,19 @@
+.st-wrap {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.st-item {
+    text-align: center;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+.st-item b {
+    font-weight: 900;
+}

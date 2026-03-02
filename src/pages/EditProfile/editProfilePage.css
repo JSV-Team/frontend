@@ -1,0 +1,133 @@
+.ep-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.ep-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #111827;
+    margin-bottom: 14px;
+}
+
+.ep-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.ep-bigAvatar {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: #8a53c8;
+    margin: 10px auto 0 auto;
+    outline: 6px solid rgba(138, 83, 200, .18);
+}
+
+.ep-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-right: 8px;
+}
+
+.ep-input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    outline: none;
+    font-size: 16px;
+}
+
+.ep-input:focus {
+    border-color: rgba(123, 92, 255, .55);
+    box-shadow: 0 0 0 4px rgba(123, 92, 255, .12);
+}
+
+.ep-dateWrap {
+    position: relative;
+}
+
+.ep-date {
+    padding-right: 46px;
+}
+
+.ep-cal {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: .7;
+}
+
+.ep-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ep-chip {
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-weight: 800;
+    cursor: pointer;
+    color: #fff;
+}
+
+.c-blue {
+    background: #3b82f6;
+}
+
+.c-orange {
+    background: #f59e0b;
+}
+
+.c-gray {
+    background: #9ca3af;
+}
+
+.c-sky {
+    background: #a7d8ff;
+    color: #0b3b6b;
+}
+
+.ep-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 6px;
+}
+
+.ep-btn {
+    border: 0;
+    border-radius: 18px;
+    padding: 18px;
+    font-weight: 900;
+    font-size: 18px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.ep-cancel {
+    background: #ef4444;
+}
+
+.ep-save {
+    background: #22c55e;
+}
+
+@media (max-width: 1100px) {
+    .ep-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ep-bigAvatar {
+        margin: 0 auto;
+    }
+}
