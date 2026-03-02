@@ -1,0 +1,21 @@
+.tt-wrap {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.tt-tab {
+    border: 0;
+    padding: 14px 22px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.tt-tab.active {
+    color: #fff;
+    background: linear-gradient(90deg, #7b5cff 0%, #4ec8ff 100%);
+}

@@ -1,0 +1,125 @@
+.rp-headCard {
+    background: linear-gradient(90deg, #f7d9dc 0%, #f2e7ea 70%);
+    border-radius: 22px;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.rp-headLeft {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.rp-star {
+    font-size: 28px;
+}
+
+.rp-title {
+    font-weight: 900;
+    font-size: 28px;
+    color: #111827;
+}
+
+.rp-sub {
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.rp-scorePill {
+    background: #b77a7b;
+    color: #fff;
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-weight: 900;
+}
+
+.rp-filterCard {
+    background: #fff;
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.rp-filters {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.rp-select {
+    flex: 1;
+    min-width: 160px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    outline: none;
+    background: #fff;
+}
+
+.rp-btnFilter {
+    border: 0;
+    padding: 12px 18px;
+    border-radius: 14px;
+    background: #3b82f6;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.rp-tableCard {
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.rp-tableHead {
+    background: #f1a7a8;
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr 1fr 1fr .6fr .9fr;
+    gap: 10px;
+    padding: 14px 16px;
+    font-weight: 900;
+    color: #111827;
+}
+
+.rp-tableBody {
+    padding: 10px 0;
+}
+
+.rp-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr 1fr 1fr .6fr .9fr;
+    gap: 10px;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(0, 0, 0, .06);
+}
+
+.rp-paging {
+    background: #fff;
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.rp-pageBtn {
+    border: 1px solid rgba(0, 0, 0, .08);
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.rp-pageBtn.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
