@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import SidebarProfile from "../components/SidebarProfile/SidebarProfile";
-import TopTabs from "../components/TopTabs/TopTabs";
-import StatBar from "../components/StatBar/StatBar";
-import "./profileLayout.css";
+import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
+import TopTabs from "../../components/TopTabs/TopTabs";
+import StatBar from "../../components/StatBar/StatBar";
+import "../profileLayout.css";
 import "./editProfilePage.css";
 
 export default function EditProfilePage() {

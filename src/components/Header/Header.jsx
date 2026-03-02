@@ -48,7 +48,7 @@ function Header() {
         </nav>
 
         <div className="header-actions">
-          <div className="user-avatar" onClick={() => navigate('/profile')}>
+          <div className="user-avatar" onClick={() => navigate('/profile/edit')}>
             <img
               src="https://picsum.photos/seed/user1/100/100"
               alt="User Avatar"
