@@ -23,7 +23,6 @@ function Header() {
     if (path === '/') return 'Home';
     if (path === '/match') return 'Match';
     if (path === '/friends') return 'Friends';
-    if (path === '/notifications') return 'Notifications';
     return 'Home';
   };
 
@@ -49,9 +48,13 @@ function Header() {
         </nav>
 
         <div className="header-actions">
-          <div className="notification-icon" onClick={() => navigate('/notifications')}>
-            <Bell size={20} />
-          </div>
+          <button 
+            className="notification-btn"
+            onClick={() => navigate('/notifications')}
+            title="Thông báo"
+          >
+            <Bell size={24} />
+          </button>
           <div className="user-avatar" onClick={() => navigate('/profile')}>
             <img
               src="https://picsum.photos/seed/user1/100/100"

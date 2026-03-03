@@ -2,7 +2,8 @@ import { useState } from 'react';
 import CreatePost from '../../components/Post/CreatePost';
 import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import useListPost from '../../hooks/useListPost';
-import { Activity, Clock, Settings, Star, MessageSquare, MoreHorizontal } from 'lucide-react';
+import useNotifications from '../../hooks/useNotifications';
+import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import './Home.css';
 
@@ -15,6 +16,7 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
+  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -37,7 +39,6 @@ function Home() {
       }
 
       alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
-      // FIX: reload cả danh sách pending sau khi join
       setPendingReload(prev => prev + 1);
     } catch (err) {
       console.error('Join error:', err);
@@ -64,16 +65,15 @@ function Home() {
   return (
     <div className="home-container">
       <div className="home-main">
-        {/* Left Sidebar */}
-        <aside className="home-sidebar">
+        <div className="home-layout">
+          {/* Left Sidebar - Pending Groups */}
+          <aside className="home-sidebar">
+            <PendingGroups reload={pendingReload} />
+          </aside>
 
-          {/* FIX: Dùng PendingGroups thực thay vì skeleton hardcode */}
-          <PendingGroups reload={pendingReload} />
-        </aside>
-
-        {/* Main Feed */}
-        <div className="home-content">
-          <CreatePost onPostCreated={reloadPosts} />
+          {/* Right Content - Posts Feed */}
+          <div className="home-content">
+            <CreatePost onPostCreated={reloadPosts} />
 
           <div className="posts-section">
             {loading && <p className="loading">Đang tải...</p>}
@@ -176,6 +176,7 @@ function Home() {
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
       </div>
