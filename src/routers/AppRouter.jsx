@@ -5,6 +5,7 @@ import Home from '../pages/Home/Home';
 import Match from '../pages/Match/Match';
 import Friends from '../pages/Friends/Friends';
 import Notifications from '../pages/Notifications/Notifications';
+import Login from '../pages/Login/Login';
 
 function AppRouter() {
   return (
@@ -12,6 +13,7 @@ function AppRouter() {
       <MainLayout>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/match" element={<Match />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/notifications" element={<Notifications />} />
