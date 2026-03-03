@@ -4,7 +4,14 @@ export default function SidebarProfile({ profile, onLogout }) {
   return (
     <aside className="sb-wrap">
       <div className="sb-avatarWrap">
-        <div className="sb-avatar" />
+        <div 
+          className="sb-avatar" 
+          style={{ 
+            backgroundImage: profile.avatar ? `url(${profile.avatar})` : undefined,
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        />
       </div>
 
       <div className="sb-title">Hồ sơ cá nhân</div>

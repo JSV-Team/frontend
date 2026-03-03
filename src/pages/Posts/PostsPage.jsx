@@ -5,16 +5,27 @@ import StatBar from "../../components/StatBar/StatBar";
 import "../profileLayout.css";
 import "./postsPage.css";
 
+// Hàm lấy dữ liệu profile từ localStorage hoặc giá trị mặc định
+const getInitialProfile = () => {
+  const saved = localStorage.getItem("userProfile");
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error("Error parsing saved profile:", e);
+    }
+  }
+  return {
+    fullName: "Bạn",
+    gender: "Khác",
+    dobISO: "2000-01-02",
+    email: "hxoa@gmail.com",
+    avatar: null,
+  };
+};
+
 export default function PostsPage() {
-  const profile = useMemo(
-    () => ({
-      fullName: "Bạn",
-      gender: "Khác",
-      dobISO: "2000-01-02",
-      email: "hxoa@gmail.com",
-    }),
-    []
-  );
+  const profile = getInitialProfile();
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),

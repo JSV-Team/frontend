@@ -5,16 +5,27 @@ import StatBar from "../../components/StatBar/StatBar";
 import "../profileLayout.css";
 import "./reputationPage.css";
 
+// Hàm lấy dữ liệu profile từ localStorage hoặc giá trị mặc định
+const getInitialProfile = () => {
+  const saved = localStorage.getItem("userProfile");
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error("Error parsing saved profile:", e);
+    }
+  }
+  return {
+    fullName: "Bạn",
+    gender: "Khác",
+    dobISO: "2000-01-02",
+    email: "hxoa@gmail.com",
+    avatar: null,
+  };
+};
+
 export default function ReputationPage() {
-  const profile = useMemo(
-    () => ({
-      fullName: "Bạn",
-      gender: "Khác",
-      dobISO: "2000-01-02",
-      email: "hxoa@gmail.com",
-    }),
-    []
-  );
+  const profile = getInitialProfile();
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
@@ -23,7 +34,6 @@ export default function ReputationPage() {
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [deductedBy, setDeductedBy] = useState("");
 
   const [rows] = useState([
     { by: "-", action: "Joined", date: "2026-02-26", reason: "-", point: 0, remain: 100 },
@@ -67,12 +77,6 @@ export default function ReputationPage() {
               <option value="2026-02-28">28/02/2026</option>
             </select>
 
-            <select className="rp-select" value={deductedBy} onChange={(e) => setDeductedBy(e.target.value)}>
-              <option value="">Người trừ điểm</option>
-              <option value="admin">Admin</option>
-              <option value="mod">Moderator</option>
-            </select>
-
             <button className="rp-btnFilter" onClick={() => alert("Lọc (demo) ✅")}>
               🔍 Lọc
             </button>
@@ -81,7 +85,6 @@ export default function ReputationPage() {
 
         <div className="rp-tableCard">
           <div className="rp-tableHead">
-            <div>Người trừ</div>
             <div>Hành động</div>
             <div>Ngày</div>
             <div>Lý do</div>
@@ -92,7 +95,6 @@ export default function ReputationPage() {
           <div className="rp-tableBody">
             {rows.map((r, idx) => (
               <div className="rp-row" key={idx}>
-                <div>{r.by}</div>
                 <div>{r.action}</div>
                 <div>{r.date}</div>
                 <div>{r.reason}</div>
