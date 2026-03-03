@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import CreatePost from '../../components/Post/CreatePost';
-import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import useListPost from '../../hooks/useListPost';
 import { Activity, Clock, Settings, Star, MessageSquare, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -10,7 +9,6 @@ const CURRENT_USER_ID = 2; // Tạm thời hardcode, thay bằng auth sau
 
 function Home() {
   const [reload, setReload] = useState(0);
-  const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
@@ -37,8 +35,6 @@ function Home() {
       }
 
       alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
-      // FIX: reload cả danh sách pending sau khi join
-      setPendingReload(prev => prev + 1);
     } catch (err) {
       console.error('Join error:', err);
       alert('Lỗi kết nối: ' + err.message);
@@ -64,13 +60,6 @@ function Home() {
   return (
     <div className="home-container">
       <div className="home-main">
-        {/* Left Sidebar */}
-        <aside className="home-sidebar">
-
-          {/* FIX: Dùng PendingGroups thực thay vì skeleton hardcode */}
-          <PendingGroups reload={pendingReload} />
-        </aside>
-
         {/* Main Feed */}
         <div className="home-content">
           <CreatePost onPostCreated={reloadPosts} />

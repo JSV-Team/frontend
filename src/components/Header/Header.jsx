@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell } from 'lucide-react';
 import './Header.css';
 
 function Header() {
@@ -24,7 +23,6 @@ function Header() {
     if (path === '/') return 'Home';
     if (path === '/match') return 'Match';
     if (path === '/friends') return 'Friends';
-    if (path === '/notifications') return 'Notifications';
     return 'Home';
   };
 
@@ -50,9 +48,6 @@ function Header() {
         </nav>
 
         <div className="header-actions">
-          <div className="notification-icon" onClick={() => navigate('/notifications')}>
-            <Bell size={20} />
-          </div>
           <div className="user-avatar" onClick={() => navigate('/profile')}>
             <img
               src="https://picsum.photos/seed/user1/100/100"

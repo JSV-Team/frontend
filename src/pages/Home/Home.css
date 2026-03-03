@@ -9,11 +9,11 @@
 }
 
 .home-main {
-  max-width: 1280px;
+  max-width: 680px;
   margin: 0 auto;
   padding: 0 1rem;
-  display: grid;
-  grid-template-columns: 300px 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
 }
 
@@ -494,16 +494,7 @@
 }
 
 /* ==================== RESPONSIVE ==================== */
-@media (max-width: 1024px) {
-  .home-main {
-    grid-template-columns: 1fr;
-  }
-
-  .home-sidebar {
-    display: none;
-  }
-}
-
+/* Removed .home-sidebar media query specific to 1024px since sidebar is removed */
 @media (max-width: 768px) {
   .home-container {
     padding-top: 80px;
