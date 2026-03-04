@@ -8,6 +8,10 @@ export const notificationService = {
   getNotifications: async (userId = USER_ID) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`);
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -19,6 +23,10 @@ export const notificationService = {
   getNotificationsByUserId: async (userId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`);
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -30,6 +38,10 @@ export const notificationService = {
   getUnreadCount: async (userId = USER_ID) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${userId}`);
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -46,6 +58,10 @@ export const notificationService = {
           'Content-Type': 'application/json',
         },
       });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -63,6 +79,10 @@ export const notificationService = {
         },
         body: JSON.stringify({ userId }),
       });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
@@ -76,6 +96,10 @@ export const notificationService = {
       const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
         method: 'DELETE',
       });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error deleting notification:', error);

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import CreatePost from '../../components/Post/CreatePost';
 import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
+import NotificationsWidget from '../../components/NotificationsWidget/NotificationsWidget';
 import useListPost from '../../hooks/useListPost';
-import useNotifications from '../../hooks/useNotifications';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import './Home.css';
@@ -16,7 +16,6 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -68,7 +67,8 @@ function Home() {
         <div className="home-layout">
           {/* Left Sidebar - Pending Groups */}
           <aside className="home-sidebar">
-            <PendingGroups reload={pendingReload} />
+            <NotificationsWidget userId={CURRENT_USER_ID} />
+          <PendingGroups reload={pendingReload} />
           </aside>
 
           {/* Right Content - Posts Feed */}

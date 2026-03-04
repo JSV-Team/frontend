@@ -1,41 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Notifications.css';
+import useNotifications from '../../hooks/useNotifications';
 
 // Mock user ID for testing (since there's no login yet)
 const CURRENT_USER_ID = 2;
 
 function Notifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Fetch notifications from API with userId=2
-    fetch(`http://localhost:3001/api/notifications?userId=${CURRENT_USER_ID}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch notifications');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Handle the API response structure
-        const notificationsList = data.value || data || [];
-        setNotifications(notificationsList);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching notifications:', err);
-        setError('Không thể tải thông báo');
-        setLoading(false);
-      });
-  }, []);
+  // delegate data loading to reusable hook that already respects the Vite proxy
+  const {
+    notifications,
+    loading,
+    error,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    refreshNotifications,
+  } = useNotifications(CURRENT_USER_ID);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Vừa xong';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
@@ -121,8 +107,8 @@ function Notifications() {
               <line x1="12" y1="8" x2="12" y2="12"></line>
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
+            <p>{error || 'Không thể tải thông báo'}</p>
+            <button onClick={refreshNotifications} className="retry-button">
               Thử lại
             </button>
           </div>
