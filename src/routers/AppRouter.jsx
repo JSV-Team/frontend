@@ -9,14 +9,12 @@ import Notifications from '../pages/Notifications/Notifications';
 function AppRouter() {
   return (
     <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/match" element={<Match />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route path="/notifications" element={<Notifications />} />
-        </Routes>
-      </MainLayout>
+      <Routes>
+        <Route path="/" element={<MainLayout><Home /></MainLayout>} />
+        <Route path="/match" element={<MainLayout><Match /></MainLayout>} />
+        <Route path="/friends" element={<MainLayout noContainer><Friends /></MainLayout>} />
+        <Route path="/notifications" element={<MainLayout><Notifications /></MainLayout>} />
+      </Routes>
     </Router>
   );
 }
