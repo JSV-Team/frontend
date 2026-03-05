@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-// BƯỚC 1: Import thêm icon LogOut từ thư viện lucide-react của bạn
-import { Bell, LogOut } from 'lucide-react'; 
+import { Bell } from 'lucide-react';
 import './Header.css';
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('Home');
-  
-  // Tạo State để chứa thông tin người dùng
-  const [currentUser, setCurrentUser] = useState(null);
-
-  // Mở két sắt lấy thông tin một cách an toàn khi Header vừa xuất hiện
-  useEffect(() => {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      setCurrentUser(JSON.parse(userString));
-    }
-  }, []);
 
   const tabs = [
     { name: 'Home', label: 'Home', path: '/' },
@@ -40,16 +28,6 @@ function Header() {
   };
 
   const currentTab = getCurrentTab();
-
-  // BƯỚC 2: Hàm xử lý Đăng xuất
-  const handleLogout = () => {
-    // Hỏi nhẹ một câu cho chắc chắn, tránh lỡ tay bấm nhầm
-    const isConfirm = window.confirm("Bạn có chắc chắn muốn đăng xuất không?");
-    if (isConfirm) {
-      localStorage.removeItem("user"); // Tịch thu vé
-      navigate("/login"); // Đuổi ra cửa
-    }
-  };
 
   return (
     <header className="header">
@@ -78,24 +56,13 @@ function Header() {
           >
             <Bell size={24} />
           </button>
-          
-          <div className="user-avatar" onClick={() => navigate('/profile')} title="Trang cá nhân">
-            {/* Thay ảnh cứng bằng ảnh động từ DB, nếu lỗi hoặc chưa có thì dùng ảnh dự phòng */}
+          <div className="user-avatar" onClick={() => navigate('/profile')}>
             <img
-              src={currentUser?.avatar_url || "https://i.pravatar.cc/150?img=11"}
+              src="https://picsum.photos/seed/user1/100/100"
               alt="User Avatar"
               referrerPolicy="no-referrer"
             />
           </div>
-
-          {/* BƯỚC 3: Giao diện Nút Đăng xuất nằm cạnh Avatar */}
-          <button 
-            className="logout-btn"
-            onClick={handleLogout}
-            title="Đăng xuất"
-          >
-            <LogOut size={24} />
-          </button>
         </div>
       </div>
     </header>

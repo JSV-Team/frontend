@@ -256,28 +256,3 @@
     height: 38px;
   }
 }
-/* --- CODE THÊM MỚI CHO NÚT ĐĂNG XUẤT --- */
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Giữ khoảng cách đều giữa chuông, avatar và nút logout */
-}
-
-.logout-btn {
-  background: transparent;
-  border: none;
-  color: #666; /* Màu xám chìm, không làm phân tâm người dùng */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-}
-
-/* Hiệu ứng khi đưa chuột vào: Đổi màu đỏ, có nền nhạt */
-.logout-btn:hover {
-  color: #ff4d4f;
-  background-color: #ffe5e5;
-}
