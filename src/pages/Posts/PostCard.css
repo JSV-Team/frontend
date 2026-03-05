@@ -1,0 +1,224 @@
+.pc-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+    margin-top: 14px;
+}
+
+.pc-topRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.pc-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.pc-meta {
+    color: #666;
+    font-size: 14px;
+}
+
+.pc-desc {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.pc-img {
+    width: 100%;
+    border-radius: 16px;
+    margin-top: 12px;
+    display: block;
+}
+
+.pc-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.pc-tag {
+    background: #f2f2f2;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+.pc-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+}
+
+.pc-action {
+    border: 0;
+    background: #f7f7f7;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pc-count {
+    font-weight: 700;
+}
+
+.pc-menuWrap {
+    position: relative;
+}
+
+.pc-menuBtn {
+    border: 0;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 10px;
+}
+
+.pc-menuBtn:hover {
+    background: rgba(0, 0, 0, .06);
+}
+
+.pc-menu {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 140px;
+    z-index: 10;
+}
+
+.pc-menuItem {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: 0;
+    background: #fff;
+    cursor: pointer;
+}
+
+.pc-menuItem:hover {
+    background: #f5f5f5;
+}
+
+.pc-menuItem.danger {
+    color: #d11;
+}
+
+.pc-who {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.pc-link {
+    border: 0;
+    background: transparent;
+    color: #2f66ff;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pc-reactWrap {
+    position: relative;
+}
+
+.pc-reactBox {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    z-index: 5;
+}
+
+.pc-react {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.pc-react:hover {
+    transform: scale(1.2);
+    background: #f0f0f0;
+}
+
+/* Comments */
+.pc-comments {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.pc-commentItem {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.pc-cmtAvatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.pc-cmtBody {
+    background: #f6f7fb;
+    border-radius: 14px;
+    padding: 10px 12px;
+    flex: 1;
+}
+
+.pc-cmtNameRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.pc-cmtName {
+    font-weight: 800;
+    color: #111827;
+}
+
+.pc-cmtTime {
+    font-size: 12px;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.pc-cmtText {
+    color: #111827;
+    line-height: 1.35;
+}

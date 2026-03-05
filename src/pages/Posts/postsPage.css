@@ -71,3 +71,36 @@
     object-fit: cover;
     max-height: 420px;
 }
+
+.ps-postActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.ps-postActions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.ps-postActions button:first-child {
+    background: #2563eb;
+    color: #fff;
+}
+
+.ps-postActions button:first-child:hover {
+    background: #1d4ed8;
+}
+
+.ps-postActions button:last-child {
+    background: #ef4444;
+    color: #fff;
+}
+
+.ps-postActions button:last-child:hover {
+    background: #dc2626;
+}

@@ -1,0 +1,116 @@
+.cp-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .06);
+}
+
+.cp-title {
+    font-size: 34px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.cp-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    outline: none;
+    margin-bottom: 12px;
+}
+
+.cp-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    outline: none;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+.cp-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.cp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cp-field select {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+}
+
+.cp-tagsBox {
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 12px;
+    margin-top: 8px;
+}
+
+.cp-tagsHeader {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.cp-tagsRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cp-addBtn {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 0;
+    cursor: pointer;
+}
+
+.cp-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.cp-tag {
+    background: #f0f0f0;
+    padding: 6px 10px;
+    border-radius: 999px;
+}
+
+.cp-tag button {
+    margin-left: 8px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cp-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.cp-cancel,
+.cp-post {
+    padding: 12px 18px;
+    border-radius: 14px;
+    border: 0;
+    cursor: pointer;
+}
+
+.cp-post {
+    background: #2f66ff;
+    color: #fff;
+    font-weight: 700;
+}

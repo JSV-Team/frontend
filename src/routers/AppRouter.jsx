@@ -8,6 +8,8 @@ import Notifications from '../pages/Notifications/Notifications';
 import EditProfilePage from '../pages/EditProfile/EditProfilePage';
 import ReputationPage from '../pages/Reputation/ReputationPage';
 import PostsPage from '../pages/Posts/PostsPage';
+import CreatePostPage from '../pages/Posts/CreatePostPage';
+import EditPostPage from '../pages/Posts/EditPostPage';
 
 function AppRouter() {
   return (
@@ -22,6 +24,8 @@ function AppRouter() {
           <Route path="/profile/edit" element={<EditProfilePage />} />
           <Route path="/profile/reputation" element={<ReputationPage />} />
           <Route path="/profile/posts" element={<PostsPage />} />
+          <Route path="/profile/posts/new" element={<CreatePostPage />} />
+          <Route path="/profile/posts/:id/edit" element={<EditPostPage />} />
         </Routes>
       </MainLayout>
     </Router>
