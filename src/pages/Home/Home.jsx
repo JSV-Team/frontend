@@ -7,8 +7,19 @@ import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, Mor
 import { motion } from 'motion/react';
 import './Home.css';
 
-const CURRENT_USER_ID = 2; // Tạm thời hardcode, thay bằng auth sau
-
+// Helper func lấy user ID từ danh sách Auth (localStorage)
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+    }
+  }
+  return null;
+};
 function Home() {
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
@@ -16,7 +27,8 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
+  const currentUserId = getUserId();
+  const { notifications, unreadCount } = useNotifications(currentUserId);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -28,7 +40,7 @@ function Home() {
       const response = await fetch('/api/activities/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
+        body: JSON.stringify({ activityId, userId: getUserId() }),
       });
 
       const data = await response.json();
@@ -84,7 +96,7 @@ function Home() {
 
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
-                const isOwner = post.user_id === CURRENT_USER_ID;
+                const isOwner = post.user_id === getUserId();
                 const isJoining = joiningIds.has(post.status_id);
 
                 return (
