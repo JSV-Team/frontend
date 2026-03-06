@@ -325,7 +325,11 @@ function Friends() {
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
+<<<<<<< Updated upstream
                               src={msg.image_url?.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
+=======
+                              src={msg.image_url.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
+>>>>>>> Stashed changes
                               alt="Sent image"
                               className="message-image"
                             />
