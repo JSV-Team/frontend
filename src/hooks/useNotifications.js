@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
 import notificationService from '../services/notificationService';
 
-function useNotifications(userId = 2) {
+function useNotifications(initialUserId = null) {
+  const [userId, setUserId] = useState(() => {
+    if (initialUserId) return initialUserId;
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser);
+        return userObj?.user_id || userObj?.id || null;
+      } catch (e) { }
+    }
+    return null;
+  });
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -36,7 +47,7 @@ function useNotifications(userId = 2) {
   const markAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId);
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(n => n.notification_id === notificationId ? { ...n, is_read: true } : n)
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
