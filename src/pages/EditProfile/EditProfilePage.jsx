@@ -1,25 +1,59 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
+import { saveProfileToLocalStorage, getProfileFromLocalStorage } from "../../services/profileService";
 import "../profileLayout.css";
 import "./editProfilePage.css";
 
+// Dữ liệu mặc định
+const DEFAULT_PROFILE = {
+  fullName: "Bạn",
+  gender: "Khác",
+  dobISO: "2000-01-02",
+  dobText: "01/02/2000",
+  email: "hxoa@gmail.com",
+  avatar: "",
+};
+
+const DEFAULT_INTERESTS = ["Bóng đá", "Chạy bộ", "Cầu lông"];
+
 export default function EditProfilePage() {
-  const [profile, setProfile] = useState({
-    fullName: "Bạn",
-    gender: "Khác",
-    dobISO: "2000-01-02",
-    dobText: "01/02/2000",
-    email: "hxoa@gmail.com",
+  const fileInputRef = useRef(null);
+  
+  // Load dữ liệu từ localStorage hoặc dùng mặc định
+  const [profile, setProfile] = useState(() => {
+    const saved = getProfileFromLocalStorage();
+    return saved ? { ...DEFAULT_PROFILE, ...saved } : DEFAULT_PROFILE;
   });
+
+  const [interests, setInterests] = useState(() => {
+    const saved = getProfileFromLocalStorage();
+    return saved?.interests || DEFAULT_INTERESTS;
+  });
+
+  const [avatarPreview, setAvatarPreview] = useState(profile.avatar || "");
+  const [isUploading, setIsUploading] = useState(false);
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
     []
   );
 
-  const [interests, setInterests] = useState(["Bóng đá", "Chạy bộ", "Cầu lông"]);
+  // Xử lý khi chọn ảnh
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Tạo preview cục bộ
+    const localPreview = URL.createObjectURL(file);
+    setAvatarPreview(localPreview);
+    setProfile((p) => ({ ...p, avatar: localPreview }));
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const addInterest = () => {
     const name = prompt("Nhập sở thích mới:");
@@ -30,25 +64,36 @@ export default function EditProfilePage() {
   };
 
   const onCancel = () => {
-    setProfile({
-      fullName: "Bạn",
-      gender: "Khác",
-      dobISO: "2000-01-02",
-      dobText: "01/02/2000",
-      email: "hxoa@gmail.com",
-    });
-    setInterests(["Bóng đá", "Chạy bộ", "Cầu lông"]);
+    const saved = getProfileFromLocalStorage();
+    if (saved) {
+      setProfile(saved);
+      setAvatarPreview(saved.avatar || "");
+      setInterests(saved.interests || DEFAULT_INTERESTS);
+    } else {
+      setProfile(DEFAULT_PROFILE);
+      setAvatarPreview("");
+      setInterests(DEFAULT_INTERESTS);
+    }
   };
 
   const onSave = () => {
-    console.log("SAVE:", profile, interests);
-    alert("Đã lưu (demo) ✅");
+    // Lưu vào localStorage
+    const profileData = {
+      ...profile,
+      interests: interests,
+    };
+    saveProfileToLocalStorage(profileData);
+    
+    // Gửi sự kiện để Header cập nhật avatar
+    window.dispatchEvent(new Event('profile-updated'));
+    
+    alert("Đã lưu thông tin thành công! ✅");
   };
 
   return (
     <div className="vm-page">
       <SidebarProfile
-        profile={{ ...profile, stats }}
+        profile={{ ...profile, interests, stats, avatar: avatarPreview }}
         onLogout={() => alert("Logout (demo)")}
       />
 
@@ -60,33 +105,82 @@ export default function EditProfilePage() {
           <div className="ep-title">Thông tin chung</div>
 
           <div className="ep-grid">
-            <div className="ep-bigAvatar" />
+            {/* Avatar with upload functionality */}
+            <div 
+              className="ep-bigAvatar" 
+              onClick={handleAvatarClick}
+              style={{ cursor: 'pointer', position: 'relative' }}
+            >
+              <img
+                src={avatarPreview || "https://i.pravatar.cc/150?img=11"}
+                alt="Avatar"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                background: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                textAlign: 'center',
+                padding: '4px',
+                fontSize: '12px',
+                borderRadius: '0 0 50% 50%'
+              }}>
+                {isUploading ? 'Đang tải...' : 'Đổi ảnh'}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleAvatarChange}
+                disabled={isUploading}
+              />
+            </div>
 
             <div className="ep-col">
               <input
                 className="ep-input"
                 value={profile.fullName}
                 onChange={(e) => setProfile((p) => ({ ...p, fullName: e.target.value }))}
+                placeholder="Họ và tên"
               />
-              <input
+              
+              {/* Giới tính - Select option */}
+              <select
                 className="ep-input"
                 value={profile.gender}
                 onChange={(e) => setProfile((p) => ({ ...p, gender: e.target.value }))}
-              />
+              >
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Khác">Khác</option>
+              </select>
 
               <div className="ep-dateWrap">
                 <input
                   className="ep-input ep-date"
-                  value={profile.dobText}
-                  onChange={(e) => setProfile((p) => ({ ...p, dobText: e.target.value }))}
+                  type="date"
+                  value={profile.dobISO}
+                  onChange={(e) => {
+                    const dobISO = e.target.value;
+                    // Chuyển đổi sang định dd/mm/yyyy
+                    const [year, month, day] = dobISO.split('-');
+                    const dobText = `${day}/${month}/${year}`;
+                    setProfile((p) => ({ ...p, dobISO, dobText }));
+                  }}
                 />
                 <div className="ep-cal">📅</div>
               </div>
 
               <input
                 className="ep-input"
+                type="email"
                 value={profile.email}
                 onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))}
+                placeholder="Email"
               />
             </div>
           </div>
@@ -104,7 +198,7 @@ export default function EditProfilePage() {
                 title="Bấm để xóa"
                 onClick={() => setInterests((p) => p.filter((i) => i !== x))}
               >
-                {x}
+                {x} ×
               </button>
             ))}
 
