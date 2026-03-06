@@ -592,3 +592,24 @@
 .chat-main {
   position: relative;
 }
+
+.leave-group-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 16px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.leave-group-btn:hover {
+  background: #fef2f2;
+}
