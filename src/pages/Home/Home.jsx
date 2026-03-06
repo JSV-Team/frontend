@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CreatePost from '../../components/Post/CreatePost';
 import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import useListPost from '../../hooks/useListPost';
@@ -21,6 +22,10 @@ const getUserId = () => {
   return null;
 };
 function Home() {
+  const navigate = useNavigate();
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
+  const CURRENT_USER_ID = currentUser?.user_id;
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
@@ -72,6 +77,24 @@ function Home() {
     if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
     return `${Math.floor(diff / 86400)} ngày trước`;
+  };
+
+  const handleMessageHost = async (hostId) => {
+    if (hostId === CURRENT_USER_ID) return;
+    try {
+      const response = await fetch('/api/chat/private', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      navigate('/friends', { state: { openChatId: data.conversation_id } });
+    } catch (err) {
+      console.error('Lỗi tạo chat riêng:', err);
+      alert('Lỗi: ' + err.message);
+    }
   };
 
   return (
@@ -148,9 +171,6 @@ function Home() {
                             alt="Post"
                             className="post-media-img"
                           />
-                          <button className="floating-comment-btn">
-                            <MessageSquare size={24} />
-                          </button>
                         </div>
                       )}
                     </div>
@@ -165,16 +185,6 @@ function Home() {
                     )}
 
                     {/* Post Stats */}
-                    <div className="post-stats">
-                      <div className="stats-left">
-                        <Star size={16} className="star-icon" />
-                        <span>{post.interested_count || 12} người quan tâm</span>
-                      </div>
-                      <div className="stats-right">
-                        <span>{post.comment_count || 5} bình luận</span>
-                      </div>
-                    </div>
-
                     <div className="post-actions-divider" />
 
                     <div className="post-actions-bar">
@@ -182,15 +192,17 @@ function Home() {
                       {isOwner ? (
                         <span className="post-creator-label">✓ Bài viết của bạn</span>
                       ) : (
-                        <button
-                          className="action-btn join-btn"
-                          onClick={() => handleJoinPost(post.status_id)}
-                          disabled={isJoining}
-                        >
-                          {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                        </button>
+                        <>
+                          <button
+                            className="action-btn join-btn"
+                            onClick={() => handleJoinPost(post.status_id)}
+                            disabled={isJoining}
+                          >
+                            {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                          </button>
+                          <button className="action-btn message-btn" onClick={() => handleMessageHost(post.user_id)}>Nhắn tin</button>
+                        </>
                       )}
-                      <button className="action-btn message-btn">Nhắn tin</button>
                     </div>
                   </div>
                 );
