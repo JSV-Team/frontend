@@ -82,6 +82,7 @@ function CreatePost({ onPostCreated }) {
     }
 
     const postData = {
+      userId: currentUser?.user_id,
       title: title.trim(),
       content: content.trim(),
       location,
