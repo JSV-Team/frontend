@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import './Friends.css';
@@ -6,9 +7,10 @@ import './Friends.css';
 const CURRENT_USER_ID = 2; // Hardcode để test, thay bằng Redux/Context Auth sau
 
 function Friends() {
+  const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
-  const [activeConvId, setActiveConvId] = useState(null);
+  const [activeConvId, setActiveConvId] = useState(location.state?.openChatId || null);
   const [messages, setMessages] = useState([]);
   const [inputMsg, setInputMsg] = useState('');
   const [socket, setSocket] = useState(null);
@@ -32,6 +34,15 @@ function Friends() {
   useEffect(() => {
     activeConvIdRef.current = activeConvId;
   }, [activeConvId]);
+
+  // Sync with location state when navigating from another page
+  useEffect(() => {
+    if (location.state?.openChatId) {
+      setActiveConvId(location.state.openChatId);
+      // Xóa state để tránh vòng lặp nếu có rerender
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state?.openChatId]);
 
   // Khởi tạo Socket
   useEffect(() => {
@@ -271,7 +282,7 @@ function Friends() {
                     </div>
                   );
                 })}
-                <div ref={messagesEndRef} />
+                <div ref={(el) => { messagesEndRef.current = el; }} />
               </div>
             </div>
 
@@ -338,6 +349,10 @@ function Friends() {
                       ))
                     )}
                   </div>
+                  <button className="leave-group-btn" onClick={handleLeaveGroup}>
+                    <LogOut size={16} />
+                    <span>Rời nhóm</span>
+                  </button>
                 </div>
               </div>
             )}
