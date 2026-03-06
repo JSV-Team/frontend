@@ -168,8 +168,6 @@ function Notifications() {
             {notifications.map((notification) => (
               <div
                 key={notification.notification_id}
-              <div
-                key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
               >
                 {getNotificationIcon(notification.type)}
