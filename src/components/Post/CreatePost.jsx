@@ -18,8 +18,8 @@ function CreatePost({ onPostCreated }) {
   const fileInputRef = useRef(null);
 
   // Lấy thông tin user hiện tại từ localStorage
-  const storedUser = localStorage.getItem('user');
-  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+  // linter-fix: redundant user pull
+
   const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
   const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
 
