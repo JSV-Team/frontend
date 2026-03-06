@@ -3,6 +3,7 @@ const API_BASE_URL = '/api';
 export const postService = {
   createPost: async (postData) => {
     const dataToSend = {
+      userId: postData.userId,
       title: postData.title || '',
       content: postData.title || '', // backend dùng content
       imageUrl: postData.imageUrl || '',

@@ -1,11 +1,15 @@
 // Notification Service - API calls related to notifications
 // Sử dụng userId = 2 cho test (tạm thời chưa có login)
 const API_BASE_URL = '/api';
-const USER_ID = 2; // User ID test
+
+const getCurrentUserId = () => {
+  const userString = localStorage.getItem('user');
+  return userString ? JSON.parse(userString)?.user_id : null;
+};
 
 export const notificationService = {
   // Get all notifications cho user hiện tại
-  getNotifications: async (userId = USER_ID) => {
+  getNotifications: async (userId = getCurrentUserId()) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`);
       return await response.json();
@@ -27,7 +31,7 @@ export const notificationService = {
   },
 
   // Get unread notifications count
-  getUnreadCount: async (userId = USER_ID) => {
+  getUnreadCount: async (userId = getCurrentUserId()) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${userId}`);
       return await response.json();
@@ -54,7 +58,7 @@ export const notificationService = {
   },
 
   // Mark all notifications as read
-  markAllAsRead: async (userId = USER_ID) => {
+  markAllAsRead: async (userId = getCurrentUserId()) => {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
         method: 'POST',
