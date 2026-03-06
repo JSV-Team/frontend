@@ -1,14 +1,18 @@
 import React from 'react';
 import Header from '../components/Header/Header';
 
-function MainLayout({ children }) {
+function MainLayout({ children, noContainer = false }) {
   return (
     <div className="main-layout">
       <Header />
       <main className="main-content">
-        <div className="container">
-          {children}
-        </div>
+        {noContainer ? (
+          children
+        ) : (
+          <div className="container">
+            {children}
+          </div>
+        )}
       </main>
     </div>
   );

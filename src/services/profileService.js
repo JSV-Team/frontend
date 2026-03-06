@@ -1,60 +1,66 @@
 const API_BASE_URL = '/api';
 
-// Profile Service - API calls related to user profile
 export const profileService = {
-  // Update user profile
-  updateProfile: async (profileData) => {
-    const dataToSend = {
-      fullName: profileData.fullName || '',
-      gender: profileData.gender || 'Khác',
-      dobISO: profileData.dobISO || '',
-      dobText: profileData.dobText || '',
-      email: profileData.email || '',
-      interests: profileData.interests || []
-    };
-
-    console.log('ProfileService sending data:', dataToSend);
-
+  // Lấy thông tin profile từ API
+  getProfile: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
-
-      const responseData = await response.json();
-      console.log('Profile API Response:', responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.message || `HTTP Error: ${response.status}`);
-      }
-
-      return responseData;
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
     } catch (error) {
-      console.error('Profile update error:', error);
+      console.error('Lỗi khi lấy profile:', error);
       throw error;
     }
   },
 
-  // Get user profile
-  getProfile: async () => {
+  // Cập nhật thông tin profile
+  updateProfile: async (userId, profileData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/profile`);
-      const responseData = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(responseData.message || `HTTP Error: ${response.status}`);
-      }
-      
-      return responseData;
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
     } catch (error) {
-      console.error('Profile fetch error:', error);
+      console.error('Lỗi khi cập nhật profile:', error);
       throw error;
     }
-  }
+  },
+
+  // Upload ảnh profile
+  uploadAvatar: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi upload avatar:', error);
+      throw error;
+    }
+  },
 };
 
-export default profileService;
+// Hàm tiện ích để lưu vào localStorage
+export const saveProfileToLocalStorage = (profile) => {
+  localStorage.setItem('userProfile', JSON.stringify(profile));
+};
+
+// Hàm tiện ích để lấy từ localStorage
+export const getProfileFromLocalStorage = () => {
+  const saved = localStorage.getItem('userProfile');
+  return saved ? JSON.parse(saved) : null;
+};
 

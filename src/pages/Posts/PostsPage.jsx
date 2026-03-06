@@ -3,10 +3,28 @@ import { useNavigate } from "react-router-dom";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
+import { getProfileFromLocalStorage } from "../../services/profileService";
 import PostCard from "./PostCard";
 import "../profileLayout.css";
 import "./postsPage.css";
 
+// Dữ liệu mặc định
+const DEFAULT_PROFILE = {
+  fullName: "Bạn",
+  gender: "Khác",
+  dobISO: "2000-01-02",
+  dobText: "01/02/2000",
+  email: "hxoa@gmail.com",
+  avatar: "",
+};
+
+const DEFAULT_INTERESTS = ["Bóng đá", "Chạy bộ", "Cầu lông"];
+
+export default function PostsPage() {
+  // Load profile từ localStorage
+  const savedProfile = getProfileFromLocalStorage();
+  const profile = savedProfile ? { ...DEFAULT_PROFILE, ...savedProfile } : DEFAULT_PROFILE;
+  const interests = savedProfile?.interests || DEFAULT_INTERESTS;
 // Hàm lấy dữ liệu profile từ localStorage hoặc giá trị mặc định
 const getInitialProfile = () => {
   const saved = localStorage.getItem("userProfile");
@@ -64,7 +82,7 @@ export default function PostsPage() {
   return (
     <div className="vm-page">
       <SidebarProfile
-        profile={{ ...profile, stats }}
+        profile={{ ...profile, stats, interests }}
         onLogout={() => alert("Logout (demo)")}
       />
 

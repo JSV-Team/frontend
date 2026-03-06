@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
+import { getProfileFromLocalStorage } from "../../services/profileService";
 import "../profileLayout.css";
 import "./reputationPage.css";
 
@@ -43,7 +44,7 @@ export default function ReputationPage() {
   return (
     <div className="vm-page">
       <SidebarProfile
-        profile={{ ...profile, stats }}
+        profile={{ ...profile, stats, interests }}
         onLogout={() => alert("Logout (demo)")}
       />
 

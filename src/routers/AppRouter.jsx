@@ -5,6 +5,13 @@ import Home from '../pages/Home/Home';
 import Match from '../pages/Match/Match';
 import Friends from '../pages/Friends/Friends';
 import Notifications from '../pages/Notifications/Notifications';
+import Login from '../pages/Login/Login';
+
+// Bổ sung dòng import Anh Bảo Vệ vào đây
+import ProtectedRoute from './ProtectedRoute'; 
+import EditProfilePage from '../pages/EditProfile/EditProfilePage';
+import ReputationPage from '../pages/Reputation/ReputationPage';
+import PostsPage from '../pages/Posts/PostsPage';
 import EditProfilePage from '../pages/EditProfile/EditProfilePage';
 import ReputationPage from '../pages/Reputation/ReputationPage';
 import PostsPage from '../pages/Posts/PostsPage';
@@ -14,6 +21,47 @@ import EditPostPage from '../pages/Posts/EditPostPage';
 function AppRouter() {
   return (
     <Router>
+      <Routes>
+        {/* Trang thả rông: Ai vào cũng được */}
+        <Route path="/login" element={<Login />} /> 
+
+        {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
+        <Route path="/" element={
+            <ProtectedRoute>
+                <MainLayout><Home /></MainLayout>
+            </ProtectedRoute>
+        } />
+        
+        <Route path="/match" element={
+            <ProtectedRoute>
+                <MainLayout><Match /></MainLayout>
+            </ProtectedRoute>
+        } />
+        
+        <Route path="/friends" element={
+            <ProtectedRoute>
+                <MainLayout><Friends /></MainLayout>
+            </ProtectedRoute>
+        } />
+        
+        <Route path="/notifications" element={
+            <ProtectedRoute>
+                <MainLayout><Notifications /></MainLayout>
+            </ProtectedRoute>
+        } />
+      </Routes>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/match" element={<Match />} />
+          <Route path="/friends" element={<Friends />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/profile" element={<Navigate to="/profile/edit" replace />} />
+          <Route path="/profile/edit" element={<EditProfilePage />} />
+          <Route path="/profile/reputation" element={<ReputationPage />} />
+          <Route path="/profile/posts" element={<PostsPage />} />
+        </Routes>
+      </MainLayout>
       <MainLayout>
         <Routes>
           <Route path="/" element={<Home />} />
