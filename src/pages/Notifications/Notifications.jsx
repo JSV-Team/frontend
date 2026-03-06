@@ -2,16 +2,29 @@ import React, { useState, useEffect } from 'react';
 import './Notifications.css';
 
 // Mock user ID for testing (since there's no login yet)
-const CURRENT_USER_ID = 2;
-
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+    }
+  }
+  return null;
+};
 function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch notifications from API with userId=2
-    fetch(`http://localhost:3001/api/notifications?userId=${CURRENT_USER_ID}`)
+    // Fetch notifications from API with dynamic userId
+    const currentUserId = getUserId();
+    if (!currentUserId) return;
+
+    fetch(`http://localhost:3001/api/notifications?userId=${currentUserId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');
@@ -35,7 +48,7 @@ function Notifications() {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-    
+
     if (diffInSeconds < 60) return 'Vừa xong';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
@@ -152,8 +165,8 @@ function Notifications() {
         ) : (
           <div className="notifications-list">
             {notifications.map((notification) => (
-              <div 
-                key={notification.notification_id} 
+              <div
+                key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
               >
                 {getNotificationIcon(notification.type)}
