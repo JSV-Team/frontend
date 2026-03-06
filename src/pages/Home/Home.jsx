@@ -8,10 +8,13 @@ import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, Mor
 import { motion } from 'motion/react';
 import './Home.css';
 
-const CURRENT_USER_ID = 2; // Tạm thời hardcode, thay bằng auth sau
+
 
 function Home() {
   const navigate = useNavigate();
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
+  const CURRENT_USER_ID = currentUser?.user_id;
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
