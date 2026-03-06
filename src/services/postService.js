@@ -1,10 +1,10 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = '/api';
 
 export const postService = {
   createPost: async (postData) => {
-    // Chuyển đổi data từ form gửi sang format backend expect
     const dataToSend = {
-      content: postData.title || postData.content || '',
+      title: postData.title || '',
+      content: postData.title || '', // backend dùng content
       imageUrl: postData.imageUrl || '',
       description: postData.content || '',
       location: postData.location || '',
@@ -17,12 +17,11 @@ export const postService = {
     try {
       const response = await fetch(`${API_BASE_URL}/posts`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
       });
 
+      // FIX: response.data không tồn tại trong Fetch API, dùng response.json()
       const responseData = await response.json();
       console.log('API Response:', responseData);
 

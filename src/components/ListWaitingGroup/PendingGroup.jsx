@@ -62,9 +62,11 @@ const PendingGroups = ({ reload = 0 }) => {
               <div className="pending_name_wrapper">
                 <span className="pending_name_text">{group.name}</span>
               </div>
-              <button className="pending_btn_cancel" onClick={() => handleCancel(group.id)}>
-                Hủy chờ
-              </button>
+              <div className="pending_actions" style={{ display: 'flex', gap: '5px' }}>
+                <button className="pending_btn_cancel" onClick={() => handleCancel(group.id)}>
+                  Hủy chờ
+                </button>
+              </div>
             </div>
           ))}
         </div>

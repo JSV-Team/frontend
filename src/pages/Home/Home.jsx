@@ -75,108 +75,115 @@ function Home() {
           <div className="home-content">
             <CreatePost onPostCreated={reloadPosts} />
 
-          <div className="posts-section">
-            {loading && <p className="loading">Đang tải...</p>}
-            {error && <p className="error">{error}</p>}
-            {!loading && !error && posts.length === 0 && (
-              <p className="no-posts">Chưa có bài viết nào</p>
-            )}
+            <div className="posts-section">
+              {loading && <p className="loading">Đang tải...</p>}
+              {error && <p className="error">{error}</p>}
+              {!loading && !error && posts.length === 0 && (
+                <p className="no-posts">Chưa có bài viết nào</p>
+              )}
 
-            {posts.map((post) => {
-              const isOwner = post.user_id === CURRENT_USER_ID;
-              const isJoining = joiningIds.has(post.status_id);
+              {console.log('Posts in Home:', posts)}
+              {posts.map((post) => {
+                const isOwner = post.user_id === CURRENT_USER_ID;
+                const isJoining = joiningIds.has(post.status_id);
 
-              return (
-                <div key={post.status_id} className="post-card">
-                  <div className="post-header">
-                    <div className="post-user">
-                      <div className="avatar-container">
-                        <div className="avatar-inner">
-                          <img
-                            src={post.avatar_url || 'https://i.pravatar.cc/150?img=1'}
-                            alt={post.username || 'User'}
-                            referrerPolicy="no-referrer"
-                          />
+                return (
+                  <div key={post.status_id} className="post-card">
+                    <div className="post-header">
+                      <div className="post-user">
+                        <div className="avatar-container">
+                          <div className="avatar-inner">
+                            <img
+                              src={post.avatar_url || 'https://i.pravatar.cc/150?img=1'}
+                              alt={post.username || 'User'}
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+                        </div>
+                        <div className="user-info">
+                          <div className="user-info-top">
+                            <h2>{post.full_name || post.username || 'Người dùng'}</h2>
+                            <span className="dot-separator">•</span>
+                            <span className="post-time">{getTimeAgo(post.created_at)}</span>
+                          </div>
+                          <div className="user-info-bottom">
+                            <span className="user-badge">{post.category || 'HOẠT ĐỘNG'}</span>
+                            <span className="dot-separator">•</span>
+                            <span className="online-dot" />
+                          </div>
                         </div>
                       </div>
-                      <div className="user-info">
-                        <div className="user-info-top">
-                          <h2>{post.full_name || post.username || 'Người dùng'}</h2>
-                          <span className="dot-separator">•</span>
-                          <span className="post-time">{getTimeAgo(post.created_at)}</span>
-                        </div>
-                        <div className="user-info-bottom">
-                          <span className="user-badge">{post.category || 'HOẠT ĐỘNG'}</span>
-                          <span className="dot-separator">•</span>
-                          <span className="online-dot" />
-                        </div>
-                      </div>
+                      <button className="more-button">
+                        <MoreHorizontal size={24} />
+                      </button>
                     </div>
-                    <button className="more-button">
-                      <MoreHorizontal size={24} />
-                    </button>
-                  </div>
 
-                  {/* Post info */}
-                  <div className="post-content-wrapper">
-                    <div className="post-text-content">
-                      <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
-                      {post.extra_content && (
-                        <p className="post-description">{post.extra_content}</p>
+                    {/* Post info */}
+                    <div className="post-content-wrapper">
+                      <div className="post-text-content">
+                        <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
+                        {post.extra_content && (
+                          <p className="post-description">{post.extra_content}</p>
+                        )}
+                      </div>
+
+                      {post.image_url && (
+                        <div className="post-media-container">
+                          {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
+                          {console.log('Rendering image:', post.image_url)}
+                          <img
+                            src={post.image_url.startsWith('http') ? post.image_url : `http://localhost:3001${post.image_url}`}
+                            alt="Post"
+                            className="post-media-img"
+                          />
+                          <button className="floating-comment-btn">
+                            <MessageSquare size={24} />
+                          </button>
+                        </div>
                       )}
                     </div>
 
-                    {post.image_url && (
-                      <div className="post-media-container">
-                        <img src={post.image_url} alt="Post" className="post-media-img" />
-                        <button className="floating-comment-btn">
-                          <MessageSquare size={24} />
-                        </button>
+                    {/* Post meta: địa điểm, số người (nếu có) */}
+                    {(post.location || post.max_participants) && (
+                      <div className="post-optional-meta">
+                        {post.location && <span>📍 {post.location}</span>}
+                        {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
+                        {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
                       </div>
                     )}
-                  </div>
 
-                  {/* Post meta: địa điểm, số người (nếu có) */}
-                  {(post.location || post.max_participants) && (
-                    <div className="post-optional-meta">
-                      {post.location && <span>📍 {post.location}</span>}
-                      {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
-                      {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
+                    {/* Post Stats */}
+                    <div className="post-stats">
+                      <div className="stats-left">
+                        <Star size={16} className="star-icon" />
+                        <span>{post.interested_count || 12} người quan tâm</span>
+                      </div>
+                      <div className="stats-right">
+                        <span>{post.comment_count || 5} bình luận</span>
+                      </div>
                     </div>
-                  )}
 
-                  {/* Post Stats */}
-                  <div className="post-stats">
-                    <div className="stats-left">
-                      <Star size={16} className="star-icon" />
-                      <span>{post.interested_count || 12} người quan tâm</span>
-                    </div>
-                    <div className="stats-right">
-                      <span>{post.comment_count || 5} bình luận</span>
+                    <div className="post-actions-divider" />
+
+                    <div className="post-actions-bar">
+                      {/* Chủ bài không thấy nút Tham gia */}
+                      {isOwner ? (
+                        <span className="post-creator-label">✓ Bài viết của bạn</span>
+                      ) : (
+                        <button
+                          className="action-btn join-btn"
+                          onClick={() => handleJoinPost(post.status_id)}
+                          disabled={isJoining}
+                        >
+                          {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                        </button>
+                      )}
+                      <button className="action-btn message-btn">Nhắn tin</button>
                     </div>
                   </div>
-
-                  <div className="post-actions-divider" />
-
-                  <div className="post-actions-bar">
-                    {/* Chủ bài không thấy nút Tham gia */}
-                    {isOwner ? (
-                      <span className="post-creator-label">✓ Bài viết của bạn</span>
-                    ) : (
-                      <button
-                        className="action-btn join-btn"
-                        onClick={() => handleJoinPost(post.status_id)}
-                        disabled={isJoining}
-                      >
-                        {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                      </button>
-                    )}
-                    <button className="action-btn message-btn">Nhắn tin</button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
