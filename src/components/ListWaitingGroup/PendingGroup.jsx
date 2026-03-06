@@ -8,7 +8,25 @@ const PendingGroups = ({ reload = 0 }) => {
 
   useEffect(() => {
     setLoading(true);
-    fetch('/api/pending-activities?userId=2')
+    const storedUser = localStorage.getItem('user');
+    let currentUserId = null;
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser);
+        currentUserId = userObj?.user_id || userObj?.id || null;
+      } catch (e) {
+        console.error("Error parsing user from localStorage", e);
+      }
+    }
+
+    if (!currentUserId) {
+      console.warn("No user ID found in localStorage, cannot fetch pending activities.");
+      setGroups([]); // Clear groups if no user
+      setLoading(false); // Ensure loading is set to false
+      return; // Exit early if no user ID
+    }
+
+    fetch(`/api/pending-activities?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
         setGroups(Array.isArray(data) ? data : []);
