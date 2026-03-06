@@ -325,11 +325,7 @@ function Friends() {
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
-<<<<<<< Updated upstream
                               src={msg.image_url?.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
-=======
-                              src={msg.image_url.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
->>>>>>> Stashed changes
                               alt="Sent image"
                               className="message-image"
                             />
@@ -352,17 +348,14 @@ function Friends() {
             </div>
 
             <div className="chat-input-area">
-
               {imagePreview && (
-                <div className="chat-image-preview-overlay">
-                  <div className="chat-image-preview-container">
-                    <img src={imagePreview} alt="Preview" />
-                    {uploadingImage && <div className="upload-loader">Đang tải...</div>}
-                    <button className="icon-btn" onClick={() => {
-                      setImagePreview('');
-                      if (fileInputRef.current) fileInputRef.current.value = '';
-                    }}>×</button>
-                  </div>
+                <div className="image-preview-container" style={{ position: 'absolute', bottom: '100%', left: '0', padding: '10px', background: '#fff', borderTop: '1px solid #ddd', width: '100%', zIndex: 10 }}>
+                  <img src={imagePreview} alt="Preview" style={{ height: '60px', borderRadius: '4px' }} />
+                  <button className="icon-btn" onClick={() => {
+                    URL.revokeObjectURL(imagePreview);
+                    setImagePreview('');
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }} style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', border: 'none', cursor: 'pointer' }}>×</button>
                 </div>
               )}
 
