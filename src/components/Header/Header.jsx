@@ -110,13 +110,12 @@ function Header() {
           <div className="user-avatar" onClick={() => navigate('/profile')} title="Trang cá nhân">
             {/* Thay ảnh cứng bằng ảnh từ profile đã lưu, nếu lỗi hoặc chưa có thì dùng ảnh dự phòng */}
             <img
-<<<<<<< Updated upstream
+
               src={currentUser?.avatar_url
                 ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
                 : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
-=======
-              src={userAvatar || currentUser?.avatar_url || "https://i.pravatar.cc/150?img=11"}
->>>>>>> Stashed changes
+
+           
               alt="User Avatar"
               referrerPolicy="no-referrer"
             />
