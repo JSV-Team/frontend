@@ -3,8 +3,18 @@ import { io } from 'socket.io-client';
 import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import './Friends.css';
 
-const CURRENT_USER_ID = 2; // Hardcode để test, thay bằng Redux/Context Auth sau
-
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+    }
+  }
+  return null;
+};
 function Friends() {
   const [conversations, setConversations] = useState([]);
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
@@ -35,8 +45,9 @@ function Friends() {
 
   // Khởi tạo Socket
   useEffect(() => {
+    const currentUserId = getUserId();
     const newSocket = io('http://localhost:3001', {
-      auth: { userId: CURRENT_USER_ID }, // Gửi kèm userId để server biết ai
+      auth: { userId: currentUserId }, // Gửi kèm userId để server biết ai
     });
 
     setSocket(newSocket);
@@ -76,7 +87,8 @@ function Friends() {
 
   // Load danh sách nhóm chat
   useEffect(() => {
-    fetch(`/api/chat/conversations?userId=${CURRENT_USER_ID}`)
+    const currentUserId = getUserId();
+    fetch(`/api/chat/conversations?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
         setConversations(data);
@@ -93,7 +105,8 @@ function Friends() {
   useEffect(() => {
     if (!activeConvId) return;
     setLoading(true);
-    fetch(`/api/chat/conversations/${activeConvId}/messages?userId=${CURRENT_USER_ID}&limit=50`)
+    const currentUserId = getUserId();
+    fetch(`/api/chat/conversations/${activeConvId}/messages?userId=${currentUserId}&limit=50`)
       .then(res => res.json())
       .then(data => {
         setMessages(data);
@@ -128,7 +141,7 @@ function Friends() {
     fetch(`/api/chat/conversations/${activeConvId}/leave`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: CURRENT_USER_ID })
+      body: JSON.stringify({ userId: getUserId() })
     })
       .then(res => res.json())
       .then(() => {
@@ -247,7 +260,8 @@ function Friends() {
                 {loading && <p style={{ textAlign: 'center', color: '#888' }}>Đang tải tin nhắn...</p>}
 
                 {messages.map((msg, index) => {
-                  const isMine = msg.sender_id === CURRENT_USER_ID;
+                  const currentUserId = getUserId();
+                  const isMine = msg.sender_id === currentUserId;
                   const isSystem = msg.msg_type === 'system';
 
                   if (isSystem) {
