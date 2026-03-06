@@ -96,11 +96,15 @@ function Friends() {
     fetch(`/api/chat/conversations?userId=${CURRENT_USER_ID}`)
       .then(res => res.json())
       .then(data => {
-        setConversations(data);
-        if (socket && data.length > 0) {
-          // Báo server join các room socket để bắt đầu nghe ngóng tin
-          const ids = data.map(c => c.conversation_id);
-          socket.emit('join_rooms', ids);
+        if (Array.isArray(data)) {
+          setConversations(data);
+          if (socket && data.length > 0) {
+            // Báo server join các room socket để bắt đầu nghe ngóng tin
+            const ids = data.map(c => c.conversation_id);
+            socket.emit('join_rooms', ids);
+          }
+        } else {
+          console.error('Fetch convs error (not array):', data);
         }
       })
       .catch(err => console.error('Fetch convs error:', err));
@@ -113,7 +117,12 @@ function Friends() {
     fetch(`/api/chat/conversations/${activeConvId}/messages?userId=${CURRENT_USER_ID}&limit=50`)
       .then(res => res.json())
       .then(data => {
-        setMessages(data);
+        if (Array.isArray(data)) {
+          setMessages(data);
+        } else {
+          console.error('Fetch messages error (not array):', data);
+          setMessages([]);
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -208,7 +217,11 @@ function Friends() {
     fetch(`/api/chat/conversations/${activeConvId}/members`)
       .then(res => res.json())
       .then(data => {
-        setGroupMembers(data);
+        if (Array.isArray(data)) {
+          setGroupMembers(data);
+        } else {
+          setGroupMembers([]);
+        }
         setLoadingMembers(false);
       })
       .catch(() => setLoadingMembers(false));
