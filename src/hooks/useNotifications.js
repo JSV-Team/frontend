@@ -1,7 +1,22 @@
 import { useState, useEffect } from 'react';
 import notificationService from '../services/notificationService';
 
-function useNotifications(userId = 2) {
+function useNotifications(userId) {
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
+  const effectiveUserId = userId || currentUser?.user_id;
+function useNotifications(initialUserId = null) {
+  const [userId, setUserId] = useState(() => {
+    if (initialUserId) return initialUserId;
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser);
+        return userObj?.user_id || userObj?.id || null;
+      } catch (e) { }
+    }
+    return null;
+  });
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -10,12 +25,12 @@ function useNotifications(userId = 2) {
   useEffect(() => {
     fetchNotifications();
     fetchUnreadCount();
-  }, [userId]);
+  }, [effectiveUserId]);
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const data = await notificationService.getNotifications(userId);
+      const data = await notificationService.getNotifications(effectiveUserId);
       setNotifications(data);
     } catch (err) {
       setError('Lấy danh sách thông báo thất bại');
@@ -26,7 +41,7 @@ function useNotifications(userId = 2) {
 
   const fetchUnreadCount = async () => {
     try {
-      const data = await notificationService.getUnreadCount(userId);
+      const data = await notificationService.getUnreadCount(effectiveUserId);
       setUnreadCount(data.count || 0);
     } catch (err) {
       console.error('Error fetching unread count:', err);
@@ -36,7 +51,8 @@ function useNotifications(userId = 2) {
   const markAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId);
-      setNotifications(prev => 
+      setNotifications(prev =>
+      setNotifications(prev =>
         prev.map(n => n.notification_id === notificationId ? { ...n, is_read: true } : n)
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
@@ -47,7 +63,7 @@ function useNotifications(userId = 2) {
 
   const markAllAsRead = async () => {
     try {
-      await notificationService.markAllAsRead(userId);
+      await notificationService.markAllAsRead(effectiveUserId);
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
     } catch (err) {

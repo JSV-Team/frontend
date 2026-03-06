@@ -3,19 +3,47 @@ import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 
 // Mock user ID for testing (since there's no login yet)
-const CURRENT_USER_ID = 2;
-
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+    }
+  }
+  return null;
+};
 function Notifications() {
-  // delegate data loading to reusable hook that already respects the Vite proxy
-  const {
-    notifications,
-    loading,
-    error,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    refreshNotifications,
-  } = useNotifications(CURRENT_USER_ID);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch notifications from API with dynamic userId
+    const currentUserId = getUserId();
+    if (!currentUserId) return;
+
+    fetch(`http://localhost:3001/api/notifications?userId=${currentUserId}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle the API response structure
+        const notificationsList = data.value || data || [];
+        setNotifications(notificationsList);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching notifications:', err);
+        setError('Không thể tải thông báo');
+        setLoading(false);
+      });
+  }, []);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -138,8 +166,8 @@ function Notifications() {
         ) : (
           <div className="notifications-list">
             {notifications.map((notification) => (
-              <div 
-                key={notification.notification_id} 
+              <div
+                key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
               >
                 {getNotificationIcon(notification.type)}
