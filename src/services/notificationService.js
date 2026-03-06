@@ -1,13 +1,24 @@
 // Notification Service - API calls related to notifications
-// Sử dụng userId = 2 cho test (tạm thời chưa có login)
 const API_BASE_URL = '/api';
-const USER_ID = 2; // User ID test
+
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) { }
+  }
+  return null;
+};
 
 export const notificationService = {
   // Get all notifications cho user hiện tại
-  getNotifications: async (userId = USER_ID) => {
+  getNotifications: async (userId) => {
+    const activeUserId = userId || getUserId();
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`);
+      if (!activeUserId) throw new Error('No user id');
+      const response = await fetch(`${API_BASE_URL}/notifications?userId=${activeUserId}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -27,9 +38,11 @@ export const notificationService = {
   },
 
   // Get unread notifications count
-  getUnreadCount: async (userId = USER_ID) => {
+  getUnreadCount: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${userId}`);
+      const activeUserId = userId || getUserId();
+      if (!activeUserId) return 0;
+      const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${activeUserId}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -54,14 +67,17 @@ export const notificationService = {
   },
 
   // Mark all notifications as read
-  markAllAsRead: async (userId = USER_ID) => {
+  markAllAsRead: async (userId) => {
     try {
+      const activeUserId = userId || getUserId();
+      if (!activeUserId) return;
+
       const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ userId: activeUserId }),
       });
       return await response.json();
     } catch (error) {

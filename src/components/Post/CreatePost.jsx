@@ -4,6 +4,8 @@ import useCreatePost from '../../hooks/useCreatePost';
 import './Post.css';
 
 function CreatePost({ onPostCreated }) {
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -14,6 +16,12 @@ function CreatePost({ onPostCreated }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const fileInputRef = useRef(null);
+
+  // Lấy thông tin user hiện tại từ localStorage
+  // linter-fix: redundant user pull
+
+  const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
+  const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
 
   const { createPost, loading, error } = useCreatePost(() => {
     setTitle('');
@@ -80,6 +88,7 @@ function CreatePost({ onPostCreated }) {
     }
 
     const postData = {
+      userId: currentUser?.user_id,
       title: title.trim(),
       content: content.trim(),
       location,
@@ -95,8 +104,10 @@ function CreatePost({ onPostCreated }) {
       <div className="create-activity-header">
         <div className="user-avatar">
           <img
-            src="https://i.pravatar.cc/150?img=2"
-            alt="Nguyễn Minh Khoa"
+            src={currentUser?.avatar_url
+              ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
+              : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
+            alt={currentUser?.full_name || currentUser?.username || 'User'}
             referrerPolicy="no-referrer"
           />
         </div>

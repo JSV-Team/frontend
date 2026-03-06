@@ -7,8 +7,17 @@ const PendingGroups = ({ reload = 0 }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const userString = localStorage.getItem('user');
+    const currentUser = userString ? JSON.parse(userString) : null;
+    const currentUserId = currentUser?.user_id;
+
+    if (!currentUserId) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    fetch('/api/pending-activities?userId=2')
+    fetch(`/api/pending-activities?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
         setGroups(Array.isArray(data) ? data : []);

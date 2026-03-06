@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CreatePost from '../../components/Post/CreatePost';
 import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import useListPost from '../../hooks/useListPost';
@@ -7,16 +8,32 @@ import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, Mor
 import { motion } from 'motion/react';
 import './Home.css';
 
-const CURRENT_USER_ID = 2; // Tạm thời hardcode, thay bằng auth sau
-
+// Helper func lấy user ID từ danh sách Auth (localStorage)
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) {
+      console.error("Error parsing user from localStorage", e);
+    }
+  }
+  return null;
+};
 function Home() {
+  const navigate = useNavigate();
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
+  const CURRENT_USER_ID = currentUser?.user_id;
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
+  const currentUserId = getUserId();
+  const { notifications, unreadCount } = useNotifications(currentUserId);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -28,7 +45,7 @@ function Home() {
       const response = await fetch('/api/activities/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
+        body: JSON.stringify({ activityId, userId: getUserId() }),
       });
 
       const data = await response.json();
@@ -62,6 +79,24 @@ function Home() {
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
+  const handleMessageHost = async (hostId) => {
+    if (hostId === CURRENT_USER_ID) return;
+    try {
+      const response = await fetch('/api/chat/private', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      navigate('/friends', { state: { openChatId: data.conversation_id } });
+    } catch (err) {
+      console.error('Lỗi tạo chat riêng:', err);
+      alert('Lỗi: ' + err.message);
+    }
+  };
+
   return (
     <div className="home-container">
       <div className="home-main">
@@ -84,7 +119,7 @@ function Home() {
 
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
-                const isOwner = post.user_id === CURRENT_USER_ID;
+                const isOwner = post.user_id === getUserId();
                 const isJoining = joiningIds.has(post.status_id);
 
                 return (
@@ -136,9 +171,6 @@ function Home() {
                             alt="Post"
                             className="post-media-img"
                           />
-                          <button className="floating-comment-btn">
-                            <MessageSquare size={24} />
-                          </button>
                         </div>
                       )}
                     </div>
@@ -153,16 +185,6 @@ function Home() {
                     )}
 
                     {/* Post Stats */}
-                    <div className="post-stats">
-                      <div className="stats-left">
-                        <Star size={16} className="star-icon" />
-                        <span>{post.interested_count || 12} người quan tâm</span>
-                      </div>
-                      <div className="stats-right">
-                        <span>{post.comment_count || 5} bình luận</span>
-                      </div>
-                    </div>
-
                     <div className="post-actions-divider" />
 
                     <div className="post-actions-bar">
@@ -170,15 +192,17 @@ function Home() {
                       {isOwner ? (
                         <span className="post-creator-label">✓ Bài viết của bạn</span>
                       ) : (
-                        <button
-                          className="action-btn join-btn"
-                          onClick={() => handleJoinPost(post.status_id)}
-                          disabled={isJoining}
-                        >
-                          {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                        </button>
+                        <>
+                          <button
+                            className="action-btn join-btn"
+                            onClick={() => handleJoinPost(post.status_id)}
+                            disabled={isJoining}
+                          >
+                            {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                          </button>
+                          <button className="action-btn message-btn" onClick={() => handleMessageHost(post.user_id)}>Nhắn tin</button>
+                        </>
                       )}
-                      <button className="action-btn message-btn">Nhắn tin</button>
                     </div>
                   </div>
                 );
