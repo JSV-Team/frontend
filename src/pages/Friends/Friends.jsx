@@ -21,6 +21,9 @@ function Friends() {
   const [showInfo, setShowInfo] = useState(false);       // Toggle panel thông tin nhóm
   const [groupMembers, setGroupMembers] = useState([]);  // Danh sách thành viên
   const [loadingMembers, setLoadingMembers] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const activeConvIdRef = useRef(null);
 
@@ -126,6 +129,7 @@ function Friends() {
     socket.emit('send_message', {
       conversationId: activeConvId,
       content: inputMsg,
+      msgType: 'text',
     }, (response) => {
       // Callback từ server
       if (response.status === 'error') {
@@ -134,6 +138,48 @@ function Friends() {
     });
 
     setInputMsg('');
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !activeConvId || !socket) return;
+
+    // Hiển thị preview local
+    const localPreview = URL.createObjectURL(file);
+    setImagePreview(localPreview);
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch('http://localhost:3001/api/upload/image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Upload thất bại');
+
+      // Gửi Message ảnh qua Socket
+      socket.emit('send_message', {
+        conversationId: activeConvId,
+        content: '', // Có thể để trống nếu chỉ gửi ảnh
+        msgType: 'image',
+        imageUrl: data.imageUrl
+      }, (response) => {
+        if (response.status === 'error') {
+          alert('Lỗi gửi ảnh: ' + response.error);
+        }
+      });
+
+    } catch (err) {
+      alert('Lỗi upload: ' + err.message);
+    } finally {
+      setUploadingImage(false);
+      setImagePreview(''); // Xóa preview sau khi gửi xong
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleLeaveGroup = () => {
@@ -276,7 +322,19 @@ function Friends() {
                     <div key={index} className={`message-wrapper ${isMine ? 'mine' : 'theirs'}`}>
                       {!isMine && <span className="sender-name">{msg.sender_name || 'Người dùng'}</span>}
                       <div className="message-bubble">
-                        {msg.content}
+                        {msg.msg_type === 'image' || msg.image_url ? (
+                          <div className="message-image-container">
+                            <img
+                              src={msg.image_url?.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
+                              alt="Sent image"
+                              className="message-image"
+                            />
+                            {/* Nếu muốn cho phép vừa gửi ảnh vừa gửi chữ 1 lúc */}
+                            {msg.content && <div style={{ marginTop: '5px' }}>{msg.content}</div>}
+                          </div>
+                        ) : (
+                          msg.content
+                        )}
                       </div>
                       {/* Fake Trạng thái tin nhắn */}
                       {isMine && index === messages.length - 1 && (
@@ -290,9 +348,30 @@ function Friends() {
             </div>
 
             <div className="chat-input-area">
+
+              {imagePreview && (
+                <div className="chat-image-preview-overlay">
+                  <div className="chat-image-preview-container">
+                    <img src={imagePreview} alt="Preview" />
+                    {uploadingImage && <div className="upload-loader">Đang tải...</div>}
+                    <button className="icon-btn" onClick={() => {
+                      setImagePreview('');
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}>×</button>
+                  </div>
+                </div>
+              )}
+
               <div className="chat-input-tools">
                 <PlusCircle size={22} cursor="pointer" />
-                <ImageIcon size={22} cursor="pointer" />
+                <ImageIcon size={22} cursor="pointer" onClick={() => fileInputRef.current?.click()} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleImageUpload}
+                />
               </div>
               <div className="chat-input-wrapper">
                 <input
