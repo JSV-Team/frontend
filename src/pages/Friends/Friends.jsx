@@ -4,10 +4,13 @@ import { io } from 'socket.io-client';
 import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle } from 'lucide-react';
 import './Friends.css';
 
-const CURRENT_USER_ID = 2; // Hardcode để test, thay bằng Redux/Context Auth sau
+
 
 function Friends() {
   const location = useLocation();
+  const userString = localStorage.getItem('user');
+  const currentUser = userString ? JSON.parse(userString) : null;
+  const CURRENT_USER_ID = currentUser?.user_id;
   const [conversations, setConversations] = useState([]);
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
   const [activeConvId, setActiveConvId] = useState(location.state?.openChatId || null);
