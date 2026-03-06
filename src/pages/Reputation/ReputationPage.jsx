@@ -2,19 +2,27 @@ import { useMemo, useState } from "react";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
+import { getProfileFromLocalStorage } from "../../services/profileService";
 import "../profileLayout.css";
 import "./reputationPage.css";
 
+// Dữ liệu mặc định
+const DEFAULT_PROFILE = {
+  fullName: "Bạn",
+  gender: "Khác",
+  dobISO: "2000-01-02",
+  dobText: "01/02/2000",
+  email: "hxoa@gmail.com",
+  avatar: "",
+};
+
+const DEFAULT_INTERESTS = ["Bóng đá", "Chạy bộ", "Cầu lông"];
+
 export default function ReputationPage() {
-  const profile = useMemo(
-    () => ({
-      fullName: "Bạn",
-      gender: "Khác",
-      dobISO: "2000-01-02",
-      email: "hxoa@gmail.com",
-    }),
-    []
-  );
+  // Load profile từ localStorage
+  const savedProfile = getProfileFromLocalStorage();
+  const profile = savedProfile ? { ...DEFAULT_PROFILE, ...savedProfile } : DEFAULT_PROFILE;
+  const interests = savedProfile?.interests || DEFAULT_INTERESTS;
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
@@ -33,7 +41,7 @@ export default function ReputationPage() {
   return (
     <div className="vm-page">
       <SidebarProfile
-        profile={{ ...profile, stats }}
+        profile={{ ...profile, stats, interests }}
         onLogout={() => alert("Logout (demo)")}
       />
 
