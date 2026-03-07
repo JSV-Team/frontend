@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -61,7 +63,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/login/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -78,7 +80,7 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: "success", text: "Đăng ký thành công! 🎉" });
+        setMessage({ type: "success", text: "Đăng ký thành công! 🎉 Đang chuyển sang trang đăng nhập..." });
         setFormData({
           email: "",
           firstName: "",
@@ -91,8 +93,12 @@ export default function Register() {
           password: "",
           confirmPassword: ""
         });
+        // Chuyển sang trang Login sau 2 giây
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       } else {
-        setMessage({ type: "error", text: data.message || "Đăng ký thất bại" });
+        setMessage({ type: "error", text: data.error || "Đăng ký thất bại" });
       }
     } catch (error) {
       console.error("Register error:", error);
@@ -259,7 +265,10 @@ export default function Register() {
           </p>
 
           <p className="login-link">
-            Đã có tài khoản? <span>Đăng nhập ngay</span>
+            Đã có tài khoản? <a href="#" onClick={(e) => {
+              e.preventDefault();
+              navigate('/login');
+            }}>Đăng nhập ngay</a>
           </p>
         </div>
       </div>
