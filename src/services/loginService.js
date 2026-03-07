@@ -1,46 +1,31 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+import axios from 'axios';
+const API_BASE_URL = '/api';
 
 export const loginService = {
-  loginUser: async (email, password) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          identifier: email,
-          password: password,
-        }),
-      });
+    login: async (identifier, password) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Báo cho BE biết mình gửi dữ liệu JSON
+                },
+                body: JSON.stringify({ identifier, password }) // Đóng gói dữ liệu
+            });
 
-      const responseData = await response.json();
-      console.log('Login response:', responseData);
+            // Chuyển kết quả từ chuỗi JSON thành Object
+            const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(responseData.message || `HTTP Error: ${response.status}`);
-      }
+            // Nếu Backend trả về mã lỗi (400, 401, 403, 500)
+            if (!response.ok) {
+                // Ném lỗi ra để thằng Login.jsx hứng lấy và hiển thị lên màn hình
+                throw data; 
+            }
 
-      // Lưu token vào localStorage
-      if (responseData.data) {
-        localStorage.setItem('user', JSON.stringify(responseData.data));
-      }
-
-      return responseData;
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+            // Nếu thành công (200 OK)
+            return data; 
+        } catch (error) {
+            console.error('Lỗi khi gọi API login:', error);
+            throw error;
+        }
     }
-  },
-
-  logoutUser: () => {
-    localStorage.removeItem('user');
-  },
-
-  getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
-  },
 };
-
-export default loginService;

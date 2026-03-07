@@ -26,8 +26,11 @@ function useCreatePost(onSuccess) {
       const response = await postService.createPost(content);
       console.log('Post created successfully:', response);
 
+     
+      
       // báo cho Home biết: "đăng xong rồi"
       if (onSuccess) {
+      
         onSuccess();
       }
     } catch (err) {
