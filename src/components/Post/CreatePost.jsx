@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { MapPin, Image as ImageIcon } from 'lucide-react';
 import useCreatePost from '../../hooks/useCreatePost';
+import uploadService from '../../services/uploadService';
 import './Post.css';
 
 function CreatePost({ onPostCreated }) {
@@ -10,6 +11,10 @@ function CreatePost({ onPostCreated }) {
   const [maxParticipants, setMaxParticipants] = useState('');
   const [duration, setDuration] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
+  
   const { createPost, loading, error } = useCreatePost(() => {
     setTitle('');
     setContent('');
@@ -17,8 +22,28 @@ function CreatePost({ onPostCreated }) {
     setMaxParticipants('');
     setDuration('');
     setImageUrl('');
+    setUploadError('');
     onPostCreated();
   });
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadError('');
+
+    try {
+      const response = await uploadService.uploadImage(file);
+      setImageUrl(response.imageUrl);
+      console.log('Image uploaded:', response.imageUrl);
+    } catch (err) {
+      setUploadError(err.message || 'Upload ảnh thất bại');
+      console.error('Upload error:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = () => {
     if (!title.trim()) {
@@ -114,12 +139,36 @@ function CreatePost({ onPostCreated }) {
             />
           </div>
         </div>
+
+        {imageUrl && (
+          <div className="form-row">
+            <div className="form-group full-width">
+              <label>Ảnh đã chọn</label>
+              <img 
+                src={`http://localhost:3001${imageUrl}`} 
+                alt="Preview" 
+                style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px' }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="create-activity-footer">
-        <button className="btn-add-image">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          onChange={handleImageSelect}
+          style={{ display: 'none' }}
+        />
+        <button 
+          className="btn-add-image" 
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
           <ImageIcon size={18} />
-          <span>Ảnh hoạt động</span>
+          <span>{uploading ? 'Đang upload...' : 'Ảnh hoạt động'}</span>
         </button>
         <button 
           className="btn-submit" 
@@ -130,6 +179,7 @@ function CreatePost({ onPostCreated }) {
         </button>
       </div>
 
+      {uploadError && <p className="error-message">{uploadError}</p>}
       {error && <p className="error-message">{error}</p>}
     </div>
   );

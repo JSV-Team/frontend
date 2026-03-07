@@ -1,5 +1,5 @@
 // Friend Service - API calls related to friends
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:3001/api';
 
 export const friendService = {
   // Get friends list

@@ -1,6 +1,6 @@
 // Notification Service - API calls related to notifications
 // Sử dụng userId = 2 cho test (tạm thời chưa có login)
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:3001/api';
 const USER_ID = 2; // User ID test
 
 export const notificationService = {
