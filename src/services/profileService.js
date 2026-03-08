@@ -4,7 +4,7 @@ export const profileService = {
   // Lấy thông tin profile từ API
   getProfile: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}`);
       const data = await response.json();
       if (!response.ok) throw data;
       return data;
@@ -17,7 +17,7 @@ export const profileService = {
   // Cập nhật thông tin profile
   updateProfile: async (userId, profileData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -29,6 +29,38 @@ export const profileService = {
       return data;
     } catch (error) {
       console.error('Lỗi khi cập nhật profile:', error);
+      throw error;
+    }
+  },
+
+  // Cập nhật sở thích (interests)
+  updateInterests: async (userId, interests) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}/interests`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ interests }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật sở thích:', error);
+      throw error;
+    }
+  },
+
+  // Lấy danh sách sở thích
+  getInterests: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}/interests`);
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi lấy sở thích:', error);
       throw error;
     }
   },

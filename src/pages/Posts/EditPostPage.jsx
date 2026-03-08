@@ -1,32 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
-import TopTabs from "../../components/TopTabs/TopTabs";
-import StatBar from "../../components/StatBar/StatBar";
-import "../profileLayout.css";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams, useOutletContext } from "react-router-dom";
 import "./createPostPage.css"; // dùng lại css
-
-const getInitialProfile = () => {
-  const saved = localStorage.getItem("userProfile");
-  if (saved) {
-    try { return JSON.parse(saved); } catch {}
-  }
-  return {
-    fullName: "Bạn",
-    gender: "Khác",
-    dobISO: "2000-01-02",
-    email: "hxoa@gmail.com",
-    avatar: null,
-  };
-};
 
 export default function EditPostPage() {
   const { id } = useParams(); // id từ URL
   const postId = Number(id);
   const navigate = useNavigate();
-
-  const profile = getInitialProfile();
-  const stats = useMemo(() => ({ reputation: 100, fer: 100, fing: 100, group: 100 }), []);
+  const { stats } = useOutletContext();
 
   const [loading, setLoading] = useState(true);
 
@@ -100,78 +80,71 @@ export default function EditPostPage() {
   if (loading) return null;
 
   return (
-    <div className="vm-page">
-      <SidebarProfile profile={{ ...profile, stats }} onLogout={() => alert("Logout (demo)")} />
+    <div className="cp-wrap">
+      <div className="cp-card">
+        <div className="cp-title">Chỉnh sửa bài đăng</div>
 
-      <main className="vm-main">
-        <TopTabs active="posts" />
-        <StatBar stats={stats} />
+        <input
+          className="cp-input"
+          placeholder="Tiêu đề"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-        <div className="cp-card">
-          <div className="cp-title">Chỉnh sửa bài đăng</div>
+        <textarea
+          className="cp-textarea"
+          placeholder="Nội dung bài viết"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+          rows={6}
+        />
 
-          <input
-            className="cp-input"
-            placeholder="Tiêu đề"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+        <div className="cp-row">
+          <label className="cp-field">
+            <span>Chế độ</span>
+            <select value={privacy} onChange={(e) => setPrivacy(e.target.value)}>
+              <option value="public">Public</option>
+              <option value="friends">Bạn bè</option>
+              <option value="private">Private</option>
+            </select>
+          </label>
+        </div>
 
-          <textarea
-            className="cp-textarea"
-            placeholder="Nội dung bài viết"
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            rows={6}
-          />
+        {image && (
+          <div style={{ marginTop: 10 }}>
+            <div style={{ fontWeight: 700, marginBottom: 6 }}>Ảnh hiện tại</div>
+            <img src={image} alt="current" style={{ width: "100%", borderRadius: 14 }} />
+          </div>
+        )}
 
-          <div className="cp-row">
-            <label className="cp-field">
-              <span>Chế độ</span>
-              <select value={privacy} onChange={(e) => setPrivacy(e.target.value)}>
-                <option value="public">Public</option>
-                <option value="friends">Bạn bè</option>
-                <option value="private">Private</option>
-              </select>
-            </label>
+        <div className="cp-tagsBox">
+          <div className="cp-tagsHeader">Tags (demo)</div>
+          <div className="cp-tagsRow">
+            <input
+              className="ps-input" // Dùng chung style input của posts
+              placeholder="Nhập tag..."
+              value={tagText}
+              onChange={(e) => setTagText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addTag()}
+            />
+            <button className="cp-addBtn" onClick={addTag}>+ Tag</button>
           </div>
 
-          {image && (
-            <div style={{ marginTop: 10 }}>
-              <div style={{ fontWeight: 700, marginBottom: 6 }}>Ảnh hiện tại</div>
-              <img src={image} alt="current" style={{ width: "100%", borderRadius: 14 }} />
-            </div>
-          )}
-
-          <div className="cp-tagsBox">
-            <div className="cp-tagsHeader">Tags (demo)</div>
-            <div className="cp-tagsRow">
-              <input
-                className="cp-input"
-                placeholder="Nhập tag..."
-                value={tagText}
-                onChange={(e) => setTagText(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && addTag()}
-              />
-              <button className="cp-addBtn" onClick={addTag}>+ Tag</button>
-            </div>
-
-            <div className="cp-tags">
-              {tags.map((t) => (
-                <span key={t} className="cp-tag">
-                  {t}
-                  <button onClick={() => removeTag(t)}>x</button>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="cp-actions">
-            <button className="cp-cancel" onClick={() => navigate(-1)}>Hủy</button>
-            <button className="cp-post" onClick={onSave}>Lưu</button>
+          <div className="cp-tags">
+            {tags.map((t) => (
+              <span key={t} className="cp-tag">
+                {t}
+                <button onClick={() => removeTag(t)}>x</button>
+              </span>
+            ))}
           </div>
         </div>
-      </main>
+
+        <div className="cp-actions">
+          <button className="cp-cancel" onClick={() => navigate(-1)}>Hủy</button>
+          <button className="cp-post" onClick={onSave}>Lưu</button>
+        </div>
+      </div>
     </div>
   );
 }

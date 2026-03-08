@@ -20,6 +20,11 @@
     margin-bottom: 12px;
 }
 
+.cp-half {
+    flex: 1;
+    min-width: 120px;
+}
+
 .cp-textarea {
     width: 100%;
     padding: 14px 16px;

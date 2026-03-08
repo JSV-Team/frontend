@@ -16,6 +16,10 @@ export default function PostCard({
   const [openReacts, setOpenReacts] = useState(false);
   const menuRef = useRef(null);
 
+  useEffect(() => {
+    if (post.image) console.log(`PostCard [${post.id}] image:`, post.image);
+  }, [post.id, post.image]);
+
   // Tính tổng reactions
   const totalReacts =
     (post.reactions?.like || 0) +
@@ -80,6 +84,14 @@ export default function PostCard({
       </div>
 
       <div className="pc-desc">{post.desc}</div>
+
+      {(post.location || post.duration || post.maxParticipants) && (
+        <div className="pc-activity-info">
+          {post.location && <span className="pc-info-item"><span className="pc-icon pin">📍</span> {post.location}</span>}
+          {post.duration && <span className="pc-info-item"><span className="pc-icon time">⏱️</span> {post.duration} phút</span>}
+          {post.maxParticipants && <span className="pc-info-item"><span className="pc-icon group">👥</span> Tối đa {post.maxParticipants} người</span>}
+        </div>
+      )}
 
       {post.image && <img className="pc-img" src={post.image} alt="post" />}
 
