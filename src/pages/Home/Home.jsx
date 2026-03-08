@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreatePost from '../../components/Post/CreatePost';
+import PendingApproval from '../../components/ListWaitingApproval/PendingApproval';
 import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import NotificationsWidget from '../../components/NotificationsWidget/NotificationsWidget';
 import useListPost from '../../hooks/useListPost';
+import useNotifications from '../../hooks/useNotifications';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import './Home.css';
@@ -32,11 +34,8 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-<<<<<<< HEAD
-=======
   const currentUserId = getUserId();
   const { notifications, unreadCount } = useNotifications(currentUserId);
->>>>>>> 8ff97c1cfb7dc776774ec025001946d12dbdb616
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -104,10 +103,11 @@ function Home() {
     <div className="home-container">
       <div className="home-main">
         <div className="home-layout">
-          {/* Left Sidebar - Pending Groups */}
+          {/* Left Sidebar - Pending Groups & Approvals */}
           <aside className="home-sidebar">
-            <NotificationsWidget userId={CURRENT_USER_ID} />
-          <PendingGroups reload={pendingReload} />
+            {/* <NotificationsWidget userId={CURRENT_USER_ID} /> */}
+            <PendingApproval reload={pendingReload} />
+            <PendingGroups reload={pendingReload} />
           </aside>
 
           {/* Right Content - Posts Feed */}

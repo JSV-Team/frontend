@@ -1,7 +1,7 @@
 import React from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-
+import { useState, useEffect } from 'react';
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');

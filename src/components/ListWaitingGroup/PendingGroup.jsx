@@ -7,34 +7,32 @@ const PendingGroups = ({ reload = 0 }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userString = localStorage.getItem('user');
-    const currentUser = userString ? JSON.parse(userString) : null;
-    const currentUserId = currentUser?.user_id;
+    // 1. Bật loading trước khi bắt đầu xử lý
+    setLoading(true);
 
+    // 2. Lấy và parse dữ liệu user một lần duy nhất, bọc trong try/catch cho an toàn
+    const userString = localStorage.getItem('user');
+    let currentUserId = null;
+
+    if (userString) {
+      try {
+        const currentUser = JSON.parse(userString);
+        // Lấy user_id, dự phòng trường hợp API trả về là id
+        currentUserId = currentUser?.user_id || currentUser?.id || null;
+      } catch (e) {
+        console.error("Lỗi khi đọc dữ liệu user từ localStorage:", e);
+      }
+    }
+
+    // 3. Nếu không có ID, thoát sớm và tắt loading
     if (!currentUserId) {
+      console.warn("Không tìm thấy user ID, không thể tải danh sách chờ.");
+      setGroups([]);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
-    const storedUser = localStorage.getItem('user');
-    let currentUserId = null;
-    if (storedUser) {
-      try {
-        const userObj = JSON.parse(storedUser);
-        currentUserId = userObj?.user_id || userObj?.id || null;
-      } catch (e) {
-        console.error("Error parsing user from localStorage", e);
-      }
-    }
-
-    if (!currentUserId) {
-      console.warn("No user ID found in localStorage, cannot fetch pending activities.");
-      setGroups([]); // Clear groups if no user
-      setLoading(false); // Ensure loading is set to false
-      return; // Exit early if no user ID
-    }
-
+    // 4. Bắt đầu gọi API
     fetch(`/api/pending-activities?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
@@ -50,7 +48,7 @@ const PendingGroups = ({ reload = 0 }) => {
   const handleCancel = (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    // FIX: DELETE /api/pending-activities/:request_id (hủy request, không phải activity)
+    // FIX: DELETE /api/pending-activities/:request_id
     fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(() => {

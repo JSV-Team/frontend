@@ -19,7 +19,7 @@ function CreatePost({ onPostCreated }) {
 
   // Lấy thông tin user hiện tại từ localStorage
   const storedUser = localStorage.getItem('user');
-  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+  // const currentUser = storedUser ? JSON.parse(storedUser) : null;
   const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
   const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
 
