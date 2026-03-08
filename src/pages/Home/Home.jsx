@@ -29,6 +29,7 @@ function Home() {
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
+  const [activeMenuId, setActiveMenuId] = useState(null); // track post menu đang mở
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
@@ -36,6 +37,27 @@ function Home() {
   const { notifications, unreadCount } = useNotifications(currentUserId);
 
   const reloadPosts = () => setReload(prev => prev + 1);
+
+  const handleDeletePost = async (activityId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
+
+    try {
+      const response = await fetch(`/api/activities/${activityId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+
+      alert('Đã xóa bài viết thành công');
+      reloadPosts();
+    } catch (err) {
+      console.error('Lỗi khi xóa bài viết:', err);
+      alert('Lỗi: ' + err.message);
+    }
+  };
 
   const handleJoinPost = async (activityId) => {
     if (joiningIds.has(activityId)) return; // đang xử lý rồi
@@ -148,9 +170,50 @@ function Home() {
                           </div>
                         </div>
                       </div>
-                      <button className="more-button">
-                        <MoreHorizontal size={24} />
-                      </button>
+                      <div className="post-options-container" style={{ position: 'relative' }}>
+                        <button
+                          className="more-button"
+                          onClick={() => setActiveMenuId(activeMenuId === post.status_id ? null : post.status_id)}
+                        >
+                          <MoreHorizontal size={24} />
+                        </button>
+
+                        {activeMenuId === post.status_id && isOwner && (
+                          <div className="post-options-menu" style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: '100%',
+                            background: 'white',
+                            border: '1px solid #ddd',
+                            borderRadius: '8px',
+                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                            zIndex: 10,
+                            padding: '8px 0',
+                            minWidth: '150px'
+                          }}>
+                            <button
+                              className="post-option-item"
+                              style={{
+                                width: '100%',
+                                padding: '8px 16px',
+                                textAlign: 'left',
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#dc3545',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                              }}
+                              onClick={() => {
+                                setActiveMenuId(null);
+                                handleDeletePost(post.status_id);
+                              }}
+                            >
+                              Xóa bài viết
+                            </button>
+                          </div>
+                        )}
+                        {/* Ẩn menu khi click ra ngoài (đơn giản hóa bằng cách thu menu lại nếu bấm vào chính nó lần nữa ở trên) */}
+                      </div>
                     </div>
 
                     {/* Post info */}
