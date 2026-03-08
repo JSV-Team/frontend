@@ -62,7 +62,7 @@ export default function ReputationPage() {
               <div>{r.action}</div>
               <div>{r.date}</div>
               <div>{r.reason}</div>
-              <div>{r.point}</div>
+              <div data-positive={r.point > 0}>{r.point > 0 ? `+${r.point}` : r.point}</div>
               <div>{r.remain}</div>
             </div>
           ))}

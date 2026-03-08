@@ -35,9 +35,9 @@ export default function ProfileLayout() {
   // Xác định tab đang active dựa trên URL
   const getActiveTab = () => {
     const path = location.pathname;
-    if (path.includes("/profile/edit")) return "edit";
-    if (path.includes("/profile/reputation")) return "reputation";
-    if (path.includes("/profile/posts")) return "posts";
+    if (path.includes("/edit")) return "edit";
+    if (path.includes("/reputation")) return "reputation";
+    if (path.includes("/posts")) return "posts";
     return "edit";
   };
 

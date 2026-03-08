@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+// BƯỚC 1: Import thêm icon LogOut từ thư viện lucide-react của bạn
 import { Bell, LogOut } from 'lucide-react';
 import './Header.css';
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [activeTab, setActiveTab] = useState('Home');
 
   // Lấy thông tin user từ localStorage (chỉ chứa dữ liệu login, không cache profile)
   const [currentUser, setCurrentUser] = useState(null);
@@ -15,7 +17,7 @@ function Header() {
     if (userString) {
       setCurrentUser(JSON.parse(userString));
     }
-  }, [location.pathname]);
+  }, []);
 
   const tabs = [
     { name: 'Home', label: 'Home', path: '/' },
@@ -37,20 +39,14 @@ function Header() {
 
   const currentTab = getCurrentTab();
 
+  // BƯỚC 2: Hàm xử lý Đăng xuất
   const handleLogout = () => {
+    // Hỏi nhẹ một câu cho chắc chắn, tránh lỡ tay bấm nhầm
     const isConfirm = window.confirm("Bạn có chắc chắn muốn đăng xuất không?");
     if (isConfirm) {
-      localStorage.removeItem("user");
-      navigate("/login");
+      localStorage.removeItem("user"); // Tịch thu vé
+      navigate("/login"); // Đuổi ra cửa
     }
-  };
-
-  // Tạo avatar URL từ user object (đến từ DB lúc login)
-  const getAvatarSrc = () => {
-    if (!currentUser) return "https://i.pravatar.cc/150?img=11";
-    if (currentUser.avatar_url) return currentUser.avatar_url;
-    const name = currentUser.full_name || currentUser.username || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
   };
 
   return (
@@ -81,9 +77,14 @@ function Header() {
             <Bell size={24} />
           </button>
 
-          <div className="user-avatar" onClick={() => navigate('/profile/edit')} title="Trang cá nhân">
+<div className="user-avatar" onClick={() => {
+            const userId = currentUser?.user_id || currentUser?.id || currentUser?.USER_ID;
+            navigate(`/profile/${userId}`);
+          }} title="Trang cá nhân">
             <img
-              src={getAvatarSrc()}
+              src={currentUser?.avatar_url
+                ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
+                : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
               alt="User Avatar"
               referrerPolicy="no-referrer"
             />

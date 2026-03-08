@@ -25,7 +25,7 @@ export default function EditPostPage() {
 
     if (!found) {
       alert("Không tìm thấy bài viết!");
-      navigate("/profile/posts");
+      navigate(`/profile/${USER_ID}/posts`);
       return;
     }
 
@@ -74,7 +74,7 @@ export default function EditPostPage() {
 
     localStorage.setItem("posts", JSON.stringify(next));
     alert("Cập nhật thành công ✅");
-    navigate("/profile/posts");
+    navigate(`/profile/${USER_ID}/posts`);
   };
 
   if (loading) return null;

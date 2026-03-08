@@ -1,125 +1,257 @@
+.rp-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 10px 0;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Head Card - Điểm số */
 .rp-headCard {
-    background: linear-gradient(90deg, #f7d9dc 0%, #f2e7ea 70%);
-    border-radius: 22px;
-    padding: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: white;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.rp-headCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiIHN0cm9rZS13aWR0aD0iMSI+PHBhdGggZD0iTTAgMjAwaDQwME0yMDAgMHY0MDAiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjEwMCIvPjwvN3ZnPg==') repeat;
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .rp-headLeft {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 16px;
+    z-index: 1;
 }
 
 .rp-star {
-    font-size: 28px;
+    font-size: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .rp-title {
-    font-weight: 900;
-    font-size: 28px;
-    color: #111827;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
 }
 
 .rp-sub {
-    color: #6b7280;
-    margin-top: 2px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .rp-scorePill {
-    background: #b77a7b;
-    color: #fff;
-    border-radius: 16px;
-    padding: 14px 18px;
-    font-weight: 900;
+    background: white;
+    color: #4f46e5;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
+/* Filter Card */
 .rp-filterCard {
-    background: #fff;
-    border-radius: 22px;
-    padding: 16px;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
 .rp-filters {
     display: flex;
-    gap: 14px;
+    gap: 16px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .rp-select {
-    flex: 1;
-    min-width: 160px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, .08);
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
     outline: none;
-    background: #fff;
+    min-width: 160px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.rp-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .rp-btnFilter {
-    border: 0;
-    padding: 12px 18px;
-    border-radius: 14px;
-    background: #3b82f6;
-    color: #fff;
-    font-weight: 800;
+    background: #111827;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
-    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
 }
 
+.rp-btnFilter:hover {
+    background: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
+}
+
+/* Table Card */
 .rp-tableCard {
-    background: #fff;
-    border-radius: 22px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     overflow: hidden;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
 }
 
 .rp-tableHead {
-    background: #f1a7a8;
     display: grid;
-    grid-template-columns: 1.1fr 1.4fr 1fr 1fr .6fr .9fr;
-    gap: 10px;
-    padding: 14px 16px;
-    font-weight: 900;
-    color: #111827;
+    grid-template-columns: 2fr 1.5fr 2fr 1fr 1fr;
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #475569;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .rp-tableBody {
-    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .rp-row {
     display: grid;
-    grid-template-columns: 1.1fr 1.4fr 1fr 1fr .6fr .9fr;
-    gap: 10px;
-    padding: 14px 16px;
-    border-top: 1px solid rgba(0, 0, 0, .06);
+    grid-template-columns: 2fr 1.5fr 2fr 1fr 1fr;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: center;
+    font-size: 14px;
+    color: #334155;
+    transition: background 0.2s;
 }
 
+.rp-row:last-child {
+    border-bottom: none;
+}
+
+.rp-row:hover {
+    background: #f8fafc;
+}
+
+.rp-row div:first-child {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.rp-row div:nth-child(2) {
+    color: #64748b;
+}
+
+.rp-row div:nth-child(4) {
+    font-weight: 700;
+    color: #ef4444; /* Đỏ hco điểm trừ, có thể đổi theo logic */
+}
+.rp-row div:nth-child(4)[data-positive="true"] {
+    color: #10b981; /* Xanh cho điểm cộng */
+}
+
+.rp-row div:last-child {
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+/* Pagination */
 .rp-paging {
-    background: #fff;
-    border-radius: 18px;
-    padding: 14px;
     display: flex;
     justify-content: center;
-    gap: 10px;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+    gap: 8px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .rp-pageBtn {
-    border: 1px solid rgba(0, 0, 0, .08);
-    background: #fff;
-    padding: 10px 14px;
-    border-radius: 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    min-width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rp-pageBtn:hover {
+    border-color: #cbd5e1;
+    color: #334155;
+    background: #f8fafc;
 }
 
 .rp-pageBtn.active {
-    background: #3b82f6;
-    color: #fff;
-    border-color: #3b82f6;
+    background: #4f46e5;
+    color: white;
+    border-color: #4f46e5;
+}
+
+@media (max-width: 768px) {
+    .rp-headCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .rp-tableHead, .rp-row {
+        grid-template-columns: 1.5fr 1.5fr 1fr;
+    }
+    .rp-tableHead div:nth-child(3), .rp-tableHead div:nth-child(5),
+    .rp-row div:nth-child(3), .rp-row div:nth-child(5) {
+        display: none;
+    }
 }

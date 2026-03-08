@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import InterestChips from "../../components/InterestChips/InterestChips";
 import { profileService } from "../../services/profileService";
-import "./profileEdit.css";
+import "./ProfileEdit.css";
 
 export default function ProfileEdit() {
   const context = useOutletContext() || {};

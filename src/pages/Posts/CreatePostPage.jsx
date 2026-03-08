@@ -38,7 +38,7 @@ export default function CreatePostPage() {
       await postService.createPost(USER_ID, postData);
       
       // Sau khi lưu thành công vào DB, chuyển hướng về trang danh sách
-      navigate("/profile/posts");
+      navigate(`/profile/${USER_ID}/posts`);
     } catch (error) {
       console.error("Lỗi khi đăng bài:", error);
       alert(`Đăng bài thất bại: ${error.error || error.message || "Lỗi server"}`);
