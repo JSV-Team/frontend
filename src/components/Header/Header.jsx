@@ -13,10 +13,24 @@ function Header() {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      setCurrentUser(JSON.parse(userString));
-    }
+    // Function to load user from localStorage
+    const loadUser = () => {
+      const userString = localStorage.getItem('user');
+      if (userString) {
+        setCurrentUser(JSON.parse(userString));
+      }
+    };
+
+    // Load initially
+    loadUser();
+
+    // Listen for custom 'userUpdated' event from EditProfile
+    window.addEventListener('userUpdated', loadUser);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('userUpdated', loadUser);
+    };
   }, []);
 
   const tabs = [

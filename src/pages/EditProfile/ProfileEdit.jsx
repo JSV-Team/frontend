@@ -63,7 +63,8 @@ export default function ProfileEdit() {
     try {
       // 1. Upload to backend
       const res = await profileService.uploadAvatar(file);
-      const newAvatarUrl = res.url;
+      // Sử dụng fullUrl nếu có, fallback về url
+      const newAvatarUrl = res.fullUrl || res.url;
 
       // 2. Update profile with new avatar URL
       await profileService.updateProfile(USER_ID, { avatar_url: newAvatarUrl });
@@ -72,7 +73,19 @@ export default function ProfileEdit() {
       const fresh = await profileService.getProfile(USER_ID);
       setProfile(fresh);
       
+      // --- THE REMEDY ---
+      // Update localStorage with the new avatar_url so Header can read it
+      const userString = localStorage.getItem("user");
+      if (userString) {
+        const userData = JSON.parse(userString);
+        userData.avatar_url = newAvatarUrl;
+        localStorage.setItem("user", JSON.stringify(userData));
+        // Dispatch event for Header to listen
+        window.dispatchEvent(new Event('userUpdated'));
+      }
+      
       setMsg({ type: "success", text: "Cập nhật ảnh đại diện thành công! ✨" });
+      setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
     } catch (err) {
       console.error("Upload error:", err);
       setMsg({ type: "danger", text: "Không thể tải ảnh lên. Thử lại sau." });
@@ -116,9 +129,21 @@ export default function ProfileEdit() {
       const fresh = await profileService.getProfile(USER_ID);
       setProfile(fresh);
 
-      // setMsg({ type: "success", text: "Lưu thành công ✅" });
+      // --- THE REMEDY ---
+      // Update localStorage with the new full_name so Header can read it
+      const userString = localStorage.getItem("user");
+      if (userString) {
+        const userData = JSON.parse(userString);
+        userData.full_name = form.full_name.trim(); // Update name in storage
+        localStorage.setItem("user", JSON.stringify(userData));
+        // Dispatch event for Header to listen
+        window.dispatchEvent(new Event('userUpdated'));
+      }
+
+      setMsg({ type: "success", text: "Lưu thành công ✅" });
+      setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
     } catch (e) {
-      // setMsg({ type: "danger", text: "Lưu thất bại. Vui lòng thử lại." });
+      setMsg({ type: "danger", text: "Lưu thất bại. Vui lòng thử lại." });
     } finally {
       setSaving(false);
     }
