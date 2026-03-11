@@ -22,9 +22,9 @@ export const profileService = {
     
     try {
       const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}`);
-      const data = await response.json();
-      if (!response.ok) throw data;
-      return data;
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result; // Return .data if available
     } catch (error) {
       console.error('Lỗi khi lấy profile:', error);
       throw error;
@@ -44,9 +44,9 @@ export const profileService = {
         },
         body: JSON.stringify(profileData),
       });
-      const data = await response.json();
-      if (!response.ok) throw data;
-      return data;
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result;
     } catch (error) {
       console.error('Lỗi khi cập nhật profile:', error);
       throw error;
@@ -60,9 +60,9 @@ export const profileService = {
     
     try {
       const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}/interests`);
-      const data = await response.json();
-      if (!response.ok) throw data;
-      return data;
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result;
     } catch (error) {
       console.error('Lỗi khi lấy interests:', error);
       throw error;
