@@ -59,10 +59,15 @@ export const profileService = {
     if (!activeUserId) throw new Error('No user id');
     
     try {
-      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}/interests`);
+      // The backend does not have a specific GET /profile/:id/interests route.
+      // We will fetch the full profile and extract the 'interests' property from it.
+      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}`);
       const result = await response.json();
       if (!response.ok) throw result;
-      return result.data || result;
+      
+      const profileData = result.data || result;
+      // Trả về thuộc tính interests nếu có, không thì trả rỗng mảng
+      return profileData.interests || [];
     } catch (error) {
       console.error('Lỗi khi lấy interests:', error);
       throw error;
@@ -75,10 +80,12 @@ export const profileService = {
     if (!activeUserId) throw new Error('No user id');
     
     try {
-      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}/interests`, {
+      // Note: Backend defines 'PUT /api/profile/interests' that requires auth middleware headers
+      const response = await fetch(`${API_BASE_URL}/profile/interests`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'x-auth-user-id': activeUserId.toString()
         },
         body: JSON.stringify({ interests }),
       });

@@ -30,7 +30,7 @@ export const apiHomeService = {
   getPendingActivities: async (userId) => {
     const activeUserId = userId || getUserId();
     try {
-      const response = await fetch(`${API_BASE_URL}/pending-activities?userId=${activeUserId}`);
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities?userId=${activeUserId}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching pending activities:', error);
@@ -70,7 +70,7 @@ export const apiHomeService = {
   // Cancel join request / Delete activity request
   cancelJoinRequest: async (requestId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/pending-activities/${requestId}`, {
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities/${requestId}`, {
         method: 'DELETE',
       });
       return await response.json();

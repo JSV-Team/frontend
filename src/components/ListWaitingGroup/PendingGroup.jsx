@@ -17,7 +17,7 @@ const PendingGroups = ({ reload = 0 }) => {
     }
 
     setLoading(true);
-    fetch(`/api/pending-activities?userId=${currentUserId}`)
+    fetch(`/api/activities/pending-activities?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
         setGroups(Array.isArray(data) ? data : []);
@@ -32,8 +32,8 @@ const PendingGroups = ({ reload = 0 }) => {
   const handleCancel = (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    // FIX: DELETE /api/pending-activities/:request_id (hủy request, không phải activity)
-    fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
+    // FIX: DELETE /api/activities/pending-activities/:request_id (hủy request, không phải activity)
+    fetch(`/api/activities/pending-activities/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(() => {
         setGroups(prev => prev.filter(g => g.id !== id));
