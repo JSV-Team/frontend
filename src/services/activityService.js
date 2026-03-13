@@ -16,7 +16,7 @@ export const activityService = {
   // Get pending activities (activities user has requested to join)
   getPendingActivities: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/activity-requests/pending?userId=${userId}`);
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities?userId=${userId}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching pending activities:', error);
@@ -38,12 +38,12 @@ export const activityService = {
   // Join activity
   joinActivity: async (activityId, userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/activities/${activityId}/join`, {
+      const response = await fetch(`${API_BASE_URL}/activities/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId }),
+        body: JSON.stringify({ activityId, userId }),
       });
       return await response.json();
     } catch (error) {
@@ -55,7 +55,7 @@ export const activityService = {
   // Cancel join request
   cancelJoinRequest: async (requestId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/activity-requests/${requestId}`, {
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities/${requestId}`, {
         method: 'DELETE',
       });
       return await response.json();

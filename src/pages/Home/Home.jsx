@@ -6,6 +6,7 @@ import useListPost from '../../hooks/useListPost';
 import useNotifications from '../../hooks/useNotifications';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
+import activityService from '../../services/activityService';
 import './Home.css';
 
 // Helper func lấy user ID từ danh sách Auth (localStorage)
@@ -21,6 +22,7 @@ const getUserId = () => {
   }
   return null;
 };
+
 function Home() {
   const navigate = useNavigate();
   const userString = localStorage.getItem('user');
@@ -42,20 +44,12 @@ function Home() {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
 
     try {
-      const response = await fetch(`/api/activities/${activityId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: currentUserId })
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
+      await activityService.deleteActivity(activityId, currentUserId);
       alert('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {
       console.error('Lỗi khi xóa bài viết:', err);
-      alert('Lỗi: ' + err.message);
+      alert('Lỗi: ' + (err.message || 'Không thể xóa bài viết'));
     }
   };
 
@@ -64,21 +58,14 @@ function Home() {
 
     setJoiningIds(prev => new Set(prev).add(activityId));
     try {
-      const response = await fetch('/api/activities/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ activityId, userId: getUserId() }),
-      });
+      const data = await activityService.joinActivity(activityId, currentUserId);
 
-      const data = await response.json();
-
-      if (!response.ok) {
+      if (data.message && data.message.includes('thành công')) {
+        alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
+        setPendingReload(prev => prev + 1);
+      } else {
         alert(data.message || 'Tham gia thất bại');
-        return;
       }
-
-      alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
-      setPendingReload(prev => prev + 1);
     } catch (err) {
       console.error('Join error:', err);
       alert('Lỗi kết nối: ' + err.message);
