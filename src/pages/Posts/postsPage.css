@@ -1,0 +1,73 @@
+.ps-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .06);
+}
+
+.ps-h1 {
+    font-size: 34px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: #111827;
+}
+
+.ps-createRow {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.ps-input {
+    flex: 1;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, .08);
+    outline: none;
+}
+
+.ps-btn {
+    border: 0;
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+    min-width: 110px;
+}
+
+.ps-feature {
+    background: linear-gradient(180deg, #f7d9dc 0%, #f2e7ea 80%);
+}
+
+.ps-featureTitle {
+    font-size: 20px;
+    font-weight: 900;
+    color: #111827;
+    margin-bottom: 10px;
+}
+
+.ps-postTitle {
+    font-size: 30px;
+    font-weight: 900;
+    color: #111827;
+}
+
+.ps-meta {
+    color: #6b7280;
+    margin-top: 6px;
+}
+
+.ps-desc {
+    color: #111827;
+    margin-top: 6px;
+}
+
+.ps-img {
+    width: 100%;
+    margin-top: 14px;
+    border-radius: 18px;
+    object-fit: cover;
+    max-height: 420px;
+}

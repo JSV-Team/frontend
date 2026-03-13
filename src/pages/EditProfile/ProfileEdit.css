@@ -1,0 +1,37 @@
+.pe-wrap {
+    width: 100%;
+}
+
+.pe-card {
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, .06);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .06);
+}
+
+.pe-title {
+    font-weight: 800;
+    margin: 0 0 10px 0;
+}
+
+.pe-input {
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+
+.pe-alert {
+    border-radius: 14px;
+    margin-top: 10px;
+}
+
+.pe-actions {
+    display: flex;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.pe-btn {
+    flex: 1;
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-weight: 700;
+}
