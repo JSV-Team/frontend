@@ -3,7 +3,7 @@
     padding: 22px;
     background: #f6f7fb;
     display: grid;
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: 240px 1fr;
     gap: 24px;
     box-sizing: border-box;
 }

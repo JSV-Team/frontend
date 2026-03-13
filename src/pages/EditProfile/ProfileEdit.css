@@ -3,35 +3,196 @@
 }
 
 .pe-card {
-    border-radius: 20px;
-    border: 1px solid rgba(0, 0, 0, .06);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, .06);
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    background: #fff;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.pe-card .card-body {
+    padding: 0 !important;
 }
 
 .pe-title {
+    font-size: 20px;
     font-weight: 800;
-    margin: 0 0 10px 0;
+    padding: 24px 24px 0 24px;
+    margin: 0;
+    color: #111827;
+}
+
+.pe-flex-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    padding: 20px 24px 30px 24px;
+}
+
+/* Avatar Section */
+.pe-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pe-avatar-box {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    border: 4px solid #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pe-avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pe-avatar-placeholder {
+    font-size: 60px;
+    font-weight: 800;
+    color: #9ca3af;
+}
+
+.pe-avatar-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pe-avatar-box:hover .pe-avatar-overlay {
+    opacity: 1;
+}
+
+/* Inputs Section */
+.pe-inputs-section {
+    flex: 1;
+    width: 100%;
+}
+
+.pe-form-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.pe-label-h {
+    width: 120px;
+    font-size: 15px;
+    color: #4b5563;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.pe-input-field {
+    flex: 1;
+    width: 100%;
 }
 
 .pe-input {
-    border-radius: 14px;
-    padding: 12px 14px;
+    border-radius: 12px;
+    padding: 12px 20px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 15px;
+    color: #111827;
+    transition: all 0.2s ease;
+    width: 100% !important;
+    max-width: 800px !important; /* Tăng hẳn lên để khớp với StatBar */
+}
+
+.pe-textarea {
+    resize: none;
+}
+
+.pe-input:focus {
+    border-color: #8b5cf6;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.08);
+    outline: none;
+}
+
+.pe-section-block {
+    margin-bottom: 24px !important;
 }
 
 .pe-alert {
     border-radius: 14px;
-    margin-top: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
 }
 
 .pe-actions {
     display: flex;
-    gap: 18px;
-    margin-top: 18px;
+    gap: 16px;
+    margin-top: 30px;
+    padding: 0 0 24px 0;
 }
 
 .pe-btn {
     flex: 1;
-    border-radius: 16px;
-    padding: 14px 16px;
+    border-radius: 14px;
+    padding: 16px;
     font-weight: 700;
+    font-size: 16px;
+    border: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pe-btn:active {
+    transform: translateY(0);
+}
+
+.pe-cancel {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.pe-cancel:hover {
+    background: #fecaca;
+}
+
+.pe-save {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.2);
+}
+
+.pe-save:hover {
+    background: linear-gradient(90deg, #059669 0%, #047857 100%);
+}
+
+.pe-save:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
 }

@@ -1,99 +1,91 @@
-import { useMemo, useState } from "react";
-import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
-import TopTabs from "../../components/TopTabs/TopTabs";
-import StatBar from "../../components/StatBar/StatBar";
-import { getProfileFromLocalStorage } from "../../services/profileService";
-import "../profileLayout.css";
+import { useState, useEffect } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { postService } from "../../services/postService";
+import PostCard from "./PostCard";
 import "./postsPage.css";
 
-// Dữ liệu mặc định
-const DEFAULT_PROFILE = {
-  fullName: "Bạn",
-  gender: "Khác",
-  dobISO: "2000-01-02",
-  dobText: "01/02/2000",
-  email: "hxoa@gmail.com",
-  avatar: "",
-};
-
-const DEFAULT_INTERESTS = ["Bóng đá", "Chạy bộ", "Cầu lông"];
-
 export default function PostsPage() {
-  // Load profile từ localStorage
-  const savedProfile = getProfileFromLocalStorage();
-  const profile = savedProfile ? { ...DEFAULT_PROFILE, ...savedProfile } : DEFAULT_PROFILE;
-  const interests = savedProfile?.interests || DEFAULT_INTERESTS;
-
-  const stats = useMemo(
-    () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
-    []
-  );
-
+  const navigate = useNavigate();
+  const { USER_ID, profile } = useOutletContext();
+  
   const [content, setContent] = useState("");
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Một buổi chiều chill cùng nhóm",
-      time: "2/25/2026, 10:37:51 PM",
-      desc: "Hôm nay mình đi cafe và trò chuyện với mọi người, chia sẻ vài chiếc ảnh.",
-      image:
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop",
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const onPost = () => {
-    if (!content.trim()) return;
-    const newPost = {
-      id: Date.now(),
-      title: content.trim(),
-      time: new Date().toLocaleString(),
-      desc: "Hôm nay mình chia sẻ một bài mới.",
-      image: posts[0]?.image,
-    };
-    setPosts((prev) => [newPost, ...prev]);
-    setContent("");
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const data = await postService.getPostsByUserId(USER_ID);
+      setPosts(data);
+    } catch (error) {
+      console.error("Lỗi khi tải bài đăng:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    if (USER_ID) {
+      fetchPosts();
+    }
+  }, [USER_ID]);
+
   return (
-    <div className="vm-page">
-      <SidebarProfile
-        profile={{ ...profile, stats, interests }}
-        onLogout={() => alert("Logout (demo)")}
-      />
+    <div className="ps-wrap">
+      <div className="ps-card">
+        <div className="ps-h1">Tạo bài đăng</div>
 
-      <main className="vm-main">
-        <TopTabs active="posts" />
-        <StatBar stats={stats} />
+        <div className="ps-createRow">
+          <input
+            className="ps-input"
+            placeholder="Nhập nội dung..."
+            value={content}
+            onFocus={() => navigate(`/profile/${USER_ID}/posts/new`)}
+            onClick={() => navigate(`/profile/${USER_ID}/posts/new`)}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <button className="ps-btn" onClick={() => navigate(`/profile/${USER_ID}/posts/new`)}>
+            Đăng
+          </button>
+        </div>
+      </div>
 
-        <div className="ps-card">
-          <div className="ps-h1">Tạo bài đăng</div>
+      <div className="ps-card ps-feature">
+        <div className="ps-featureTitle">Bài viết của bạn</div>
 
-          <div className="ps-createRow">
-            <input
-              className="ps-input"
-              placeholder="Nhập nội dung..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+        {loading ? (
+          <div className="ps-loading">Đang tải bài viết...</div>
+        ) : posts.length === 0 ? (
+          <div className="ps-empty">Bạn chưa có bài đăng nào.</div>
+        ) : (
+          posts.map((p) => (
+            <PostCard
+              key={p.id}
+              post={p}
+              onEdit={(id) => navigate(`/profile/${USER_ID}/posts/${id}/edit`)}
+              onDelete={async (id) => {
+                if (window.confirm("Bạn có chắc muốn xóa bài đăng này?")) {
+                  try {
+                    await postService.deletePost(id);
+                    fetchPosts(); // Reload
+                  } catch (e) {
+                    alert("Xóa thất bại.");
+                  }
+                }
+              }}
+              onReact={(id, type) => {
+                alert("Tính năng này sẽ được cập nhật sau (liên kết DB). ✅");
+              }}
+              onComment={(id) => {
+                alert("Tính năng này sẽ được cập nhật sau (liên kết DB). ✅");
+              }}
+              onShare={(id) => {
+                alert("Tính năng này sẽ được cập nhật sau (liên kết DB). ✅");
+              }}
             />
-            <button className="ps-btn" onClick={onPost}>
-              Đăng
-            </button>
-          </div>
-        </div>
-
-        <div className="ps-card ps-feature">
-          <div className="ps-featureTitle">Bài viết nổi bật</div>
-
-          {posts.map((p) => (
-            <div key={p.id} className="ps-post">
-              <div className="ps-postTitle">{p.title}</div>
-              <div className="ps-meta">Người dùng • {p.time}</div>
-              <div className="ps-desc">Mô tả ngắn: {p.desc}</div>
-              {p.image && <img className="ps-img" src={p.image} alt="post" />}
-            </div>
-          ))}
-        </div>
-      </main>
+          ))
+        )}
+      </div>
     </div>
   );
 }

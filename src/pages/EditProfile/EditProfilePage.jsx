@@ -1,39 +1,55 @@
 import { useMemo, useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
 import { saveProfileToLocalStorage, getProfileFromLocalStorage } from "../../services/profileService";
+import { profileService } from "../../services/profileService";
 import "../profileLayout.css";
 import "./editProfilePage.css";
 
-// Dữ liệu mặc định
-const DEFAULT_PROFILE = {
-  fullName: "Bạn",
-  gender: "Khác",
-  dobISO: "2000-01-02",
-  dobText: "01/02/2000",
-  email: "hxoa@gmail.com",
-  avatar: "",
+// Hàm lấy dữ liệu profile từ localStorage hoặc giá trị mặc định
+const getInitialProfile = () => {
+  const saved = localStorage.getItem("userProfile");
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error("Error parsing saved profile:", e);
+    }
+  }
+  return {
+    fullName: "Bạn",
+    gender: "Khác",
+    dobISO: "2000-01-02",
+    dobText: "01/02/2000",
+    email: "hxoa@gmail.com",
+    avatar: null,
+  };
 };
 
-const DEFAULT_INTERESTS = ["Bóng đá", "Chạy bộ", "Cầu lông"];
+// Hàm lấy danh sách interests từ localStorage hoặc giá trị mặc định
+const getInitialInterests = () => {
+  const saved = localStorage.getItem("userInterests");
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      console.error("Error parsing saved interests:", e);
+    }
+  }
+  return ["Bóng đá", "Chạy bộ", "Cầu lông"];
+};
 
 export default function EditProfilePage() {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   
-  // Load dữ liệu từ localStorage hoặc dùng mặc định
-  const [profile, setProfile] = useState(() => {
-    const saved = getProfileFromLocalStorage();
-    return saved ? { ...DEFAULT_PROFILE, ...saved } : DEFAULT_PROFILE;
-  });
-
-  const [interests, setInterests] = useState(() => {
-    const saved = getProfileFromLocalStorage();
-    return saved?.interests || DEFAULT_INTERESTS;
-  });
-
+  const [profile, setProfile] = useState(getInitialProfile);
+  const [interests, setInterests] = useState(getInitialInterests);
   const [avatarPreview, setAvatarPreview] = useState(profile.avatar || "");
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
@@ -45,10 +61,13 @@ export default function EditProfilePage() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Tạo preview cục bộ
-    const localPreview = URL.createObjectURL(file);
-    setAvatarPreview(localPreview);
-    setProfile((p) => ({ ...p, avatar: localPreview }));
+    // Đọc file và convert thành base64 để hiển thị
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfile((p) => ({ ...p, avatar: reader.result }));
+      setAvatarPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAvatarClick = () => {
@@ -64,30 +83,35 @@ export default function EditProfilePage() {
   };
 
   const onCancel = () => {
-    const saved = getProfileFromLocalStorage();
-    if (saved) {
-      setProfile(saved);
-      setAvatarPreview(saved.avatar || "");
-      setInterests(saved.interests || DEFAULT_INTERESTS);
-    } else {
-      setProfile(DEFAULT_PROFILE);
-      setAvatarPreview("");
-      setInterests(DEFAULT_INTERESTS);
-    }
+    // Khôi phục dữ liệu từ localStorage
+    const savedProfile = getInitialProfile();
+    setProfile(savedProfile);
+    setAvatarPreview(savedProfile.avatar || "");
+    setInterests(getInitialInterests());
   };
 
-  const onSave = () => {
-    // Lưu vào localStorage
-    const profileData = {
-      ...profile,
-      interests: interests,
-    };
-    saveProfileToLocalStorage(profileData);
-    
-    // Gửi sự kiện để Header cập nhật avatar
-    window.dispatchEvent(new Event('profile-updated'));
-    
-    alert("Đã lưu thông tin thành công! ✅");
+  const onSave = async () => {
+    try {
+      setIsSaving(true);
+      console.log("SAVE:", profile, interests);
+      
+      // Lưu vào localStorage
+      localStorage.setItem("userProfile", JSON.stringify(profile));
+      localStorage.setItem("userInterests", JSON.stringify(interests));
+      
+      // Gửi sự kiện để Header cập nhật avatar
+      window.dispatchEvent(new Event('profile-updated'));
+      
+      console.log("Saved to localStorage:", { profile, interests });
+      alert("Lưu thành công! ✅");
+      // Chuyển hướng về trang hồ sơ cá nhân
+      navigate("/profile");
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("Lỗi khi lưu: " + error.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -167,9 +191,13 @@ export default function EditProfilePage() {
                   onChange={(e) => {
                     const dobISO = e.target.value;
                     // Chuyển đổi sang định dd/mm/yyyy
-                    const [year, month, day] = dobISO.split('-');
-                    const dobText = `${day}/${month}/${year}`;
-                    setProfile((p) => ({ ...p, dobISO, dobText }));
+                    if(dobISO) {
+                        const [year, month, day] = dobISO.split('-');
+                        const dobText = `${day}/${month}/${year}`;
+                        setProfile((p) => ({ ...p, dobISO, dobText }));
+                    } else {
+                        setProfile((p) => ({ ...p, dobISO: "", dobText: "" }));
+                    }
                   }}
                 />
                 <div className="ep-cal">📅</div>
@@ -210,7 +238,9 @@ export default function EditProfilePage() {
 
         <div className="ep-actions">
           <button className="ep-btn ep-cancel" onClick={onCancel}>Hủy</button>
-          <button className="ep-btn ep-save" onClick={onSave}>Lưu</button>
+          <button className="ep-btn ep-save" onClick={onSave} disabled={isSaving}>
+            {isSaving ? "Đang lưu..." : "Lưu"}
+          </button>
         </div>
       </main>
     </div>
