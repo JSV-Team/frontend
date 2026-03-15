@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './PendingGroup.css';
+// import activityService from '../../services/activityService'; // Nếu không dùng thì có thể comment lại
 
-// FIX: nhận reload prop để re-fetch khi có join mới
 const PendingGroups = ({ reload = 0 }) => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,21 +10,20 @@ const PendingGroups = ({ reload = 0 }) => {
     // 1. Bật loading trước khi bắt đầu xử lý
     setLoading(true);
 
-    // 2. Lấy và parse dữ liệu user một lần duy nhất, bọc trong try/catch cho an toàn
+    // 2. Lấy và parse dữ liệu user
     const userString = localStorage.getItem('user');
     let currentUserId = null;
 
     if (userString) {
       try {
         const currentUser = JSON.parse(userString);
-        // Lấy user_id, dự phòng trường hợp API trả về là id
         currentUserId = currentUser?.user_id || currentUser?.id || null;
       } catch (e) {
         console.error("Lỗi khi đọc dữ liệu user từ localStorage:", e);
       }
     }
 
-    // 3. Nếu không có ID, thoát sớm và tắt loading
+    // 3. Nếu không có ID, thoát sớm
     if (!currentUserId) {
       console.warn("Không tìm thấy user ID, không thể tải danh sách chờ.");
       setGroups([]);
@@ -32,23 +31,27 @@ const PendingGroups = ({ reload = 0 }) => {
       return;
     }
 
-    // 4. Bắt đầu gọi API
-    fetch(`/api/activities/pending-activities?userId=${currentUserId}`)
-      .then(res => res.json())
-      .then(data => {
+    // 4. Khai báo hàm gọi API đàng hoàng với async/await
+    const fetchPendingGroups = async () => {
+      try {
+        const res = await fetch(`/api/activities/pending-activities?userId=${currentUserId}`);
+        const data = await res.json();
         setGroups(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Lỗi lấy pending:', err);
-        setLoading(false);
-      });
-  }, [reload]); // FIX: re-fetch khi reload thay đổi
+      } finally {
+        // finally luôn chạy dù try hay catch, dùng để tắt loading rất chuẩn
+        setLoading(false); 
+      }
+    };
 
-  const handleCancel = (id) => {
+    // 5. Gọi hàm vừa khai báo ở trên
+    fetchPendingGroups();
+  }, [reload]);
+
+  const handleCancel = async (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    // FIX: DELETE /api/pending-activities/:request_id
     fetch(`/api/activities/pending-activities/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(() => {

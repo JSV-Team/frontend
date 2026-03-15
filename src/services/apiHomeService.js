@@ -1,7 +1,20 @@
-// Activity Service - API calls related to activities
+// New Home Service - API calls related to home page
+// Backend: /api/activities, /api/pending-activities
+
 const API_BASE_URL = '/api';
 
-export const activityService = {
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      const userObj = JSON.parse(storedUser);
+      return userObj?.user_id || userObj?.id || null;
+    } catch (e) { }
+  }
+  return null;
+};
+
+export const apiHomeService = {
   // Get all activities
   getActivities: async () => {
     try {
@@ -15,8 +28,9 @@ export const activityService = {
 
   // Get pending activities (activities user has requested to join)
   getPendingActivities: async (userId) => {
+    const activeUserId = userId || getUserId();
     try {
-      const response = await fetch(`${API_BASE_URL}/activities/pending-activities?userId=${userId}`);
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities?userId=${activeUserId}`);
       return await response.json();
     } catch (error) {
       console.error('Error fetching pending activities:', error);
@@ -37,13 +51,14 @@ export const activityService = {
 
   // Join activity
   joinActivity: async (activityId, userId) => {
+    const activeUserId = userId || getUserId();
     try {
       const response = await fetch(`${API_BASE_URL}/activities/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ activityId, userId }),
+        body: JSON.stringify({ activityId, userId: activeUserId }),
       });
       return await response.json();
     } catch (error) {
@@ -52,7 +67,7 @@ export const activityService = {
     }
   },
 
-  // Cancel join request
+  // Cancel join request / Delete activity request
   cancelJoinRequest: async (requestId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/activities/pending-activities/${requestId}`, {
@@ -66,4 +81,5 @@ export const activityService = {
   },
 };
 
-export default activityService;
+export default apiHomeService;
+

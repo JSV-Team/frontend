@@ -1,0 +1,87 @@
+.sb-wrap {
+    border-radius: 28px;
+    padding: 30px 16px;
+    background: #8b5cf6;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    min-height: 600px;
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+}
+
+.sb-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sb-avatarWrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.sb-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sb-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+
+.sb-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+
+.sb-bio-card {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.sb-bio-card i {
+    font-size: 13px;
+    line-height: 1.4;
+    display: block;
+    margin-top: 2px;
+}
+
+.sb-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.sb-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sb-row span {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.sb-row b {
+    font-size: 16px;
+    font-weight: 700;
+}
