@@ -33,7 +33,7 @@ function Header() {
   }, []);
 
   const tabs = [
-    { name: 'Home', label: 'Home', path: '/' },
+    { name: 'Home', label: 'Home', path: '/home' },
     { name: 'Match', label: 'Ghép đôi', path: '/match' },
     { name: 'Friends', label: 'Bạn bè', path: '/friends' }
   ];
@@ -44,7 +44,7 @@ function Header() {
 
   const getCurrentTab = () => {
     const path = location.pathname;
-    if (path === '/') return 'Home';
+    if (path === '/home' || path === '/') return 'Home';
     if (path === '/match') return 'Match';
     if (path === '/friends') return 'Friends';
     return '';
