@@ -34,7 +34,7 @@ export default function Login() {
       if (result.success) {
         // Đăng nhập thành công, đá người dùng về trang chủ (hoặc trang match/friends tùy bạn)
         localStorage.setItem("user", JSON.stringify(result.data));
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       // Hứng lỗi 401, 403 từ Backend ném sang
@@ -70,7 +70,7 @@ export default function Login() {
               onChange={(e) => setIdentifier(e.target.value)}
             />
           </label>
-
+        
           <label className="field">
             <span className="fieldIcon">🔒</span>
             <input
@@ -103,7 +103,10 @@ export default function Login() {
           </button>
 
           <p className="foot">
-            Not a member? <a className="link" href="#">Sign up now</a>
+            Not a member? <a className="link" href="#" onClick={(e) => {
+              e.preventDefault();
+              navigate('/register');
+            }}>Sign up now</a>
           </p>
         </form>
       </section>

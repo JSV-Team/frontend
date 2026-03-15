@@ -1,0 +1,221 @@
+/* Tổng thể trang */
+.register-container {
+  background: #f5f7fb;
+  min-height: 100vh;
+  padding: 60px 20px; /* Giảm padding top một chút để cân đối */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Căn giữa dọc cho đẹp */
+}
+
+/* Khung đăng ký - Tăng từ 520px lên 600px */
+.register-card {
+  width: 100%;
+  max-width: 600px; 
+  background: #ffffff;
+  padding: 50px 60px;
+  border-radius: 28px;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.1);
+  transition: 0.3s ease;
+}
+
+/* ====== TIÊU ĐỀ (TO HƠN) ====== */
+.title {
+  text-align: center;
+  font-size: 34px; /* Tăng từ 30px */
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 40px;
+  font-size: 16px; /* Tăng từ 15px */
+}
+
+/* ====== AVATAR (CĂN CHỈNH LẠI ICON) ====== */
+.avatar-wrapper {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.avatar-circle {
+  width: 125px; /* To hơn một chút */
+  height: 125px;
+  border-radius: 50%;
+  border: 4px solid #f97316;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  color: #cbd5e1;
+}
+
+.edit-icon {
+  position: absolute;
+  /* Căn icon bám theo vòng tròn thay vì số pixel cố định */
+  left: calc(50% + 35px);
+  bottom: 5px;
+  background: #1e3a8a;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+  cursor: pointer;
+}
+
+.avatar-text {
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #111827;
+  margin-top: 15px;
+}
+
+.avatar-sub {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 15px;
+  margin-bottom: 45px;
+}
+
+/* ====== FORM (TO & RÕ) ====== */
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 15px; /* Tăng kích thước label */
+  color: #374151;
+}
+
+/* Ô input cao hơn và chữ to hơn */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 15px 18px; /* Tăng độ dày */
+  border-radius: 16px;
+  border: 1.5px solid #e5e7eb; /* Viền đậm hơn chút cho rõ */
+  background: #ffffff;
+  font-size: 16px; /* Chữ to chuẩn UI hiện đại */
+  transition: 0.25s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* ====== HÀNG NGANG (ROW) ====== */
+.row {
+  display: flex;
+  gap: 20px; /* Khoảng cách rộng hơn */
+}
+
+/* ====== NÚT GIỚI TÍNH (GENDER) ====== */
+.gender {
+  display: flex;
+  gap: 12px;
+}
+
+.gender button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.gender button.active {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* ====== NÚT ĐĂNG KÝ (SUBMIT) ====== */
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: #ffffff;
+  padding: 18px; /* Cao hơn */
+  border-radius: 18px;
+  border: none;
+  margin-top: 30px;
+  font-weight: 700;
+  font-size: 17px; /* Chữ to và mạnh mẽ */
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+}
+
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.35);
+}
+
+/* ====== FOOTER TEXT ====== */
+.terms {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 25px;
+  color: #6b7280;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+/* ====== MESSAGE ====== */
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+  animation: slideDown 0.3s ease;
+}
+
+.message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.message.error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

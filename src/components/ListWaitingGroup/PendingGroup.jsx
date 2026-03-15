@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './PendingGroup.css';
+import activityService from '../../services/activityService';
 
-// FIX: nhận reload prop để re-fetch khi có join mới
 const PendingGroups = ({ reload = 0 }) => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,15 +37,17 @@ const PendingGroups = ({ reload = 0 }) => {
       .then(res => res.json())
       .then(data => {
         setGroups(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Lỗi lấy pending:', err);
+      } finally {
         setLoading(false);
-      });
-  }, [reload]); // FIX: re-fetch khi reload thay đổi
+      }
+    };
 
-  const handleCancel = (id) => {
+    fetchPendingGroups();
+  }, [reload]);
+
+  const handleCancel = async (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
     // FIX: DELETE /api/pending-activities/:request_id
