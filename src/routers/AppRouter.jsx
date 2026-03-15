@@ -7,6 +7,7 @@ import Match from '../pages/Match/Match';
 import Friends from '../pages/Friends/Friends';
 import Notifications from '../pages/Notifications/Notifications';
 import Login from '../pages/Login/Login';
+import Landing from '../pages/Landing/Landing';
 import Register from '../pages/Register/Register';
 import ProfileEdit from '../pages/EditProfile/ProfileEdit';
 import ReputationPage from '../pages/Reputation/ReputationPage';
@@ -21,14 +22,15 @@ function AppRouter() {
   return (
     <Router>
       <Routes>
-        {/* Trang thả rông: Ai vào cũng được */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Trang công khai - không cần đăng nhập */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} /> 
+
         {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <MainLayout><Home /></MainLayout>
-          </ProtectedRoute>
+        <Route path="/home" element={
+            <ProtectedRoute>
+                <MainLayout><Home /></MainLayout>
+            </ProtectedRoute>
         } />
 
         <Route path="/match" element={
