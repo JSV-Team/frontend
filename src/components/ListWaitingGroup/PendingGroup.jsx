@@ -33,7 +33,7 @@ const PendingGroups = ({ reload = 0 }) => {
     }
 
     // 4. Bắt đầu gọi API
-    fetch(`/api/pending-activities?userId=${currentUserId}`)
+    fetch(`/api/activities/pending-activities?userId=${currentUserId}`)
       .then(res => res.json())
       .then(data => {
         setGroups(Array.isArray(data) ? data : []);
@@ -49,7 +49,7 @@ const PendingGroups = ({ reload = 0 }) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
     // FIX: DELETE /api/pending-activities/:request_id
-    fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
+    fetch(`/api/activities/pending-activities/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(() => {
         setGroups(prev => prev.filter(g => g.id !== id));

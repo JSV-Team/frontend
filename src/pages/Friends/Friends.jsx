@@ -75,14 +75,15 @@ function Friends() {
 
     // Lắng nghe tin nhắn mới tới
     newSocket.on('receive_message', (msg) => {
+      console.log('socket receive_message:', msg, 'activeConvIdRef:', activeConvIdRef.current);
       // NẾU user đang mở đúng group này thì add tin nhắn mới vào màn hình ngay
-      if (msg.conversation_id === activeConvIdRef.current) {
+      if (String(msg.conversation_id) === String(activeConvIdRef.current)) {
         setMessages((prev) => [...prev, msg]);
       }
 
       // Đẩy Group có tin nhắn mới lên vị trí ĐẦU TIÊN của Sidebar
       setConversations(prev => {
-        const index = prev.findIndex(c => c.conversation_id === msg.conversation_id);
+        const index = prev.findIndex(c => String(c.conversation_id) === String(msg.conversation_id));
         if (index > -1) {
           const updatedConv = { ...prev[index], last_message: msg.content };
           const newConvs = [...prev];
@@ -142,7 +143,13 @@ function Friends() {
         console.error('Fetch messages err:', err);
         setLoading(false);
       });
-  }, [activeConvId]);
+
+    // Báo server join room này ngay lập tức để tránh miss tin nhắn
+    // từ group mới tạo chưa kịp có trong danh sách tổng
+    if (socket) {
+      socket.emit('join_rooms', [activeConvId]);
+    }
+  }, [activeConvId, socket]);
 
   const handleSend = () => {
     if (!inputMsg.trim() || !activeConvId || !socket) return;
@@ -397,11 +404,11 @@ function Friends() {
                   onChange={handleImageUpload}
                 />
               </div>
-              <div className="chat-input-wrapper">
+              <div className="chat-input-wrapper" style={{ flex: 1 }}>
                 <input
                   type="text"
                   className="chat-input"
-                  placeholder="Chọn một người để nhắn tin..."
+                  placeholder="Nhập tin nhắn..."
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}

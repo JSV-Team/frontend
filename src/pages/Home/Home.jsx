@@ -160,9 +160,9 @@ function Home() {
                     {/* Post info */}
                     <div className="post-content-wrapper">
                       <div className="post-text-content">
-                        <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
-                        {post.extra_content && (
-                          <p className="post-description">{post.extra_content}</p>
+                        <h3 className="post-title">{post.title || 'Hoạt động'}</h3>
+                        {post.description && (
+                          <p className="post-description">{post.description}</p>
                         )}
                       </div>
 

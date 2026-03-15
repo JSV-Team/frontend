@@ -3,20 +3,19 @@ const API_BASE_URL = '/api';
 export const postService = {
   createPost: async (postData) => {
     const dataToSend = {
-      userId: postData.userId,
+      user_id: postData.userId,
       title: postData.title || '',
-      content: postData.title || '', // backend dùng content
-      imageUrl: postData.imageUrl || '',
       description: postData.content || '',
       location: postData.location || '',
-      maxParticipants: postData.maxParticipants || 10,
-      duration: postData.duration || 60
+      max_participants: postData.maxParticipants || 10,
+      duration: postData.duration || 60,
+      image_url: postData.imageUrl || ''
     };
 
     console.log('PostService sending data:', dataToSend);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/posts`, {
+      const response = await fetch(`${API_BASE_URL}/activities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),

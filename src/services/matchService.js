@@ -1,61 +1,58 @@
-// Match Service - API calls related to matching
 const API_BASE_URL = '/api';
 
+const getUserId = () => {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      return JSON.parse(storedUser)?.user_id || null;
+    } catch { return null; }
+  }
+  return null;
+};
+
 export const matchService = {
-  // Get match suggestions
-  getMatchSuggestions: async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/match/suggestions`);
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching match suggestions:', error);
-      throw error;
-    }
+  enableMatching: async () => {
+    const response = await fetch(`${API_BASE_URL}/match/enable`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId() }),
+    });
+    return response.json();
   },
 
-  // Like a profile
-  likeProfile: async (profileId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/match/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ profileId }),
-      });
-      return await response.json();
-    } catch (error) {
-      console.error('Error liking profile:', error);
-      throw error;
-    }
+  disableMatching: async () => {
+    const response = await fetch(`${API_BASE_URL}/match/disable`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId() }),
+    });
+    return response.json();
   },
 
-  // Pass a profile
-  passProfile: async (profileId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/match/pass`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ profileId }),
-      });
-      return await response.json();
-    } catch (error) {
-      console.error('Error passing profile:', error);
-      throw error;
-    }
+  getStatus: async () => {
+    const response = await fetch(`${API_BASE_URL}/match/status?userId=${getUserId()}`);
+    return response.json();
   },
 
-  // Get matches
-  getMatches: async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/match/matches`);
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching matches:', error);
-      throw error;
-    }
+  findMatch: async () => {
+    const response = await fetch(`${API_BASE_URL}/match/find`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId() }),
+    });
+    const data = await response.json();
+    return { ok: response.ok, ...data };
+  },
+
+  endMatch: async () => {
+    const response = await fetch(`${API_BASE_URL}/match/end`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: getUserId() }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Error');
+    return data;
   },
 };
 
