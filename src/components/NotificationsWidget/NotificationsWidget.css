@@ -1,0 +1,14 @@
+/* reuse widget styles defined in Home.css */
+@import '../../pages/Home/Home.css';
+
+/* additional small tweaks if needed */
+.notifications-error.small {
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.retry-button.small {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}

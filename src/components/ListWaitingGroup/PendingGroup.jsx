@@ -7,21 +7,35 @@ const PendingGroups = ({ reload = 0 }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPendingGroups = async () => {
-      const userString = localStorage.getItem('user');
-      const currentUser = userString ? JSON.parse(userString) : null;
-      const currentUserId = currentUser?.user_id;
+    // 1. Bật loading trước khi bắt đầu xử lý
+    setLoading(true);
 
-      if (!currentUserId) {
-        console.warn("No user ID found in localStorage, cannot fetch pending activities.");
-        setGroups([]);
-        setLoading(false);
-        return;
-      }
+    // 2. Lấy và parse dữ liệu user một lần duy nhất, bọc trong try/catch cho an toàn
+    const userString = localStorage.getItem('user');
+    let currentUserId = null;
 
-      setLoading(true);
+    if (userString) {
       try {
-        const data = await activityService.getPendingActivities(currentUserId);
+        const currentUser = JSON.parse(userString);
+        // Lấy user_id, dự phòng trường hợp API trả về là id
+        currentUserId = currentUser?.user_id || currentUser?.id || null;
+      } catch (e) {
+        console.error("Lỗi khi đọc dữ liệu user từ localStorage:", e);
+      }
+    }
+
+    // 3. Nếu không có ID, thoát sớm và tắt loading
+    if (!currentUserId) {
+      console.warn("Không tìm thấy user ID, không thể tải danh sách chờ.");
+      setGroups([]);
+      setLoading(false);
+      return;
+    }
+
+    // 4. Bắt đầu gọi API
+    fetch(`/api/pending-activities?userId=${currentUserId}`)
+      .then(res => res.json())
+      .then(data => {
         setGroups(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Lỗi lấy pending:', err);
@@ -36,13 +50,13 @@ const PendingGroups = ({ reload = 0 }) => {
   const handleCancel = async (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    try {
-      await activityService.cancelJoinRequest(id);
-      setGroups(prev => prev.filter(g => g.id !== id));
-    } catch (err) {
-      console.error('Lỗi khi hủy:', err);
-      alert('Có lỗi xảy ra khi hủy yêu cầu. Vui lòng thử lại.');
-    }
+    // FIX: DELETE /api/pending-activities/:request_id
+    fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
+      .then(res => res.json())
+      .then(() => {
+        setGroups(prev => prev.filter(g => g.id !== id));
+      })
+      .catch(err => console.error('Lỗi khi hủy:', err));
   };
 
   if (loading) {

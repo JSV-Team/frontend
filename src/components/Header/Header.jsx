@@ -47,6 +47,7 @@ function Header() {
     if (path === '/home' || path === '/') return 'Home';
     if (path === '/match') return 'Match';
     if (path === '/friends') return 'Friends';
+    if (path === '/notifications') return 'Notifications';
     return '';
   };
 
@@ -83,7 +84,7 @@ function Header() {
 
         <div className="header-actions">
           <button
-            className="notification-btn"
+            className={`notification-btn ${currentTab === 'Notifications' ? 'active' : ''}`}
             onClick={() => navigate('/notifications')}
             title="Thông báo"
           >

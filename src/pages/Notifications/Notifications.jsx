@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './Notifications.css';
-
+import useNotifications from '../../hooks/useNotifications';
+import { useState, useEffect } from 'react';
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -48,7 +49,6 @@ function Notifications() {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-
 
     if (diffInSeconds < 60) return 'Vừa xong';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
@@ -135,8 +135,8 @@ function Notifications() {
               <line x1="12" y1="8" x2="12" y2="12"></line>
               <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
+            <p>{error || 'Không thể tải thông báo'}</p>
+            <button onClick={refreshNotifications} className="retry-button">
               Thử lại
             </button>
           </div>

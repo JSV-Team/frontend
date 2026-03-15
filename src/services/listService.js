@@ -2,7 +2,7 @@ const API_BASE_URL = '/api';
 
 export const listService = {
   getListPost: async () => {
-    const response = await fetch(`${API_BASE_URL}/activities`);
+    const response = await fetch(`${API_BASE_URL}/posts`);
 
     if (!response.ok) {
       throw new Error('get list failed');
