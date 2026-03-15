@@ -1,8 +1,20 @@
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Landing() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/home");
+    }
+  }, [navigate]);
+
+  const handleRegisterClick = () => {
+    navigate("/register");
+  };
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -20,7 +32,7 @@ export default function Landing() {
 
         <div className="hero-right">
           <div className="top-buttons">
-            <button className="nav-btn">Đăng ký</button>
+            <button onClick={handleRegisterClick} className="nav-btn">Đăng ký</button>
             <button onClick={handleLoginClick} className="nav-btn">Đăng nhập</button>
           </div>
 
