@@ -63,14 +63,14 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("http://localhost:3001/api/login/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           email: formData.email,
-          username: formData.email.split("@")[0],
+          username: `${formData.email.split("@")[0]}_${Math.floor(Math.random() * 10000)}`,
           password: formData.password,
           full_name: `${formData.firstName} ${formData.lastName}`,
           location: formData.location
@@ -98,7 +98,7 @@ export default function Register() {
           navigate('/login');
         }, 2000);
       } else {
-        setMessage({ type: "error", text: data.error || "Đăng ký thất bại" });
+        setMessage({ type: "error", text: data.error || data.message || "Đăng ký thất bại" });
       }
     } catch (error) {
       console.error("Register error:", error);

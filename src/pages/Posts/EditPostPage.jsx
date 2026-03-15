@@ -6,7 +6,7 @@ export default function EditPostPage() {
   const { id } = useParams(); // id từ URL
   const postId = Number(id);
   const navigate = useNavigate();
-  const { stats } = useOutletContext();
+  const { USER_ID, stats } = useOutletContext();
 
   const [loading, setLoading] = useState(true);
 
