@@ -32,10 +32,9 @@ const PendingGroups = ({ reload = 0 }) => {
       return;
     }
 
-    // 4. Bắt đầu gọi API
-    fetch(`/api/pending-activities?userId=${currentUserId}`)
-      .then(res => res.json())
-      .then(data => {
+    const fetchPendingGroups = async () => {
+      try {
+        const data = await activityService.getPendingActivities(currentUserId);
         setGroups(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error('Lỗi lấy pending:', err);
@@ -50,13 +49,12 @@ const PendingGroups = ({ reload = 0 }) => {
   const handleCancel = async (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    // FIX: DELETE /api/pending-activities/:request_id
-    fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
-      .then(res => res.json())
-      .then(() => {
-        setGroups(prev => prev.filter(g => g.id !== id));
-      })
-      .catch(err => console.error('Lỗi khi hủy:', err));
+    try {
+      await activityService.cancelJoinRequest(id);
+      setGroups(prev => prev.filter(g => g.id !== id));
+    } catch (err) {
+      console.error('Lỗi khi hủy:', err);
+    }
   };
 
   if (loading) {
