@@ -25,6 +25,7 @@ function AppRouter() {
         {/* Trang công khai - không cần đăng nhập */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} /> 
+        <Route path="/register" element={<Register />} /> 
 
         {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
         <Route path="/home" element={
