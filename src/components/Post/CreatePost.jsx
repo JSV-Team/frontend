@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { MapPin, Image as ImageIcon, X } from 'lucide-react';
 import useCreatePost from '../../hooks/useCreatePost';
+import uploadService from '../../services/uploadService';
 import './Post.css';
 
 function CreatePost({ onPostCreated }) {
@@ -228,6 +229,7 @@ function CreatePost({ onPostCreated }) {
         </button>
       </div>
 
+      {uploadError && <p className="error-message">{uploadError}</p>}
       {error && <p className="error-message">{error}</p>}
     </div>
   );

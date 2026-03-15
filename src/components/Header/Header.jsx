@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 // BƯỚC 1: Import thêm icon LogOut từ thư viện lucide-react của bạn
 import { Bell, LogOut } from 'lucide-react';
 import './Header.css';
-
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,7 +66,7 @@ function Header() {
     <header className="header">
       <div className="header-container">
         <div className="header-logo">
-          <h1>JSV</h1>
+          <h1 onClick={() => navigate("/home")}>JSV</h1>
         </div>
 
         <nav className="header-nav">

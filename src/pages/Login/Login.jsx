@@ -105,7 +105,10 @@ export default function Login() {
           </button>
 
           <p className="foot">
-            Not a member? <a className="link" href="#">Sign up now</a>
+            Not a member? <a className="link" href="#" onClick={(e) => {
+              e.preventDefault();
+              navigate('/register');
+            }}>Sign up now</a>
           </p>
         </form>
       </section>

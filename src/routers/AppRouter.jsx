@@ -7,6 +7,7 @@ import Match from '../pages/Match/Match';
 import Friends from '../pages/Friends/Friends';
 import Notifications from '../pages/Notifications/Notifications';
 import Login from '../pages/Login/Login';
+import Register from '../pages/Register/Register';
 import ProfileEdit from '../pages/EditProfile/ProfileEdit';
 import ReputationPage from '../pages/Reputation/ReputationPage';
 import PostsPage from '../pages/Posts/PostsPage';
