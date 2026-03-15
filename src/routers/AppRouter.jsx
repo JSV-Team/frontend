@@ -18,53 +18,53 @@ import EditPostPage from '../pages/Posts/EditPostPage';
 import ProtectedRoute from './ProtectedRoute';
 
 function AppRouter() {
-    return (
-        <Router>
-            <Routes>
-                {/* Trang thả rông: Ai vào cũng được */}
-                <Route path="/login" element={<Login />} />
+  return (
+    <Router>
+      <Routes>
+        {/* Trang thả rông: Ai vào cũng được */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <MainLayout><Home /></MainLayout>
+          </ProtectedRoute>
+        } />
 
-                {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
-                <Route path="/" element={
-                    <ProtectedRoute>
-                        <MainLayout><Home /></MainLayout>
-                    </ProtectedRoute>
-                } />
+        <Route path="/match" element={
+          <ProtectedRoute>
+            <MainLayout><Match /></MainLayout>
+          </ProtectedRoute>
+        } />
 
-                <Route path="/match" element={
-                    <ProtectedRoute>
-                        <MainLayout><Match /></MainLayout>
-                    </ProtectedRoute>
-                } />
+        <Route path="/friends" element={
+          <ProtectedRoute>
+            <MainLayout><Friends /></MainLayout>
+          </ProtectedRoute>
+        } />
 
-                <Route path="/friends" element={
-                    <ProtectedRoute>
-                        <MainLayout><Friends /></MainLayout>
-                    </ProtectedRoute>
-                } />
+        <Route path="/notifications" element={
+          <ProtectedRoute>
+            <MainLayout><Notifications /></MainLayout>
+          </ProtectedRoute>
+        } />
 
-                <Route path="/notifications" element={
-                    <ProtectedRoute>
-                        <MainLayout><Notifications /></MainLayout>
-                    </ProtectedRoute>
-                } />
-
-                {/* Profile Routes - Sử dụng ProfileLayout */}
-                <Route path="/profile/:userId" element={
-                    <ProtectedRoute>
-                        <MainLayout noContainer><ProfileLayout /></MainLayout>
-                    </ProtectedRoute>
-                }>
-                    <Route index element={<Navigate to="edit" replace />} />
-                    <Route path="edit" element={<ProfileEdit />} />
-                    <Route path="reputation" element={<ReputationPage />} />
-                    <Route path="posts" element={<PostsPage />} />
-                    <Route path="posts/new" element={<CreatePostPage />} />
-                    <Route path="posts/:id/edit" element={<EditPostPage />} />
-                </Route>
-            </Routes>
-        </Router>
-    );
+        {/* Profile Routes - Sử dụng ProfileLayout */}
+        <Route path="/profile/:userId" element={
+          <ProtectedRoute>
+            <MainLayout noContainer><ProfileLayout /></MainLayout>
+          </ProtectedRoute>
+        }>
+          <Route index element={<Navigate to="edit" replace />} />
+          <Route path="edit" element={<ProfileEdit />} />
+          <Route path="reputation" element={<ReputationPage />} />
+          <Route path="posts" element={<PostsPage />} />
+          <Route path="posts/new" element={<CreatePostPage />} />
+          <Route path="posts/:id/edit" element={<EditPostPage />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default AppRouter;
