@@ -143,8 +143,7 @@ export default function ProfileEdit() {
       setMsg({ type: "success", text: "Lưu thành công ✅" });
       setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
     } catch (e) {
-      console.error("Lỗi save:", e);
-      setMsg({ type: "danger", text: `Lưu thất bại: ${e.message || JSON.stringify(e)}` });
+      setMsg({ type: "danger", text: "Lưu thất bại. Vui lòng thử lại." });
     } finally {
       setSaving(false);
     }
