@@ -32,9 +32,19 @@ export default function Login() {
       const result = await loginService.login(identifier, password);
 
       if (result.success) {
-        // Đăng nhập thành công, đá người dùng về trang chủ (hoặc trang match/friends tùy bạn)
-        localStorage.setItem("user", JSON.stringify(result.data));
-        navigate("/home");
+        const user = result.data;
+        const token = result.token;
+        
+        // Lưu thông tin vào bộ nhớ trình duyệt
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", user.role);
+
+        if (user.role === "admin") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate("/home", { replace: true });
+        }
       }
     } catch (error) {
       // Hứng lỗi 401, 403 từ Backend ném sang
