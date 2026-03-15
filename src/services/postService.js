@@ -63,7 +63,7 @@ export const postService = {
   // Xóa bài đăng (nếu backend hỗ trợ)
   deletePost: async (postId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/${postId}`, {
+      const response = await fetch(`/api/activities/${postId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
