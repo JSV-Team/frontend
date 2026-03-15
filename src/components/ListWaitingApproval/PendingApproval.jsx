@@ -26,7 +26,7 @@ function PendingApproval({ reload }) {
         if (!userId) return;
         try {
             setLoading(true);
-            const response = await fetch(`/api/pending-approvals?userId=${userId}`);
+            const response = await fetch(`/api/activities/pending-approvals?userId=${userId}`);
             if (!response.ok) throw new Error('Không thể tải các yêu cầu xin tham gia');
             const data = await response.json();
             setRequests(data);
@@ -44,7 +44,7 @@ function PendingApproval({ reload }) {
 
     const handleAction = async (requestId, action) => {
         try {
-            const endpoint = `/api/pending-activities/${requestId}/${action}`;
+            const endpoint = `/api/activities/pending-activities/${requestId}/${action}`;
             const response = await fetch(endpoint, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
