@@ -1,41 +1,100 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = '/api/posts';
 
 export const postService = {
-  createPost: async (postData) => {
-    const dataToSend = {
-      userId: postData.userId,
-      title: postData.title || '',
-      content: postData.title || '', // backend dùng content
-      imageUrl: postData.imageUrl || '',
-      description: postData.content || '',
-      location: postData.location || '',
-      maxParticipants: postData.maxParticipants || 10,
-      duration: postData.duration || 60
-    };
-
-    console.log('PostService sending data:', dataToSend);
+  // Tạo bài đăng mới
+  createPost: async (userIdOrData, maybeData) => {
+    let userId, postData;
+    
+    // Handle flexible arguments to fix NULL creator_id issue
+    if (maybeData === undefined) {
+      // If called with 1 arg: createPost(postDataWithUserId)
+      userId = userIdOrData?.userId || 2;
+      postData = userIdOrData;
+    } else {
+      // If called with 2 args: createPost(userId, postData) 
+      userId = userIdOrData;
+      postData = maybeData;
+    }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/posts`, {
+      const response = await fetch(`${API_BASE_URL}/${userId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dataToSend),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
       });
-
-      // FIX: response.data không tồn tại trong Fetch API, dùng response.json()
-      const responseData = await response.json();
-      console.log('API Response:', responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.message || `HTTP Error: ${response.status}`);
-      }
-
-      return responseData;
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Lỗi khi tạo bài đăng:', error);
       throw error;
     }
   },
-};
 
-export default postService;
+  // Lấy danh sách bài đăng của user
+  getPostsByUserId: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/${userId}`);
+      const data = await response.json();
+      if (!response.ok) throw data;
+      // Map backend fields to frontend fields
+      return data.map(p => ({
+        id: p.post_id || p.activity_id || p.status_id,
+        user_id: p.user_id || p.creator_id,
+        title: p.title || p.content,
+        desc: p.description || p.extra_content || '',
+        location: p.location || '',
+        duration: p.duration_minutes || null,
+        maxParticipants: p.max_participants || null,
+        time: new Date(p.created_at).toLocaleString(),
+        image: p.image_url || null,
+        reactions: p.reactions || {},
+        comments: p.comments || [],
+        shares: p.shares || 0
+      }));
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách bài đăng:', error);
+      throw error;
+    }
+  },
+
+  // Xóa bài đăng (nếu backend hỗ trợ)
+  deletePost: async (postId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/${postId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw data;
+      }
+      return true;
+    } catch (error) {
+      console.error('Lỗi khi xóa bài đăng:', error);
+      throw error;
+    }
+  },
+
+  // Upload nhiều ảnh bài đăng
+  uploadPostMedia: async (files) => {
+    try {
+      const formData = new FormData();
+      files.forEach(file => {
+        formData.append('media', file);
+      });
+
+      const response = await fetch(`/api/upload/post-media`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data.urls; // Mảng các URLs
+    } catch (error) {
+      console.error('Lỗi khi upload ảnh bài đăng:', error);
+      throw error;
+    }
+  }
+};

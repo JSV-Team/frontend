@@ -7,7 +7,7 @@ export default function Login() {
   // 1. Tạo "bộ nhớ" (State) để kiểm soát các ô nhập liệu
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // 2. Tạo State để quản lý trạng thái (Đang xoay xoay hay Đang báo lỗi)
   const [errorMsg, setErrorMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +30,11 @@ export default function Login() {
     try {
       // Nhờ anh chạy vặt gửi data sang Backend (cổng 3001)
       const result = await loginService.login(identifier, password);
-      
+
       if (result.success) {
         // Đăng nhập thành công, đá người dùng về trang chủ (hoặc trang match/friends tùy bạn)
         localStorage.setItem("user", JSON.stringify(result.data));
-        navigate("/"); 
+        navigate("/");
       }
     } catch (error) {
       // Hứng lỗi 401, 403 từ Backend ném sang
@@ -70,7 +70,7 @@ export default function Login() {
               onChange={(e) => setIdentifier(e.target.value)}
             />
           </label>
-
+        
           <label className="field">
             <span className="fieldIcon">🔒</span>
             <input
@@ -96,9 +96,9 @@ export default function Login() {
             </a>
           </div>
 
-          <button 
-            className="btn primary" 
-            type="submit" 
+          <button
+            className="btn primary"
+            type="submit"
             disabled={isLoading} // Nếu đang load thì vô hiệu hóa nút, chống bấm 2 lần
           >
             {isLoading ? "Đang xử lý..." : "Login"}

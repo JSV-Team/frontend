@@ -91,11 +91,11 @@ function CreatePost({ onPostCreated }) {
     const postData = {
       userId: currentUser?.user_id,
       title: title.trim(),
-      content: content.trim(),
+      description: content.trim(),
       location,
-      maxParticipants: parseInt(maxParticipants) || 0,
-      duration: parseInt(duration) || 0,
-      imageUrl
+      max_participants: parseInt(maxParticipants) || 0,
+      duration_minutes: parseInt(duration) || 0,
+      media: imageUrl ? [{ url: imageUrl }] : []
     };
     createPost(postData);
   };

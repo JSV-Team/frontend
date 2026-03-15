@@ -1,44 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import './PendingGroup.css';
+import activityService from '../../services/activityService';
 
-// FIX: nhận reload prop để re-fetch khi có join mới
 const PendingGroups = ({ reload = 0 }) => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userString = localStorage.getItem('user');
-    const currentUser = userString ? JSON.parse(userString) : null;
-    const currentUserId = currentUser?.user_id;
+    const fetchPendingGroups = async () => {
+      const userString = localStorage.getItem('user');
+      const currentUser = userString ? JSON.parse(userString) : null;
+      const currentUserId = currentUser?.user_id;
 
-    if (!currentUserId) {
-      setLoading(false);
-      return;
-    }
+      if (!currentUserId) {
+        console.warn("No user ID found in localStorage, cannot fetch pending activities.");
+        setGroups([]);
+        setLoading(false);
+        return;
+      }
 
-    setLoading(true);
-    fetch(`/api/pending-activities?userId=${currentUserId}`)
-      .then(res => res.json())
-      .then(data => {
+      setLoading(true);
+      try {
+        const data = await activityService.getPendingActivities(currentUserId);
         setGroups(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error('Lỗi lấy pending:', err);
+      } finally {
         setLoading(false);
-      });
-  }, [reload]); // FIX: re-fetch khi reload thay đổi
+      }
+    };
 
-  const handleCancel = (id) => {
+    fetchPendingGroups();
+  }, [reload]);
+
+  const handleCancel = async (id) => {
     if (!window.confirm('Bạn có chắc muốn hủy yêu cầu tham gia này?')) return;
 
-    // FIX: DELETE /api/pending-activities/:request_id (hủy request, không phải activity)
-    fetch(`/api/pending-activities/${id}`, { method: 'DELETE' })
-      .then(res => res.json())
-      .then(() => {
-        setGroups(prev => prev.filter(g => g.id !== id));
-      })
-      .catch(err => console.error('Lỗi khi hủy:', err));
+    try {
+      await activityService.cancelJoinRequest(id);
+      setGroups(prev => prev.filter(g => g.id !== id));
+    } catch (err) {
+      console.error('Lỗi khi hủy:', err);
+      alert('Có lỗi xảy ra khi hủy yêu cầu. Vui lòng thử lại.');
+    }
   };
 
   if (loading) {
