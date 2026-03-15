@@ -34,7 +34,7 @@ export default function Login() {
       if (result.success) {
         // Đăng nhập thành công, đá người dùng về trang chủ (hoặc trang match/friends tùy bạn)
         localStorage.setItem("user", JSON.stringify(result.data));
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       // Hứng lỗi 401, 403 từ Backend ném sang
