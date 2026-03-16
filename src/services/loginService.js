@@ -22,7 +22,12 @@ export const loginService = {
             }
 
             // Nếu thành công (200 OK)
-            return data; 
+            // data sẽ chứa { success, message, data (user), token }
+            return {
+                success: data.success,
+                user: data.data,
+                token: data.token
+            }; 
         } catch (error) {
             console.error('Lỗi khi gọi API login:', error);
             throw error;
