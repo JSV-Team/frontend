@@ -7,7 +7,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <div className="logo">JSV</div>
+        <div className="logo">VibeMatch</div>
       </div>
 
       <nav className="navbar-center">
