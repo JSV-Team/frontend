@@ -31,7 +31,7 @@ function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
       <div className="admin-sidebar__brand">
-        <h1>JSV</h1>
+        <h1>VibeMatch</h1>
         <span>Admin</span>
       </div>
 
