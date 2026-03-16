@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Search, Eye, Shield, ShieldOff, MoreVertical,
   UserCheck, UserX, Mail, Calendar, Hash
 } from 'lucide-react';
 
 const UserManagement = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('search');
+    if (q) {
+      setSearchQuery(q);
+    }
+  }, [location.search]);
 
   // Mock data fallback if backend is empty
   const mockUsers = [

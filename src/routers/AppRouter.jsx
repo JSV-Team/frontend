@@ -24,6 +24,7 @@ import PostManagement from '../pages/admin/PostManagement';
 import ReportManagement from '../pages/admin/ReportManagement';
 import Statistics from '../pages/admin/Statistics';
 import AdminSettings from '../pages/admin/AdminSettings';
+import SystemSettings from '../pages/admin/SystemSettings';
 
 function AppRouter() {
   return (
@@ -81,7 +82,7 @@ function AppRouter() {
             <Route path="posts" element={<PostManagement />} />
             <Route path="reports" element={<ReportManagement />} />
             <Route path="statistics" element={<Statistics />} />
-            <Route path="settings" element={<AdminSettings />} />
+            <Route path="settings" element={<SystemSettings />} />
           </Route>
         </Route>
 
