@@ -28,15 +28,24 @@ export default function Login() {
     setIsLoading(true); // Bật chế độ "Đang tải"
 
     try {
+      console.log("Đang gọi API login cho:", identifier);
       // Nhờ anh chạy vặt gửi data sang Backend (cổng 3001)
       const result = await loginService.login(identifier, password);
+      console.log("Kết quả nhận được từ service:", result);
 
       if (result.success) {
-        // Đăng nhập thành công, đá người dùng về trang chủ (hoặc trang match/friends tùy bạn)
-        localStorage.setItem("user", JSON.stringify(result.data));
+        console.log("Đăng nhập thành công! Đang lưu thông tin...");
+        // Đăng nhập thành công, lưu thông tin user và token vào localStorage
+        localStorage.setItem("user", JSON.stringify(result.user));
+        localStorage.setItem("token", result.token);
+        console.log("Đã lưu vào localStorage. Chuyển trang sang /home...");
         navigate("/home");
+      } else {
+        console.log("Đăng nhập thất bại (success = false)");
+        setErrorMsg("Đăng nhập thất bại. Vui lòng thử lại!");
       }
     } catch (error) {
+      console.error("Lỗi khi xử lý login:", error);
       // Hứng lỗi 401, 403 từ Backend ném sang
       setErrorMsg(error.message || "Tài khoản hoặc mật khẩu không chính xác!");
     } finally {
