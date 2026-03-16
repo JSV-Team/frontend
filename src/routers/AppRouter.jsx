@@ -17,6 +17,8 @@ import EditPostPage from '../pages/Posts/EditPostPage';
 
 // Bổ sung dòng import Anh Bảo Vệ vào đây
 import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
+import AdminDashboard from '../pages/Admin/AdminDashboard';
 
 function AppRouter() {
   return (
@@ -26,6 +28,13 @@ function AppRouter() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} /> 
         <Route path="/register" element={<Register />} /> 
+
+        {/* Trang Admin - Chỉ Admin mới vào được */}
+        <Route path="/admin" element={
+          <AdminRoute>
+            <MainLayout><AdminDashboard /></MainLayout>
+          </AdminRoute>
+        } />
 
         {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
         <Route path="/home" element={
