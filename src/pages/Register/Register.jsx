@@ -113,7 +113,7 @@ export default function Register() {
       <div className="register-container">
         <div className="register-card">
           <h2 className="title">Tạo tài khoản</h2>
-          <p className="subtitle">Tham gia cộng đồng JSV ngay hôm nay</p>
+          <p className="subtitle">Tham gia cộng đồng VibeMatch ngay hôm nay</p>
 
           {/* Message */}
           {message.text && (
