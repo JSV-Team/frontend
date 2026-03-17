@@ -59,6 +59,7 @@ function Header() {
     const isConfirm = window.confirm("Bạn có chắc chắn muốn đăng xuất không?");
     if (isConfirm) {
       localStorage.removeItem("user"); // Tịch thu vé
+      localStorage.removeItem("token"); // Thu hồi mã xác thực
       navigate("/login"); // Đuổi ra cửa
     }
   };
@@ -67,7 +68,7 @@ function Header() {
     <header className="header">
       <div className="header-container">
         <div className="header-logo">
-          <h1 onClick={() => navigate("/home")}>JSV</h1>
+          <h1 onClick={() => navigate("/home")}>VibeMatch</h1>
         </div>
 
         <nav className="header-nav">
@@ -91,7 +92,7 @@ function Header() {
             <Bell size={24} />
           </button>
 
-<div className="user-avatar" onClick={() => {
+          <div className="user-avatar" onClick={() => {
             const userId = currentUser?.user_id || currentUser?.id || currentUser?.USER_ID;
             navigate(`/profile/${userId}`);
           }} title="Trang cá nhân">

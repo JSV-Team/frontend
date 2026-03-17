@@ -28,13 +28,15 @@ export default function Login() {
     setIsLoading(true); // Bật chế độ "Đang tải"
 
     try {
+      console.log("Đang gọi API login cho:", identifier);
       // Nhờ anh chạy vặt gửi data sang Backend (cổng 3001)
       const result = await loginService.login(identifier, password);
+      console.log("Kết quả nhận được từ service:", result);
 
       if (result.success) {
         const user = result.data;
         const token = result.token;
-        
+
         // Lưu thông tin vào bộ nhớ trình duyệt
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", token);
@@ -47,6 +49,7 @@ export default function Login() {
         }
       }
     } catch (error) {
+      console.error("Lỗi khi xử lý login:", error);
       // Hứng lỗi 401, 403 từ Backend ném sang
       setErrorMsg(error.message || "Tài khoản hoặc mật khẩu không chính xác!");
     } finally {
@@ -80,7 +83,7 @@ export default function Login() {
               onChange={(e) => setIdentifier(e.target.value)}
             />
           </label>
-        
+
           <label className="field">
             <span className="fieldIcon">🔒</span>
             <input
