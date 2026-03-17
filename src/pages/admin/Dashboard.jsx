@@ -61,6 +61,11 @@ const Dashboard = () => {
       { name: 'Fake news', value: 20, color: '#3b82f6' },
       { name: 'Vi phạm quy chuẩn', value: 20, color: '#8b5cf6' }
     ],
+    matchData: {
+      stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
+      classification: [],
+      recent: []
+    },
     recentActivities: [
       { user: 'Hệ thống', action: 'đang tải dữ liệu...', time: 'Vừa xong', dotColor: '#3853b8' }
     ]
@@ -75,12 +80,22 @@ const Dashboard = () => {
       });
       const result = await response.json();
       if (result.success && result.data) {
-        // Adjust trend labels
-        const updatedStats = result.data.stats.map(s => ({
+        // Just use the stats from backend, adding context to trend labels
+        const updatedStats = (result.data.stats || []).map(s => ({
           ...s,
-          trend: s.trend.replace('+', '').replace('-', '') + (s.title.includes('Báo cáo') || s.title.includes('Yêu cầu') ? ' mới hôm nay' : ' tuần này')
+          trend: s.trend ? (s.trend.includes('mới') ? s.trend : (s.trend + ' tuần này')) : ''
         }));
-        setData({ ...result.data, stats: updatedStats });
+
+        setData(prevData => ({
+          ...prevData,
+          ...result.data,
+          activityData: {
+            ...prevData.activityData,
+            ...(result.data.activityData || {})
+          },
+          stats: updatedStats,
+          matchData: result.data.matchData || prevData.matchData
+        }));
       }
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -92,13 +107,6 @@ const Dashboard = () => {
   useEffect(() => {
     fetchStats();
   }, []);
-
-  const trafficData = [
-    { hour: '06h', value: 15 }, { hour: '08h', value: 45 }, { hour: '10h', value: 75 },
-    { hour: '12h', value: 95 }, { hour: '14h', value: 65 }, { hour: '16h', value: 80 },
-    { hour: '18h', value: 110 }, { hour: '20h', value: 135 }, { hour: '22h', value: 85 },
-    { hour: '00h', value: 30 },
-  ];
 
   if (loading) {
     return (
@@ -235,22 +243,99 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Row 3: Hourly Traffic & Recent Activity */}
+      {/* Row 3: Matching Management & Recent Activity */}
       <div className="bottom-content-grid">
         <div className="chart-section glass-card">
-          <div className="section-header">
-            <h3 className="section-title">Lượng truy cập theo giờ</h3>
+          <div className="section-header" style={{ marginBottom: '20px' }}>
+            <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Users size={20} /> Quản lý Ghép đôi
+            </h3>
           </div>
-          <div style={{ height: '280px', marginTop: '20px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trafficData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="hour" axisLine={true} tickLine={false} tick={{ fill: '#64748b', fontSize: 13 }} dy={10} />
-                <YAxis axisLine={true} tickLine={false} tick={{ fill: '#64748b', fontSize: 13 }} />
-                <Tooltip cursor={{ fill: '#f8fafc' }} />
-                <Bar dataKey="value" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={40} />
-              </BarChart>
-            </ResponsiveContainer>
+
+          <div className="match-stats-grid">
+            <div className="match-mini-card">
+              <div className="icon-box warning"><Clock size={16} /></div>
+              <div className="info">
+                <span>Đang chờ</span>
+                <h4>{data.matchData?.stats?.pending || 0}</h4>
+              </div>
+            </div>
+            <div className="match-mini-card">
+              <div className="icon-box success"><User size={16} /></div>
+              <div className="info">
+                <span>Hoạt động</span>
+                <h4>{data.matchData?.stats?.active || 0}</h4>
+              </div>
+            </div>
+            <div className="match-mini-card">
+              <div className="icon-box danger"><User size={16} /></div>
+              <div className="info">
+                <span>Từ chối</span>
+                <h4>{data.matchData?.stats?.rejected || 0}</h4>
+              </div>
+            </div>
+            <div className="match-mini-card">
+              <div className="icon-box muted"><Users size={16} /></div>
+              <div className="info">
+                <span>Kết thúc</span>
+                <h4>{data.matchData?.stats?.ended || 0}</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="match-body-grid">
+            <div className="match-classification">
+              <h4 className="sub-title">Phân loại ghép đôi</h4>
+              <div style={{ height: '180px', position: 'relative' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data.matchData?.classification || []}
+                      cx="50%" cy="50%"
+                      innerRadius={50} outerRadius={70}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      <Cell fill="#3b82f6" />
+                      <Cell fill="#a855f7" />
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="pie-overlay-labels">
+                  {(data.matchData?.classification || []).map((item, idx) => (
+                    <div key={idx} className="overlay-row">
+                      <div className="label">
+                        <div className="dot" style={{ backgroundColor: idx === 0 ? '#3b82f6' : '#a855f7' }}></div>
+                        <span>{item.name}</span>
+                      </div>
+                      <span className="val">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="recent-matches">
+              <h4 className="sub-title">Ghép đôi gần đây</h4>
+              <div className="match-list-small">
+                {(data.matchData?.recent || []).map(match => (
+                  <div key={match.id} className="match-item-small">
+                    <div className="match-avatars">
+                      <img src={match.avatars?.[0] || 'https://i.pravatar.cc/150?u=1'} alt="U1" />
+                      <img src={match.avatars?.[1] || 'https://i.pravatar.cc/150?u=2'} alt="U2" />
+                    </div>
+                    <div className="match-info-content">
+                      <div className="pair-name">{match.pair}</div>
+                      <div className="pair-time">{match.time}</div>
+                    </div>
+                    <span className={`match-status-badge ${match.status ? match.status.toLowerCase().replace(/\s/g, '-') : ''}`}>
+                      {match.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -519,6 +604,157 @@ const Dashboard = () => {
           .stats-row { grid-template-columns: repeat(2, 1fr); }
           .dashboard-main-grid, .bottom-content-grid { grid-template-columns: 1fr; }
         }
+
+        /* Matching Management Styles */
+        .match-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          margin-bottom: 24px;
+        }
+
+        .match-mini-card {
+          background: #f8fafc;
+          padding: 12px;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .match-mini-card .icon-box {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .match-mini-card .icon-box.warning { background: #fff7ed; color: #f59e0b; }
+        .match-mini-card .icon-box.success { background: #f0fdf4; color: #10b981; }
+        .match-mini-card .icon-box.danger { background: #fee2e2; color: #ef4444; }
+        .match-mini-card .icon-box.muted { background: #f1f5f9; color: #64748b; }
+
+        .match-mini-card .info span {
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 600;
+          display: block;
+        }
+
+        .match-mini-card .info h4 {
+          font-size: 16px;
+          font-weight: 800;
+          margin: 0;
+          color: #0f172a;
+        }
+
+        .match-body-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.5fr;
+          gap: 24px;
+        }
+
+        .sub-title {
+          font-size: 14px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 16px;
+        }
+
+        .pie-overlay-labels {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          width: 140px;
+        }
+
+        .overlay-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .overlay-row .label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #64748b;
+        }
+
+        .overlay-row .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+        }
+
+        .overlay-row .val {
+          color: #0f172a;
+          font-weight: 800;
+        }
+
+        .match-list-small {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .match-item-small {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 8px 0;
+        }
+
+        .match-avatars {
+          display: flex;
+          align-items: center;
+        }
+
+        .match-avatars img {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 2px solid #fff;
+        }
+
+        .match-avatars img:last-child {
+          margin-left: -12px;
+        }
+
+        .match-info-content {
+          flex: 1;
+        }
+
+        .pair-name {
+          font-size: 13px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+
+        .pair-time {
+          font-size: 11px;
+          color: #94a3b8;
+        }
+
+        .match-status-badge {
+          padding: 4px 10px;
+          border-radius: 8px;
+          font-size: 10px;
+          font-weight: 700;
+        }
+
+        .match-status-badge.đang-hoạt-động { background: #dcfce7; color: #10b981; }
+        .match-status-badge.đang-chờ { background: #fff7ed; color: #f59e0b; }
+        .match-status-badge.từ-chối { background: #fee2e2; color: #ef4444; }
+        .match-status-badge.kết-thúc { background: #f1f5f9; color: #64748b; }
       `}</style>
     </div>
   );

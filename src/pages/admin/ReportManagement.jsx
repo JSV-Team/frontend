@@ -42,7 +42,7 @@ const ReportManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/admin/reports', {
+      const response = await fetch('/api/admin/reports', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -64,7 +64,7 @@ const ReportManagement = () => {
   const handleUpdateStatus = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/admin/reports/${id}/status`, {
+      const response = await fetch(`/api/admin/reports/${id}/status`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

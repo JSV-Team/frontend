@@ -496,6 +496,16 @@
   background: #fee2e2;
 }
 
+.action-btn.active-warning {
+  border-color: #ef4444;
+  background: #fff1f2;
+}
+
+.action-btn.active-danger {
+  border-color: #ef4444;
+  background: #fee2e2;
+}
+
 /* Post Management - Grid & Cards */
 .post-grid {
   display: grid;

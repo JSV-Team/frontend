@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
+import {
   Search, Eye, Shield, ShieldOff, MoreVertical,
   UserCheck, UserX, Mail, Calendar, Hash
 } from 'lucide-react';
@@ -24,56 +24,108 @@ const UserManagement = () => {
   const mockUsers = [
     { id: 1, name: 'Nguyễn Văn Một', email: 'vanc@example.com', status: 'active', joined: '20/02/2026', posts: 15 },
     { id: 2, name: 'Trần Thị Hai', email: 'tranthihai@gmail.com', status: 'active', joined: '15/01/2026', posts: 8 },
-    { id: 3, name: 'Lê Văn Ba', email: 'levanba@gmail.com', status: 'banned', joined: '10/12/2025', posts: 3 },
-    { id: 4, name: 'Phạm Minh Bốn', email: 'phamminhbon@gmail.com', status: 'pending', joined: '05/03/2026', posts: 0 }
+    { id: 3, name: 'Lê Văn Ba', email: 'levanba@gmail.com', status: 'banned', joined: '10/12/2025', posts: 3 }
   ];
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3001/api/admin/users', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const result = await response.json();
-        if (result.success && result.data && result.data.length > 0) {
-          // Format data to match our UI
-          const formatted = result.data.map(u => ({
-            id: u.user_id,
-            name: u.full_name || u.username,
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        const formatted = result.data.map(u => {
+          const rawDate = u.created_at || u.Created_at || u.Joined || u.joined_at;
+          let dateStr = 'Không rõ';
+          if (rawDate) {
+            const d = new Date(rawDate);
+            if (!isNaN(d.getTime())) {
+              dateStr = d.toLocaleDateString('vi-VN');
+            }
+          }
+          return {
+            id: u.user_id || u.id,
+            name: u.full_name || u.username || u.name,
             email: u.email,
-            status: u.status, // active, banned, pending
-            joined: new Date(u.created_at).toLocaleDateString('vi-VN'),
-            posts: Math.floor(Math.random() * 20) // Mock post count for now
-          }));
-          setUsers(formatted);
-        } else {
-          setUsers(mockUsers);
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setUsers(mockUsers);
-      } finally {
-        setLoading(false);
+            status: u.status || 'active',
+            isLocked: u.is_locked || u.Is_locked || false,
+            joined: dateStr,
+            posts: u.posts || 0
+          };
+        });
+        setUsers(formatted);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setUsers(mockUsers);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
   }, []);
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
+    if (!window.confirm(`Bạn có chắc chắn muốn ${newStatus === 'banned' ? 'cấm' : 'bỏ cấm'} người dùng này?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users/${id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
+      }
+    } catch (error) {
+      console.error("Error toggling user status:", error);
+    }
+  };
+
+  const handleToggleLock = async (id, currentLocked) => {
+    const newLocked = !currentLocked;
+    if (!window.confirm(`Bạn có chắc chắn muốn ${newLocked ? 'khóa' : 'mở khóa'} tài khoản này?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/admin/users/${id}/lock`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ isLocked: newLocked })
+      });
+      const result = await response.json();
+      if (result.success) {
+        setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: newLocked } : u));
+      }
+    } catch (error) {
+      console.error("Error toggling user lock:", error);
+    }
+  };
+
   const filteredUsers = users.filter(user => {
     const matchesTab = activeTab === 'All' || user.status.toLowerCase() === activeTab.toLowerCase();
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
   const getStatusLabel = (status) => {
-    switch(status.toLowerCase()) {
+    switch (status.toLowerCase()) {
       case 'active': return 'Hoạt động';
       case 'banned': return 'Đã cấm';
-      case 'pending': return 'Chờ duyệt';
       default: return status;
     }
   };
@@ -87,22 +139,22 @@ const UserManagement = () => {
 
       <div className="admin-filters" style={{ marginTop: '24px' }}>
         <div className="filter-tabs">
-          {['All', 'Active', 'Banned', 'Pending'].map(tab => (
-            <button 
+          {['All', 'Active', 'Banned'].map(tab => (
+            <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'All' ? 'Tất cả' : (tab === 'Active' ? 'Hoạt động' : (tab === 'Banned' ? 'Đã cấm' : 'Chờ duyệt'))}
+              {tab === 'All' ? 'Tất cả' : (tab === 'Active' ? 'Hoạt động' : 'Đã cấm')}
             </button>
           ))}
         </div>
 
         <div className="admin-search">
           <Search size={18} color="var(--admin-text-muted)" />
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm theo tên, email..." 
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo tên, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -144,10 +196,20 @@ const UserManagement = () => {
                 <td>
                   <div className="action-btns">
                     <button className="action-btn" title="Xem chi tiết"><Eye size={16} /></button>
-                    <button className="action-btn" title={user.status === 'banned' ? 'Bỏ cấm' : 'Cấm người dùng'}>
-                      {user.status === 'banned' ? <Shield size={16} /> : <ShieldOff size={16} />}
+                    <button
+                      className={`action-btn ${user.status === 'banned' ? 'active-warning' : ''}`}
+                      title={user.status === 'banned' ? 'Bỏ cấm' : 'Cấm người dùng'}
+                      onClick={() => handleToggleStatus(user.id, user.status)}
+                    >
+                      {user.status === 'banned' ? <Shield size={16} color="#ef4444" /> : <ShieldOff size={16} />}
                     </button>
-                    <button className="action-btn delete" title="Xóa tài khoản"><UserX size={16} /></button>
+                    <button
+                      className={`action-btn ${user.isLocked ? 'active-danger' : ''}`}
+                      title={user.isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
+                      onClick={() => handleToggleLock(user.id, user.isLocked)}
+                    >
+                      {user.isLocked ? <UserX size={16} color="#ef4444" /> : <UserCheck size={16} />}
+                    </button>
                   </div>
                 </td>
               </tr>

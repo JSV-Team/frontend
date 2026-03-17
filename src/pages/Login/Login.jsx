@@ -34,7 +34,7 @@ export default function Login() {
       console.log("Kết quả nhận được từ service:", result);
 
       if (result.success) {
-        const user = result.data;
+        const user = result.user; // service returns 'user', not 'data'
         const token = result.token;
 
         // Lưu thông tin vào bộ nhớ trình duyệt

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { 
+import {
   Search, Eye, CheckCircle, Trash2, Image as ImageIcon,
   AlertTriangle, Clock, MapPin, Tag, User, Star
 } from 'lucide-react';
@@ -24,51 +24,51 @@ const PostManagement = () => {
 
   // Mock data fallback if backend is empty
   const mockActivities = [
-    { 
-      id: 1, 
-      user: 'Nguyễn Văn A', 
-      time: '31 phút trước', 
-      title: 'Tìm bạn chơi bóng đá f8', 
+    {
+      id: 1,
+      user: 'Nguyễn Văn A',
+      time: '31 phút trước',
+      title: 'Tìm bạn chơi bóng đá f8',
       tags: ['Thể thao'],
       isFeatured: true,
-      category: 'Thể thao', 
-      status: 'published', 
+      category: 'Thể thao',
+      status: 'published',
       reports: 0,
       image: null
     },
-    { 
-      id: 2, 
-      user: 'Trần Thị B', 
-      time: '2 giờ trước', 
-      title: 'Nhóm học tiếng Anh cuối tuần', 
+    {
+      id: 2,
+      user: 'Trần Thị B',
+      time: '2 giờ trước',
+      title: 'Nhóm học tiếng Anh cuối tuần',
       tags: ['Học tập'],
       isFeatured: false,
-      category: 'Học tập', 
-      status: 'published', 
+      category: 'Học tập',
+      status: 'published',
       reports: 2,
       image: null
     },
-    { 
-      id: 3, 
-      user: 'Lê Văn C', 
-      time: '5 giờ trước', 
-      title: 'Đi phượt Đà Lạt tháng 4', 
+    {
+      id: 3,
+      user: 'Lê Văn C',
+      time: '5 giờ trước',
+      title: 'Đi phượt Đà Lạt tháng 4',
       tags: ['Du lịch', 'Khám phá'],
       isFeatured: false,
-      category: 'Du lịch', 
-      status: 'pending', 
+      category: 'Du lịch',
+      status: 'pending',
       reports: 0,
       image: null
     },
-    { 
-      id: 4, 
-      user: 'Phạm Minh Bốn', 
-      time: '1 ngày trước', 
-      title: 'Workshop lập trình React', 
+    {
+      id: 4,
+      user: 'Phạm Minh Bốn',
+      time: '1 ngày trước',
+      title: 'Workshop lập trình React',
       tags: ['Công nghệ', 'Lập trình'],
       isFeatured: false,
-      category: 'Công nghệ', 
-      status: 'removed', 
+      category: 'Công nghệ',
+      status: 'removed',
       reports: 12,
       image: null
     }
@@ -82,7 +82,7 @@ const PostManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/admin/activities', { 
+      const response = await fetch('http://localhost:3001/api/admin/activities', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -123,7 +123,7 @@ const PostManagement = () => {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3001/api/admin/activities/${id}/status`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -133,14 +133,14 @@ const PostManagement = () => {
       const result = await response.json();
       if (result.success) {
         // Update local state to move the item
-        setActivities(prev => prev.map(act => 
+        setActivities(prev => prev.map(act =>
           act.id === id ? { ...act, status: newStatus } : act
         ));
       }
     } catch (error) {
       console.error("Error updating status:", error);
       // Fallback: update local state anyway if it's mock
-      setActivities(prev => prev.map(act => 
+      setActivities(prev => prev.map(act =>
         act.id === id ? { ...act, status: newStatus } : act
       ));
     }
@@ -149,16 +149,16 @@ const PostManagement = () => {
   const filteredActivities = activities.filter(act => {
     const status = (act.status || 'pending').toLowerCase();
     const tab = activeTab.toLowerCase();
-    
+
     let matchesTab = false;
     if (tab === 'all') matchesTab = true;
     else if (tab === 'published') matchesTab = (status === 'published' || status === 'active' || status === 'approved');
     else if (tab === 'pending') matchesTab = (status === 'pending');
     else if (tab === 'removed') matchesTab = (status === 'removed' || status === 'deleted');
-    
+
     const searchText = searchQuery.toLowerCase();
-    const matchesSearch = act.title.toLowerCase().includes(searchText) || 
-                          (act.user && act.user.toLowerCase().includes(searchText));
+    const matchesSearch = act.title.toLowerCase().includes(searchText) ||
+      (act.user && act.user.toLowerCase().includes(searchText));
     return matchesTab && matchesSearch;
   });
 
@@ -172,7 +172,7 @@ const PostManagement = () => {
       <div className="admin-filters" style={{ marginTop: '24px' }}>
         <div className="filter-tabs">
           {['All', 'Published', 'Pending', 'Removed'].map(tab => (
-            <button 
+            <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
@@ -184,9 +184,9 @@ const PostManagement = () => {
 
         <div className="admin-search" style={{ position: 'relative' }}>
           <Search size={18} color="var(--admin-text-muted)" />
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm bài viết..." 
+          <input
+            type="text"
+            placeholder="Tìm kiếm bài viết..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
             onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
@@ -196,8 +196,8 @@ const PostManagement = () => {
           {showSuggestions && suggestions.length > 0 && (
             <div className="search-suggestions">
               {suggestions.map(s => (
-                <div 
-                  key={s.id} 
+                <div
+                  key={s.id}
                   className="suggestion-item"
                   onClick={() => selectSuggestion(s.title)}
                 >
@@ -238,7 +238,7 @@ const PostManagement = () => {
                 </div>
 
                 <h4 className="post-card__title">{act.title}</h4>
-                
+
                 <div className="post-card__tags">
                   {(act.tags || ['Hoạt động']).map((tag, idx) => (
                     <span key={idx} className="tag-pill">{tag}</span>
@@ -258,17 +258,17 @@ const PostManagement = () => {
                 <button className="action-btn-full btn-view">
                   <Eye size={16} /> Xem
                 </button>
-                
+
                 {isRemoved ? (
-                  <button 
-                    className="action-btn-full btn-approve" 
+                  <button
+                    className="action-btn-full btn-approve"
                     onClick={() => handleStatusChange(act.id, 'published')}
                   >
                     Khôi phục
                   </button>
                 ) : (
                   isPending && (
-                    <button 
+                    <button
                       className="action-btn-full btn-approve"
                       onClick={() => handleStatusChange(act.id, 'published')}
                     >
@@ -278,8 +278,8 @@ const PostManagement = () => {
                 )}
 
                 {!isRemoved && (
-                  <button 
-                    className="action-btn-full btn-remove" 
+                  <button
+                    className="action-btn-full btn-remove"
                     title="Gỡ bài viết"
                     onClick={() => handleStatusChange(act.id, 'removed')}
                   >
