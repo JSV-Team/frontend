@@ -19,6 +19,7 @@ import EditPostPage from '../pages/Posts/EditPostPage';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
+import ProfileViewSelector from './ProfileViewSelector';
 
 function AppRouter() {
   return (
@@ -55,6 +56,8 @@ function AppRouter() {
           </ProtectedRoute>
         } />
 
+        <Route path="/chat" element={<Navigate to="/friends" replace />} />
+
         <Route path="/notifications" element={
           <ProtectedRoute>
             <MainLayout><Notifications /></MainLayout>
@@ -64,7 +67,7 @@ function AppRouter() {
         {/* Profile Routes - Sử dụng ProfileLayout */}
         <Route path="/profile/:userId" element={
           <ProtectedRoute>
-            <MainLayout noContainer><ProfileLayout /></MainLayout>
+            <MainLayout noContainer><ProfileViewSelector /></MainLayout>
           </ProtectedRoute>
         }>
           <Route index element={<Navigate to="edit" replace />} />
