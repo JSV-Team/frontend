@@ -66,13 +66,16 @@ export default function PostsPage() {
               onDelete={async (id) => {
                 if (window.confirm("Bạn có chắc muốn xóa bài đăng này?")) {
                   try {
-                    await postService.deletePost(id);
+                    const postToDelete = posts.find(p => p.id === id);
+                    await postService.deletePost(id, USER_ID, postToDelete?.type);
                     fetchPosts(); // Reload
                   } catch (e) {
                     alert("Xóa thất bại.");
                   }
                 }
               }}
+
+
               onReact={(id, type) => {
                 alert("Tính năng này sẽ được cập nhật sau (liên kết DB). ✅");
               }}
