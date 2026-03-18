@@ -38,6 +38,13 @@
   }
 }
 
+@media (max-width: 640px) {
+  .grid-layout {
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
+}
+
 /* ==================== FLOATING CHAT BUTTON ==================== */
 .floating-chat {
   position: fixed;
