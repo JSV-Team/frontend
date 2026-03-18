@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-// BƯỚC 1: Import thêm icon LogOut từ thư viện lucide-react của bạn
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 import './Header.css';
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('Home');
+  const { theme, toggleTheme } = useTheme();
 
   // Lấy thông tin user từ localStorage (chỉ chứa dữ liệu login, không cache profile)
   const [currentUser, setCurrentUser] = useState(null);
@@ -84,6 +85,14 @@ function Header() {
         </nav>
 
         <div className="header-actions">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'light' ? 'Chuyển sang tối' : 'Chuyển sang sáng'}
+          >
+            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          </button>
+
           <button
             className={`notification-btn ${currentTab === 'Notifications' ? 'active' : ''}`}
             onClick={() => navigate('/notifications')}
