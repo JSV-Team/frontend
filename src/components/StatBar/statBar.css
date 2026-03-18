@@ -1,11 +1,11 @@
 .st-wrap {
-    background: #fff;
+    background: var(--color-surface);
     border-radius: 16px;
     padding: 16px 24px;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
     margin-bottom: 24px;
     width: 100%;
     box-sizing: border-box;
@@ -16,7 +16,7 @@
 .st-item {
     text-align: center;
     font-size: 14px;
-    color: #4b5563;
+    color: var(--color-text-secondary);
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -25,6 +25,7 @@
 
 .st-item b {
     font-weight: 800;
+    color: var(--color-text-primary);
 }
 
 .st-icon {

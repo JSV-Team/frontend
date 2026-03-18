@@ -69,7 +69,7 @@ function Header() {
     <header className="header">
       <div className="header-container">
         <div className="header-logo">
-          <h1 onClick={() => navigate("/home")}>VibeMatch</h1>
+          <h1 onClick={() => navigate("/")}>VibeMatch</h1>
         </div>
 
         <nav className="header-nav">

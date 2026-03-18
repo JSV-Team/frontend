@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import MainLayout from '../layouts/MainLayout';
 import ProfileLayout from '../layouts/ProfileLayout';
 import Home from '../pages/Home/Home';
@@ -22,7 +23,8 @@ import AdminDashboard from '../pages/Admin/AdminDashboard';
 
 function AppRouter() {
   return (
-    <Router>
+    <ThemeProvider>
+      <Router>
       <Routes>
         {/* Trang công khai - không cần đăng nhập */}
         <Route path="/" element={<Landing />} />
@@ -76,6 +78,7 @@ function AppRouter() {
         </Route>
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 

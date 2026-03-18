@@ -1,3 +1,7 @@
+.cp-wrap {
+    padding: 20px;
+}
+
 .cp-card {
     background: #fff;
     border-radius: 18px;
@@ -9,6 +13,7 @@
     font-size: 34px;
     font-weight: 800;
     margin-bottom: 16px;
+    color: #111;
 }
 
 .cp-input {
@@ -18,6 +23,13 @@
     border: 1px solid #e8e8e8;
     outline: none;
     margin-bottom: 12px;
+    background: #fff;
+    color: #111;
+    font-size: 1rem;
+}
+
+.cp-input::placeholder {
+    color: #999;
 }
 
 .cp-half {
@@ -33,6 +45,14 @@
     outline: none;
     margin-bottom: 12px;
     resize: vertical;
+    background: #fff;
+    color: #111;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.cp-textarea::placeholder {
+    color: #999;
 }
 
 .cp-row {
@@ -48,10 +68,26 @@
     gap: 8px;
 }
 
+.cp-field label {
+    color: #111;
+    font-weight: 600;
+}
+
+.cp-field input[type="file"] {
+    padding: 8px;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    background: #fff;
+    color: #111;
+}
+
 .cp-field select {
     padding: 10px 12px;
     border-radius: 12px;
     border: 1px solid #e8e8e8;
+    background: #fff;
+    color: #111;
+    font-size: 1rem;
 }
 
 .cp-tagsBox {
@@ -64,6 +100,7 @@
 .cp-tagsHeader {
     font-weight: 700;
     margin-bottom: 10px;
+    color: #111;
 }
 
 .cp-tagsRow {
@@ -77,6 +114,8 @@
     border-radius: 12px;
     border: 0;
     cursor: pointer;
+    background: #f0f0f0;
+    color: #111;
 }
 
 .cp-tags {
@@ -90,6 +129,7 @@
     background: #f0f0f0;
     padding: 6px 10px;
     border-radius: 999px;
+    color: #111;
 }
 
 .cp-tag button {
@@ -112,10 +152,90 @@
     border-radius: 14px;
     border: 0;
     cursor: pointer;
+    font-weight: 600;
+}
+
+.cp-cancel {
+    background: #f0f0f0;
+    color: #111;
 }
 
 .cp-post {
     background: #2f66ff;
     color: #fff;
     font-weight: 700;
+}
+
+/* Dark Theme */
+[data-theme="dark"] .cp-wrap {
+    background: #111827;
+}
+
+[data-theme="dark"] .cp-card {
+    background: #1f2937;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .cp-title {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .cp-input {
+    background: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+}
+
+[data-theme="dark"] .cp-input::placeholder {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .cp-textarea {
+    background: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+}
+
+[data-theme="dark"] .cp-textarea::placeholder {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .cp-field label {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .cp-field input[type="file"] {
+    background: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+}
+
+[data-theme="dark"] .cp-field select {
+    background: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f9fafb !important;
+}
+
+[data-theme="dark"] .cp-tagsBox {
+    border-color: #374151;
+    background: #374151;
+}
+
+[data-theme="dark"] .cp-tagsHeader {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .cp-tag {
+    background: #4b5563;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .cp-addBtn {
+    background: #374151;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .cp-cancel {
+    background: #374151;
+    color: #f9fafb;
 }

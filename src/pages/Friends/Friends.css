@@ -844,3 +844,11 @@
 [data-theme="dark"] .new-chat-btn {
   background: #3b82f6;
 }
+
+[data-theme="dark"] .chat-search-input {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .chat-search-input::placeholder {
+  color: #6b7280;
+}

@@ -250,3 +250,81 @@
     color: #111827;
     line-height: 1.35;
 }
+
+/* Dark Theme */
+[data-theme="dark"] .pc-card {
+    background: #1f2937;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .pc-title {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .pc-meta {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .pc-desc {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pc-activity-info {
+    background: #374151;
+}
+
+[data-theme="dark"] .pc-info-item {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pc-tag {
+    background: #374151;
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pc-action {
+    background: #374151;
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pc-count {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .pc-menu {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+[data-theme="dark"] .pc-menuItem {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .pc-menuItem:hover {
+    background: #374151;
+}
+
+[data-theme="dark"] .pc-cmtBody {
+    background: #374151;
+}
+
+[data-theme="dark"] .pc-cmtName {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .pc-cmtText {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pc-cmtTime {
+    color: #9ca3af;
+}
+
+[data-theme="dark"] .pc-actions {
+    border-top-color: #374151;
+}
+
+[data-theme="dark"] .pc-comments {
+    border-top-color: #374151;
+}
