@@ -90,8 +90,30 @@ function Home() {
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
-  const handleMessageHost = async (hostId) => {
+  const handleMessageHost = async (hostId, activityId) => {
     if (hostId === CURRENT_USER_ID) return;
+
+    // Kiểm tra quyền nhắn tin (chỉ khi có activityId)
+    if (activityId) {
+      try {
+        const checkRes = await fetch('/api/chat/check-can-message-host', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
+        });
+        const checkData = await checkRes.json();
+
+        if (!checkRes.ok || !checkData.canMessage) {
+          alert(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
+          return;
+        }
+      } catch (err) {
+        console.error('Lỗi kiểm tra quyền nhắn tin:', err);
+        alert('Lỗi: ' + err.message);
+        return;
+      }
+    }
+
     try {
       const response = await fetch('/api/chat/private', {
         method: 'POST',
@@ -254,7 +276,12 @@ function Home() {
                           >
                             {isJoining ? 'Đang gửi...' : 'Tham gia'}
                           </button>
-                          <button className="action-btn message-btn" onClick={() => handleMessageHost(post.user_id)}>Nhắn tin</button>
+                          <button 
+                            className="action-btn message-btn" 
+                            onClick={() => handleMessageHost(post.user_id, post.status_id)}
+                          >
+                            Nhắn tin
+                          </button>
                         </>
                       )}
                     </div>
