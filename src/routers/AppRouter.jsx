@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '../contexts/ThemeContext';
 import MainLayout from '../layouts/MainLayout';
 import ProfileLayout from '../layouts/ProfileLayout';
 import Home from '../pages/Home/Home';
@@ -28,7 +29,8 @@ import SystemSettings from '../pages/admin/SystemSettings';
 
 function AppRouter() {
   return (
-    <Router>
+    <ThemeProvider>
+      <Router>
       <Routes>
         {/* Trang công khai - không cần đăng nhập */}
         <Route path="/" element={<Landing />} />
@@ -89,6 +91,7 @@ function AppRouter() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 }
 

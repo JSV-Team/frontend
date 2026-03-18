@@ -67,3 +67,36 @@
   color: #6b7280;
   font-size: 15px;
 }
+
+/* Dark Theme */
+[data-theme="dark"] .ps-wrap {
+  background: #111827;
+}
+
+[data-theme="dark"] .ps-card {
+  background: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .ps-h1 {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .ps-input {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .ps-input:hover {
+  background: #4b5563;
+}
+
+[data-theme="dark"] .ps-featureTitle {
+  color: #f9fafb;
+}
+
+[data-theme="dark"] .ps-loading,
+[data-theme="dark"] .ps-empty {
+  color: #9ca3af;
+}

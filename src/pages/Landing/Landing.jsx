@@ -167,9 +167,10 @@ function ShootingStars() {
 }
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
-function Navbar({ onLogin, onRegister }) {
+function Navbar({ onLogin, onRegister, isLoggedIn, onGoHome }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -177,16 +178,28 @@ function Navbar({ onLogin, onRegister }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
+  const landingLinks = [
     { label: "Trang chủ", href: "#hero" },
     { label: "Cách hoạt động", href: "#how-it-works" },
     { label: "Câu chuyện", href: "#testimonials" },
   ];
 
+  const appLinks = [
+    { label: "Home", path: "/home" },
+    { label: "Ghép đôi", path: "/match" },
+    { label: "Bạn bè", path: "/friends" },
+  ];
+
+  const handleNavLinkClick = (e, path) => {
+    if (path.startsWith("#")) return;
+    e.preventDefault();
+    navigate(path);
+  };
+
   return (
     <nav className={`navbar${scrolled ? " navbar--scrolled" : ""}`}>
       <div className="navbar__inner">
-        <a href="#" className="navbar__brand">
+        <a href="/" className="navbar__brand" onClick={(e) => { e.preventDefault(); navigate("/"); }}>
           <div className="navbar__logo">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
           </div>
@@ -194,14 +207,26 @@ function Navbar({ onLogin, onRegister }) {
         </a>
 
         <div className="navbar__links">
-          {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="navbar__link">{l.label}</a>
-          ))}
+          {isLoggedIn ? (
+            appLinks.map((l) => (
+              <a key={l.path} href={l.path} className="navbar__link" onClick={(e) => handleNavLinkClick(e, l.path)}>{l.label}</a>
+            ))
+          ) : (
+            landingLinks.map((l) => (
+              <a key={l.href} href={l.href} className="navbar__link">{l.label}</a>
+            ))
+          )}
         </div>
 
         <div className="navbar__actions">
-          <button className="btn btn--ghost" onClick={onLogin}>Đăng nhập</button>
-          <button className="btn btn--primary" onClick={onRegister}>Tạo tài khoản</button>
+          {isLoggedIn ? (
+            <button className="btn btn--primary" onClick={onGoHome}>Vào ứng dụng</button>
+          ) : (
+            <>
+              <button className="btn btn--ghost" onClick={onLogin}>Đăng nhập</button>
+              <button className="btn btn--primary" onClick={onRegister}>Tạo tài khoản</button>
+            </>
+          )}
         </div>
 
         <button className="navbar__hamburger" onClick={() => setMobileOpen(!mobileOpen)} aria-label="menu">
@@ -214,12 +239,24 @@ function Navbar({ onLogin, onRegister }) {
 
       {mobileOpen && (
         <div className="navbar__mobile">
-          {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="navbar__mobile-link" onClick={() => setMobileOpen(false)}>{l.label}</a>
-          ))}
+          {isLoggedIn ? (
+             appLinks.map((l) => (
+              <a key={l.path} href={l.path} className="navbar__mobile-link" onClick={(e) => { setMobileOpen(false); handleNavLinkClick(e, l.path); }}>{l.label}</a>
+            ))
+          ) : (
+            landingLinks.map((l) => (
+              <a key={l.href} href={l.href} className="navbar__mobile-link" onClick={() => setMobileOpen(false)}>{l.label}</a>
+            ))
+          )}
           <div className="navbar__mobile-actions">
-            <button className="btn btn--ghost btn--full" onClick={onLogin}>Đăng nhập</button>
-            <button className="btn btn--primary btn--full" onClick={onRegister}>Tạo tài khoản</button>
+            {isLoggedIn ? (
+              <button className="btn btn--primary btn--full" onClick={onGoHome}>Vào ứng dụng</button>
+            ) : (
+              <>
+                <button className="btn btn--ghost btn--full" onClick={onLogin}>Đăng nhập</button>
+                <button className="btn btn--primary btn--full" onClick={onRegister}>Tạo tài khoản</button>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -228,7 +265,7 @@ function Navbar({ onLogin, onRegister }) {
 }
 
 // ─── HERO SECTION ─────────────────────────────────────────────────────────────
-function HeroSection({ onRegister }) {
+function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
   return (
     <section id="hero" className="hero">
       <div className="hero__blob hero__blob--left" />
@@ -251,10 +288,17 @@ function HeroSection({ onRegister }) {
           </p>
 
           <div className="hero__cta">
-            <button className="btn btn--accent btn--lg" onClick={onRegister}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
-              Bắt đầu ghép đôi ngay
-            </button>
+            {isLoggedIn ? (
+              <button className="btn btn--accent btn--lg" onClick={onGoHome}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Về trang chủ ngay
+              </button>
+            ) : (
+              <button className="btn btn--accent btn--lg" onClick={onRegister}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                Bắt đầu ghép đôi ngay
+              </button>
+            )}
             <a href="#how-it-works" className="btn btn--outline btn--lg">Tìm hiểu thêm</a>
           </div>
 
@@ -464,15 +508,22 @@ function Testimonials() {
 }
 
 // ─── CTA SECTION ──────────────────────────────────────────────────────────────
-function CTASection({ onRegister }) {
+function CTASection({ onRegister, isLoggedIn, onGoHome }) {
   return (
     <section className="cta-section">
       <div className="cta-section__inner">
         <h2 className="cta-section__title">Sẵn sàng tìm người phù hợp?</h2>
         <p className="cta-section__desc">Tham gia cùng 500K+ thành viên đang kết nối mỗi ngày trên VibeMatch.</p>
-        <button className="btn btn--accent btn--lg" onClick={onRegister}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
-          Bắt đầu miễn phí ngay
+        <button className="btn btn--accent btn--lg" onClick={isLoggedIn ? onGoHome : onRegister}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            {isLoggedIn ? (
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            ) : (
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            )}
+            {isLoggedIn && <polyline points="9 22 9 12 15 12 15 22"/>}
+          </svg>
+          {isLoggedIn ? "Về trang chủ ngay" : "Bắt đầu miễn phí ngay"}
         </button>
       </div>
     </section>
@@ -545,24 +596,28 @@ function Footer() {
 // ─── LANDING (MAIN EXPORT) ────────────────────────────────────────────────────
 export default function Landing() {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
-    if (user) navigate("/home");
-  }, [navigate]);
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleRegister = () => navigate("/register");
   const handleLogin = () => navigate("/login");
+  const handleGoHome = () => navigate("/home");
 
   return (
     <div className="landing-page">
       <ShootingStars />
-      <Navbar onLogin={handleLogin} onRegister={handleRegister} />
-      <HeroSection onRegister={handleRegister} />
+      <Navbar onLogin={handleLogin} onRegister={handleRegister} isLoggedIn={isLoggedIn} onGoHome={handleGoHome} />
+      <HeroSection onRegister={handleRegister} isLoggedIn={isLoggedIn} onGoHome={handleGoHome} />
       <HowItWorks />
       <Features />
       <Testimonials />
-      <CTASection onRegister={handleRegister} />
+      <CTASection onRegister={handleRegister} isLoggedIn={isLoggedIn} onGoHome={handleGoHome} />
       <Footer />
     </div>
   );
