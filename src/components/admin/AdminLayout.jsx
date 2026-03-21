@@ -75,9 +75,9 @@ function AdminLayout() {
           <div className="admin-topbar__left">
             <div className="admin-search" ref={searchRef}>
               <Search size={18} />
-              <input 
-                type="text" 
-                placeholder="Tìm kiếm người dùng, bài viết..." 
+              <input
+                type="text"
+                placeholder="Tìm kiếm người dùng, bài viết..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
@@ -94,8 +94,8 @@ function AdminLayout() {
                     <div className="suggestion-loading">Đang tìm kiếm...</div>
                   ) : suggestions.length > 0 ? (
                     suggestions.map((item) => (
-                      <div 
-                        key={`${item.type}-${item.id}`} 
+                      <div
+                        key={`${item.type}-${item.id}`}
                         className="suggestion-item"
                         onClick={() => handleSuggestionClick(item)}
                       >

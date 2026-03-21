@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import {
   Globe,
   Shield,
@@ -12,6 +13,8 @@ import {
 } from 'lucide-react';
 
 const SystemSettings = () => {
+  const outletContext = useOutletContext();
+  const updateSiteName = outletContext?.updateSiteName;
   const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -44,16 +47,17 @@ const SystemSettings = () => {
       const result = await response.json();
       if (result.success && result.data) {
         const dbData = result.data;
-        setSettings({
-          siteName: dbData.site_name || 'VibeMatch',
-          siteDescription: dbData.site_description || 'Nền tảng kết nối những người có chung sở thích',
-          autoApprove: dbData.auto_approve,
-          sensitiveFilter: dbData.sensitive_filter,
-          autoBan: dbData.auto_ban,
-          notifyReports: dbData.notify_reports,
-          notifyNewUsers: dbData.notify_new_users,
-          notifySuspicious: dbData.notify_suspicious,
-        });
+        setSettings(prev => ({
+          ...prev,
+          siteName: dbData.siteName || prev.siteName,
+          siteDescription: dbData.siteDescription || prev.siteDescription,
+          autoApprove: dbData.autoApprove !== undefined ? dbData.autoApprove === 'true' : prev.autoApprove,
+          sensitiveFilter: dbData.sensitiveFilter !== undefined ? dbData.sensitiveFilter === 'true' : prev.sensitiveFilter,
+          autoBan: dbData.autoBan !== undefined ? dbData.autoBan === 'true' : prev.autoBan,
+          notifyReports: dbData.notifyReports !== undefined ? dbData.notifyReports === 'true' : prev.notifyReports,
+          notifyNewUsers: dbData.notifyNewUsers !== undefined ? dbData.notifyNewUsers === 'true' : prev.notifyNewUsers,
+          notifySuspicious: dbData.notifySuspicious !== undefined ? dbData.notifySuspicious === 'true' : prev.notifySuspicious,
+        }));
       }
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -99,6 +103,7 @@ const SystemSettings = () => {
       const result = await response.json();
       if (result.success) {
         setSuccess(true);
+        if (updateSiteName) updateSiteName();
         setTimeout(() => setSuccess(false), 3000);
       }
     } catch (error) {
@@ -295,7 +300,7 @@ const SystemSettings = () => {
                 <h3 className="section-title">Từ khóa cấm</h3>
               </div>
             </div>
-            
+
             <p className="section-description">Quản lý danh sách từ ngữ bị cấm (BannedKeywords)</p>
 
             <form className="keyword-input-box" onSubmit={handleAddKeyword}>
