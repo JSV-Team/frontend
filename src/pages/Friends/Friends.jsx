@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle } from 'lucide-react';
+import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
+import EmojiPicker from 'emoji-picker-react';
+import LocationPicker from '../../components/common/LocationPicker';
 import './Friends.css';
 
 const getUserId = () => {
@@ -33,6 +35,8 @@ function Friends() {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const activeConvIdRef = useRef(null);
@@ -160,6 +164,25 @@ function Friends() {
     });
 
     setInputMsg('');
+    setShowEmojiPicker(false);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setInputMsg(prevInput => prevInput + emojiObject.emoji);
+  };
+
+  const handleSendLocation = (address) => {
+    if (!activeConvId || !socket) return;
+    socket.emit('send_message', {
+      conversationId: activeConvId,
+      content: address,
+      msgType: 'location',
+    }, (response) => {
+      if (response.status === 'error') {
+        alert(response.error);
+      }
+    });
+    setShowLocationPicker(false);
   };
 
   const handleImageUpload = async (e) => {
@@ -348,7 +371,7 @@ function Friends() {
                   return (
                     <div key={index} className={`message-wrapper ${isMine ? 'mine' : 'theirs'}`}>
                       {!isMine && <span className="sender-name">{msg.sender_name || 'Người dùng'}</span>}
-                      <div className="message-bubble">
+                      <div className={`message-bubble ${msg.msg_type === 'location' ? 'location-bubble' : ''}`}>
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
@@ -358,6 +381,19 @@ function Friends() {
                             />
                             {/* Nếu muốn cho phép vừa gửi ảnh vừa gửi chữ 1 lúc */}
                             {msg.content && <div style={{ marginTop: '5px' }}>{msg.content}</div>}
+                          </div>
+                        ) : msg.msg_type === 'location' ? (
+                          <div 
+                            className="message-location-content" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(msg.content)}`, '_blank')}
+                            title="Bấm để xem trên Google Maps"
+                          >
+                            <MapPin size={18} className="location-icon" />
+                            <div className="location-text">
+                              <strong>Vị trí đã gửi:</strong>
+                              <p>{msg.content}</p>
+                            </div>
                           </div>
                         ) : (
                           msg.content
@@ -389,6 +425,23 @@ function Friends() {
               <div className="chat-input-tools">
                 <PlusCircle size={22} cursor="pointer" />
                 <ImageIcon size={22} cursor="pointer" onClick={() => fileInputRef.current?.click()} />
+                <MapPin size={22} cursor="pointer" onClick={() => setShowLocationPicker(true)} title="Gửi vị trí" />
+                
+                <div className="emoji-picker-wrapper">
+                  <Smile size={22} cursor="pointer" onClick={() => setShowEmojiPicker(val => !val)} title="Biểu tượng cảm xúc" />
+                  {showEmojiPicker && (
+                    <div className="emoji-picker-container">
+                      <EmojiPicker 
+                        onEmojiClick={onEmojiClick}
+                        autoFocusSearch={false}
+                        searchDisabled={true}
+                        previewConfig={{showPreview: false}}
+                        width={300}
+                        height={350}
+                      />
+                    </div>
+                  )}
+                </div>
                 <input
                   type="file"
                   accept="image/*"
@@ -461,6 +514,13 @@ function Friends() {
                   </button>
                 </div>
               </div>
+            )}
+
+            {showLocationPicker && (
+              <LocationPicker 
+                onClose={() => setShowLocationPicker(false)}
+                onConfirm={handleSendLocation}
+              />
             )}
           </>
         )}
