@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle } from 'lucide-react';
+import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
+import EmojiPicker from 'emoji-picker-react';
+import LocationPicker from '../../components/common/LocationPicker';
 import './Friends.css';
 
 const getUserId = () => {
@@ -33,6 +35,9 @@ function Friends() {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [showMoreTools, setShowMoreTools] = useState(false); // State để ẩn/hiện công cụ phụ
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const activeConvIdRef = useRef(null);
@@ -160,6 +165,25 @@ function Friends() {
     });
 
     setInputMsg('');
+    setShowEmojiPicker(false);
+  };
+
+  const onEmojiClick = (emojiObject) => {
+    setInputMsg(prevInput => prevInput + emojiObject.emoji);
+  };
+
+  const handleSendLocation = (address) => {
+    if (!activeConvId || !socket) return;
+    socket.emit('send_message', {
+      conversationId: activeConvId,
+      content: address,
+      msgType: 'location',
+    }, (response) => {
+      if (response.status === 'error') {
+        alert(response.error);
+      }
+    });
+    setShowLocationPicker(false);
   };
 
   const handleImageUpload = async (e) => {
@@ -252,7 +276,7 @@ function Friends() {
             <button className="new-chat-btn"><Edit size={16} /></button>
           </div>
           <div className="chat-search-wrapper">
-            <Search size={16} color="#9ca3af" />
+            <Search size={18} color="#9ca3af" />
             <input
               type="text"
               className="chat-search-input"
@@ -276,7 +300,10 @@ function Friends() {
               >
                 <div className="avatar-container">
                   <img
-                    src="https://via.placeholder.com/52/3b82f6/ffffff?text=GRP"
+                    src={conv.conversation_type === 'private' 
+                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `http://localhost:3001${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
+                      : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
+                    }
                     alt="Avatar"
                     className="conv-avatar"
                   />
@@ -285,7 +312,9 @@ function Friends() {
                 <div className="conv-info">
                   <div className="conv-title-row">
                     <span className="conv-title">{conv.activity_title || `Group ${conv.conversation_id}`}</span>
-                    <span className="conv-time">12:45</span>
+                    <span className="conv-time">
+                      {conv.last_message_time ? new Date(conv.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                    </span>
                   </div>
                   <div className="conv-last-msg">{conv.last_message || 'Chưa có tin nhắn...'}</div>
                 </div>
@@ -329,7 +358,7 @@ function Friends() {
                 </div>
               </div>
 
-              <div className="chat-messages-scroll" ref={messagesEndRef?.current?.parentElement}>
+              <div className="chat-messages-scroll">
                 {loading && <p style={{ textAlign: 'center', color: '#888' }}>Đang tải tin nhắn...</p>}
 
                 {messages.map((msg, index) => {
@@ -348,7 +377,7 @@ function Friends() {
                   return (
                     <div key={index} className={`message-wrapper ${isMine ? 'mine' : 'theirs'}`}>
                       {!isMine && <span className="sender-name">{msg.sender_name || 'Người dùng'}</span>}
-                      <div className="message-bubble">
+                      <div className={`message-bubble ${msg.msg_type === 'location' ? 'location-bubble' : ''}`}>
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
@@ -358,6 +387,19 @@ function Friends() {
                             />
                             {/* Nếu muốn cho phép vừa gửi ảnh vừa gửi chữ 1 lúc */}
                             {msg.content && <div style={{ marginTop: '5px' }}>{msg.content}</div>}
+                          </div>
+                        ) : msg.msg_type === 'location' ? (
+                          <div 
+                            className="message-location-content" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(msg.content)}`, '_blank')}
+                            title="Bấm để xem trên Google Maps"
+                          >
+                            <MapPin size={18} className="location-icon" />
+                            <div className="location-text">
+                              <strong>Vị trí đã gửi:</strong>
+                              <p>{msg.content}</p>
+                            </div>
                           </div>
                         ) : (
                           msg.content
@@ -386,34 +428,65 @@ function Friends() {
                 </div>
               )}
 
-              <div className="chat-input-tools">
-                <PlusCircle size={22} cursor="pointer" />
-                <ImageIcon size={22} cursor="pointer" onClick={() => fileInputRef.current?.click()} />
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleImageUpload}
-                />
-              </div>
               <div className="chat-input-wrapper">
+                <div className="chat-input-tools">
+                  <PlusCircle 
+                    size={22} 
+                    cursor="pointer" 
+                    className={`input-tool-icon ${showMoreTools ? 'active' : ''}`} 
+                    onClick={() => setShowMoreTools(!showMoreTools)}
+                    style={{ transition: 'transform 0.3s ease', transform: showMoreTools ? 'rotate(45deg)' : 'rotate(0)' }}
+                  />
+                  
+                  {showMoreTools && (
+                    <div className="extra-tools-group">
+                      <ImageIcon size={22} cursor="pointer" className="input-tool-icon" onClick={() => fileInputRef.current?.click()} />
+                      <MapPin size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowLocationPicker(true)} title="Gửi vị trí" />
+                      
+                      <div className="emoji-picker-wrapper">
+                        <Smile size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowEmojiPicker(val => !val)} title="Biểu tượng cảm xúc" />
+                        {showEmojiPicker && (
+                          <div className="emoji-picker-container">
+                            <EmojiPicker 
+                              onEmojiClick={onEmojiClick}
+                              autoFocusSearch={false}
+                              searchDisabled={true}
+                              previewConfig={{showPreview: false}}
+                              width={300}
+                              height={350}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleImageUpload}
+                  />
+                </div>
+                
                 <input
                   type="text"
                   className="chat-input"
-                  placeholder="Chọn một người để nhắn tin..."
+                  placeholder="Nhập nội dung tin nhắn..."
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 />
+
+                <button
+                  className={`chat-send-btn ${inputMsg.trim() ? 'active' : ''}`}
+                  onClick={handleSend}
+                  disabled={!inputMsg.trim()}
+                >
+                  <Send size={18} />
+                </button>
               </div>
-              <button
-                className={`chat-send-btn ${inputMsg.trim() ? 'active' : ''}`}
-                onClick={handleSend}
-                disabled={!inputMsg.trim()}
-              >
-                <Send size={18} />
-              </button>
             </div>
 
             {/* === PANEL THÔNG TIN NHÓM (slide in từ phải) === */}
@@ -461,6 +534,13 @@ function Friends() {
                   </button>
                 </div>
               </div>
+            )}
+
+            {showLocationPicker && (
+              <LocationPicker 
+                onClose={() => setShowLocationPicker(false)}
+                onConfirm={handleSendLocation}
+              />
             )}
           </>
         )}

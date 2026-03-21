@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { MapPin, Image as ImageIcon, X } from 'lucide-react';
 import useCreatePost from '../../hooks/useCreatePost';
 import uploadService from '../../services/uploadService';
+import LocationPicker from '../common/LocationPicker';
 import './Post.css';
 
 function CreatePost({ onPostCreated }) {
@@ -16,6 +17,7 @@ function CreatePost({ onPostCreated }) {
   const [imagePreview, setImagePreview] = useState(''); // Preview local blob URL
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   const fileInputRef = useRef(null);
 
   // Lấy thông tin user hiện tại từ localStorage
@@ -145,14 +147,19 @@ function CreatePost({ onPostCreated }) {
         <div className="form-row-3">
           <div className="form-group full-width">
             <label>Địa điểm</label>
-            <div className="input-with-icon">
+            <div 
+              className="input-with-icon" 
+              onClick={() => setShowLocationPicker(true)}
+              style={{ cursor: 'pointer' }}
+            >
               <MapPin size={16} className="input-icon" />
               <input
                 type="text"
-                placeholder="Nhập địa điểm"
+                placeholder="Chọn địa điểm trên bản đồ"
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                readOnly
                 className="form-input"
+                style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
               />
             </div>
           </div>
@@ -231,6 +238,17 @@ function CreatePost({ onPostCreated }) {
 
       {uploadError && <p className="error-message">{uploadError}</p>}
       {error && <p className="error-message">{error}</p>}
+
+      {showLocationPicker && (
+        <LocationPicker 
+          initialLocation={location}
+          onClose={() => setShowLocationPicker(false)}
+          onConfirm={(addr) => {
+            setLocation(addr);
+            setShowLocationPicker(false);
+          }}
+        />
+      )}
     </div>
   );
 }
