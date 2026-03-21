@@ -288,9 +288,6 @@ function Friends() {
                 <div className="conv-info">
                   <div className="conv-title-row">
                     <span className="conv-title">{conv.activity_title || `Group ${conv.conversation_id}`}</span>
-                    {conv.conversation_type === 'private' && conv.is_friend === 0 && (
-                      <span className="stranger-badge">Người lạ</span>
-                    )}
                     <span className="conv-time">
                       {conv.last_message_time ? new Date(conv.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                     </span>

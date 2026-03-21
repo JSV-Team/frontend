@@ -19,8 +19,6 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followLoading, setFollowLoading] = useState(false);
   
   // State for logged-in user interests to calculate commonalities
   const [myInterests, setMyInterests] = useState([]);
@@ -48,7 +46,6 @@ export default function PublicProfile() {
         const targetProfile = await profileService.getPublicProfile(userId, myId);
         setProfile(targetProfile);
         setHasStory(targetProfile.has_story || false);
-        setIsFollowing(targetProfile.is_following || false);
         
         // 2. Fetch user's posts
         try {
@@ -92,47 +89,6 @@ export default function PublicProfile() {
   useEffect(() => {
     fetchData();
   }, [userId]);
-
-  const handleFollowToggle = async () => {
-    if (!myId) {
-      alert("Vui lòng đăng nhập để thực hiện chức năng này.");
-      return;
-    }
-
-    try {
-      setFollowLoading(true);
-      console.log(">>> [FE] Toggling follow:", { userId, myId, isFollowing });
-      if (isFollowing) {
-        await profileService.unfollowUser(userId, myId);
-        setIsFollowing(false);
-        // Optimistic update for follower count if needed
-        if (profile?.stats) {
-            setProfile(prev => ({
-                ...prev,
-                stats: { ...prev.stats, followers_count: Math.max(0, parseInt(prev.stats.followers_count || 0) - 1) }
-            }));
-        }
-      } else {
-        await profileService.followUser(userId, myId);
-        setIsFollowing(true);
-        if (profile?.stats) {
-            setProfile(prev => ({
-                ...prev,
-                stats: { ...prev.stats, followers_count: parseInt(prev.stats.followers_count || 0) + 1 }
-            }));
-        }
-      }
-    } catch (err) {
-      console.error("Lỗi khi thay đổi trạng thái theo dõi:", err);
-      alert(err.message || "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
-    } finally {
-      setFollowLoading(false);
-    }
-  };
-
-  const handleMatchRequest = () => {
-      alert("Yêu cầu kết nối đã được gửi đến " + profile.full_name + "!");
-  };
 
   const handleStartChat = async (targetId = userId) => {
     if (!myId) {
@@ -223,23 +179,7 @@ export default function PublicProfile() {
 
           <div className="pp-actions">
             <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
-            <button className="pp-btn pp-btn-gradient pp-btn-match" onClick={handleMatchRequest}>Ghép đôi</button>
-            <button 
-              className={`pp-btn ${isFollowing ? 'pp-btn-active' : 'pp-btn-secondary'}`} 
-              onClick={handleFollowToggle}
-              disabled={followLoading}
-            >
-              {isFollowing ? 'Đang theo dõi' : 'Theo dõi'}
-            </button>
           </div>
-        </div>
-        
-        <div className="pp-header-footer">
-           <div className="pp-stats">
-              <div className="pp-stat-item"><b>{profile.stats?.followers_count || 0}</b> Người theo dõi</div>
-              <div className="pp-stat-item"><b>{profile.stats?.following_count || 0}</b> Đang theo dõi</div>
-              <div className="pp-stat-item"><b>mutual</b> {profile.stats?.mutual_count || 0} người chung</div>
-           </div>
         </div>
       </div>
 

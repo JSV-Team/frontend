@@ -17,6 +17,7 @@ import CreatePostPage from '../pages/Posts/CreatePostPage';
 import EditPostPage from '../pages/Posts/EditPostPage';
 
 import ProtectedRoute from './ProtectedRoute';
+import ProfileViewSelector from './ProfileViewSelector';
 import AdminRoute from '../routes/AdminRoute';
 import AdminLayout from '../components/admin/AdminLayout';
 import Dashboard from '../pages/admin/Dashboard';
