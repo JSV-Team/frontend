@@ -21,12 +21,8 @@ export default function Login() {
     }
 
     setIsLoading(true);
-
     try {
-      console.log("Đang gọi API login cho:", identifier);
       const result = await loginService.login(identifier, password);
-      console.log("Kết quả:", result);
-
       if (result.success) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
@@ -35,7 +31,6 @@ export default function Login() {
         setErrorMsg("Đăng nhập thất bại. Vui lòng thử lại!");
       }
     } catch (error) {
-      console.error("Lỗi login:", error);
       setErrorMsg(error.message || "Tài khoản hoặc mật khẩu không chính xác!");
     } finally {
       setIsLoading(false);
@@ -59,67 +54,85 @@ export default function Login() {
       <div className="glow glow-left"></div>
       <div className="glow glow-right"></div>
 
-      <form className="form" onSubmit={handleSubmit}>
-        {errorMsg && <div className="error">{errorMsg}</div>}
-        
-        <label className="field">
-          <span className="fieldIcon">👤</span>
-          <input
-            type="text"
-            name="identifier"
-            placeholder="Gmail hoặc Username"
-            autoComplete="username"
-            required
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-          />
-        </label>
-
-        <label className="field">
-          <span className="fieldIcon">🔒</span>
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="••••••••"
-            autoComplete="current-password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            type="button"
-            className="toggle-password"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? "Ẩn" : "Hiện"}
-          </button>
-        </label>
-
-        <div className="row">
-          <label className="check">
-            <input type="checkbox" name="remember" />
-            <span>Remember me</span>
-          </label>
+      <div className="page-content">
+        <div className="left-content">
+          <h1 style={{ fontSize: '4.5rem', fontWeight: 800, color: 'rgb(72, 225, 223)', textShadow: '0 0 20px rgba(0, 255, 213, 0.4)' }}>VibeMatch</h1>
+          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '20px', lineHeight: 1.6, maxWidth: '400px' }}>
+            Khám phá, chia sẻ và kết nối với những người có cùng sở thích với bạn. Đăng nhập để tiếp tục hành trình của mình!
+          </p>
         </div>
 
-        <button className="btn primary" type="submit" disabled={isLoading}>
-          {isLoading ? "Đang xử lý..." : "Đăng nhập"}
-        </button>
+        <div className="login-card">
+          <h2>Welcome Back</h2>
+          <p className="welcome-text">Trở lại và tiếp tục khám phá sở thích</p>
 
-        <p className="foot">
-          Not a member?{" "}
-          <a 
-            className="link" 
-            href="#" 
-            onClick={(e) => {
-              e.preventDefault();
-              navigate('/register');
-            }}
-          >
-            Sign up now
-          </a>
-        </p>
-      </form>
+          <form className="login-form" onSubmit={handleSubmit}>
+            {errorMsg && <div style={{ color: "#ff4d4f", textAlign: "center", fontWeight: "bold", background: "rgba(255,77,79,0.1)", padding: "10px", borderRadius: "8px" }}>{errorMsg}</div>}
+
+            <div className="form-group">
+              <label>Email hoặc Tên đăng nhập</label>
+              <input
+                type="text"
+                name="identifier"
+                placeholder="Nhập email hoặc username..."
+                autoComplete="username"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Mật khẩu</label>
+              <div className="password-wrapper" style={{ position: 'relative', width: '100%' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="show-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}
+                >
+                  {showPassword ? "Ẩn" : "Hiện"}
+                </button>
+              </div>
+            </div>
+
+            <div className="options" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', width: '100%' }}>
+              <label className="checkbox" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}>
+                <input type="checkbox" name="remember" /> <span>Ghi nhớ tôi</span>
+              </label>
+              <a href="#" className="forgot-password" style={{ color: '#4ecdc4', textDecoration: 'none' }}>Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" className="login-btn" disabled={isLoading} style={{ width: '100%' }}>
+              {isLoading ? "Đang xử lý..." : "Đăng nhập ngay"}
+            </button>
+
+            <div className="signup-prompt" style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+              Chưa có tài khoản?{" "}
+              <a
+                href="#"
+                className="signup-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/register');
+                }}
+                style={{ color: '#4ecdc4', textDecoration: 'none', fontWeight: 600 }}
+              >
+                Đăng ký ngay
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
