@@ -470,40 +470,42 @@
   gap: 8px;
 }
 
-.action-btn {
-  width: 36px;
-  height: 36px;
+.action-btn-text {
+  padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid var(--admin-border);
   background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--admin-text-muted);
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.action-btn:hover {
+.action-btn-text:hover {
   background: #f8fafc;
   color: var(--admin-primary);
   border-color: var(--admin-primary);
 }
 
-.action-btn.delete:hover {
+.action-btn-text.warning {
   color: #ef4444;
-  border-color: #ef4444;
-  background: #fee2e2;
-}
-
-.action-btn.active-warning {
-  border-color: #ef4444;
+  border-color: #fee2e2;
   background: #fff1f2;
 }
 
-.action-btn.active-danger {
-  border-color: #ef4444;
+.action-btn-text.warning:hover {
   background: #fee2e2;
+}
+
+.action-btn-text.danger {
+  color: #ef4444;
+  border-color: #fee2e2;
+  background: #fee2e2;
+}
+
+.action-btn-text.danger:hover {
+  background: #fecaca;
 }
 
 /* Post Management - Grid & Cards */

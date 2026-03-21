@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  Search, Eye, Shield, ShieldOff, MoreVertical,
-  UserCheck, UserX, Mail, Calendar, Hash
-} from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const UserManagement = () => {
   const location = useLocation();
@@ -195,20 +192,19 @@ const UserManagement = () => {
                 <td style={{ fontWeight: '600' }}>{user.posts}</td>
                 <td>
                   <div className="action-btns">
-                    <button className="action-btn" title="Xem chi tiết"><Eye size={16} /></button>
                     <button
-                      className={`action-btn ${user.status === 'banned' ? 'active-warning' : ''}`}
+                      className={`action-btn-text ${user.status === 'banned' ? 'warning' : ''}`}
                       title={user.status === 'banned' ? 'Bỏ cấm' : 'Cấm người dùng'}
                       onClick={() => handleToggleStatus(user.id, user.status)}
                     >
-                      {user.status === 'banned' ? <Shield size={16} color="#ef4444" /> : <ShieldOff size={16} />}
+                      {user.status === 'banned' ? 'Mở cấm' : 'Cấm'}
                     </button>
                     <button
-                      className={`action-btn ${user.isLocked ? 'active-danger' : ''}`}
+                      className={`action-btn-text ${user.isLocked ? 'danger' : ''}`}
                       title={user.isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
                       onClick={() => handleToggleLock(user.id, user.isLocked)}
                     >
-                      {user.isLocked ? <UserX size={16} color="#ef4444" /> : <UserCheck size={16} />}
+                      {user.isLocked ? 'Mở khóa' : 'Khóa'}
                     </button>
                   </div>
                 </td>
