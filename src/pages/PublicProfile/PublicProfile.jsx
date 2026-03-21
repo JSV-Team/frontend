@@ -326,28 +326,25 @@ export default function PublicProfile() {
                            </div>
                          )}
 
-                         <div className="post-actions-divider" />
-
-                          <div className="post-actions-bar">
-                            {isActivity ? (
-                              <>
-                                {(myId && myId.toString() === post.user_id?.toString()) ? (
-                                  <span className="post-creator-label">✓ Bài viết của bạn</span>
-                                ) : (
-                                  <button 
-                                    className="action-btn join-btn" 
-                                    onClick={() => handleJoinActivity(post.id)}
-                                    disabled={isJoining}
-                                  >
-                                    {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                                  </button>
-                                )}
-                                <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id)}>Nhắn tin</button>
-                              </>
-                            ) : (
-                              <button className="action-btn message-btn" style={{ flex: 1 }}>Bày tỏ cảm xúc</button>
-                            )}
-                          </div>
+                         {isActivity && (
+                           <>
+                             <div className="post-actions-divider" />
+                             <div className="post-actions-bar">
+                               {(myId && myId.toString() === post.user_id?.toString()) ? (
+                                 <span className="post-creator-label">✓ Bài viết của bạn</span>
+                               ) : (
+                                 <button 
+                                   className="action-btn join-btn" 
+                                   onClick={() => handleJoinActivity(post.id)}
+                                   disabled={isJoining}
+                                 >
+                                   {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                                 </button>
+                               )}
+                               <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id)}>Nhắn tin</button>
+                             </div>
+                           </>
+                         )}
                        </div>
                      );
                    })}
