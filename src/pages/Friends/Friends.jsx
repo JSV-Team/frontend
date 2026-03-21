@@ -299,7 +299,10 @@ function Friends() {
               >
                 <div className="avatar-container">
                   <img
-                    src="https://via.placeholder.com/52/3b82f6/ffffff?text=GRP"
+                    src={conv.conversation_type === 'private' 
+                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `http://localhost:3001${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
+                      : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
+                    }
                     alt="Avatar"
                     className="conv-avatar"
                   />
@@ -308,7 +311,9 @@ function Friends() {
                 <div className="conv-info">
                   <div className="conv-title-row">
                     <span className="conv-title">{conv.activity_title || `Group ${conv.conversation_id}`}</span>
-                    <span className="conv-time">12:45</span>
+                    <span className="conv-time">
+                      {conv.last_message_time ? new Date(conv.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                    </span>
                   </div>
                   <div className="conv-last-msg">{conv.last_message || 'Chưa có tin nhắn...'}</div>
                 </div>
@@ -352,7 +357,7 @@ function Friends() {
                 </div>
               </div>
 
-              <div className="chat-messages-scroll" ref={messagesEndRef?.current?.parentElement}>
+              <div className="chat-messages-scroll">
                 {loading && <p style={{ textAlign: 'center', color: '#888' }}>Đang tải tin nhắn...</p>}
 
                 {messages.map((msg, index) => {

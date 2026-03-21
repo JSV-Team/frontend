@@ -168,7 +168,7 @@ function Home() {
                   <div key={post.status_id} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
-                        <div className="avatar-container">
+                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
                           <div className="avatar-inner">
                             <img
                               src={post.avatar_url || 'https://i.pravatar.cc/150?img=1'}
@@ -179,7 +179,13 @@ function Home() {
                         </div>
                         <div className="user-info">
                           <div className="user-info-top">
-                            <h2>{post.full_name || post.username || 'Người dùng'}</h2>
+                            <h2 
+                              onClick={() => navigate(`/profile/${post.user_id}`)} 
+                              style={{ cursor: 'pointer' }}
+                              className="clickable-username"
+                            >
+                              {post.full_name || post.username || 'Người dùng'}
+                            </h2>
                             <span className="dot-separator">•</span>
                             <span className="post-time">{getTimeAgo(post.created_at)}</span>
                           </div>

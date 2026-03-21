@@ -13,20 +13,11 @@ export default function PostCard({
   onOpenSharers,
 }) {
   const [openMenu, setOpenMenu] = useState(false);
-  const [openReacts, setOpenReacts] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
     if (post.image) console.log(`PostCard [${post.id}] image:`, post.image);
   }, [post.id, post.image]);
-
-  // Tính tổng reactions
-  const totalReacts =
-    (post.reactions?.like || 0) +
-    (post.reactions?.love || 0) +
-    (post.reactions?.haha || 0) +
-    (post.reactions?.sad || 0) +
-    (post.reactions?.angry || 0);
 
   // đóng menu khi click ra ngoài
   useEffect(() => {
@@ -34,7 +25,6 @@ export default function PostCard({
       if (!menuRef.current) return;
       if (!menuRef.current.contains(e.target)) {
         setOpenMenu(false);
-        setOpenReacts(false);
       }
     };
     document.addEventListener("mousedown", onDocClick);
@@ -105,51 +95,9 @@ export default function PostCard({
         </div>
       ) : null}
 
-      {/* Hàng emoji / bình luận / share */}
-      <div className="pc-actions">
-        <div className="pc-reactWrap" ref={menuRef}>
-          <button className="pc-action" onClick={() => setOpenReacts((v) => !v)}>
-            👍 <span className="pc-count">{totalReacts}</span>
-          </button>
-
-          {openReacts && (
-            <div className="pc-reactBox">
-              <button className="pc-react" onClick={() => { onReact(post.id, "like"); setOpenReacts(false); }}>👍</button>
-              <button className="pc-react" onClick={() => { onReact(post.id, "love"); setOpenReacts(false); }}>❤️</button>
-              <button className="pc-react" onClick={() => { onReact(post.id, "haha"); setOpenReacts(false); }}>😆</button>
-              <button className="pc-react" onClick={() => { onReact(post.id, "sad"); setOpenReacts(false); }}>😢</button>
-              <button className="pc-react" onClick={() => { onReact(post.id, "angry"); setOpenReacts(false); }}>😡</button>
-            </div>
-          )}
-        </div>
-
-        <button className="pc-action" onClick={() => onComment(post.id)}>
-          💬 <span className="pc-count">{post.comments?.length || 0}</span>
-        </button>
-
-        <button className="pc-action" onClick={() => onShare(post.id)}>
-          🔁 <span className="pc-count">{post.shares || 0}</span>
-        </button>
-      </div>
 
 
-      {/* Comments list */}
-      {post.comments?.length ? (
-        <div className="pc-comments">
-          {post.comments.map((c) => (
-            <div key={c.id} className="pc-commentItem">
-              <img className="pc-cmtAvatar" src={c.avatar} alt="avatar" />
-              <div className="pc-cmtBody">
-                <div className="pc-cmtNameRow">
-                  <div className="pc-cmtName">{c.name}</div>
-                  <div className="pc-cmtTime">{c.time}</div>
-                </div>
-                <div className="pc-cmtText">{c.text}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
+
     </div>
   );
 }

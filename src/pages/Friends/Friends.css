@@ -130,6 +130,13 @@
   overflow: hidden;
 }
 
+.conv-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
 .conv-title {
   font-weight: 600;
   color: #1f2937;
@@ -138,6 +145,18 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+}
+
+.stranger-badge {
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .conv-last-msg {

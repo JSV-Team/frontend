@@ -148,6 +148,12 @@
   font-size: 1rem;
   color: var(--color-text-primary);
   margin: 0;
+  transition: color 0.2s;
+}
+
+.clickable-username:hover {
+  color: var(--color-primary) !important;
+  text-decoration: underline;
 }
 
 .dot-separator {
