@@ -10,6 +10,9 @@ export default function PublicProfile() {
   const { userId } = useParams();
   const navigate = useNavigate();
   
+  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const myId = storedUser.user_id || storedUser.id;
+  
   const [profile, setProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [userActivities, setUserActivities] = useState([]);
@@ -24,6 +27,7 @@ export default function PublicProfile() {
   
   // Current user's DailyStatus (if any)
   const [hasStory, setHasStory] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -38,9 +42,6 @@ export default function PublicProfile() {
   const fetchData = async () => {
       try {
         setLoading(true);
-
-        const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const myId = storedUser.user_id || storedUser.id;
 
         // 1. Fetch public profile with myId for mutual context
         const targetProfile = await profileService.getPublicProfile(userId, myId);
@@ -92,8 +93,6 @@ export default function PublicProfile() {
   }, [userId]);
 
   const handleFollowToggle = async () => {
-    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const myId = storedUser.user_id || storedUser.id;
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
@@ -109,7 +108,7 @@ export default function PublicProfile() {
         if (profile?.stats) {
             setProfile(prev => ({
                 ...prev,
-                stats: { ...prev.stats, followers_count: Math.max(0, prev.stats.followers_count - 1) }
+                stats: { ...prev.stats, followers_count: Math.max(0, parseInt(prev.stats.followers_count || 0) - 1) }
             }));
         }
       } else {
@@ -118,7 +117,7 @@ export default function PublicProfile() {
         if (profile?.stats) {
             setProfile(prev => ({
                 ...prev,
-                stats: { ...prev.stats, followers_count: prev.stats.followers_count + 1 }
+                stats: { ...prev.stats, followers_count: parseInt(prev.stats.followers_count || 0) + 1 }
             }));
         }
       }
@@ -134,22 +133,43 @@ export default function PublicProfile() {
       alert("Yêu cầu kết nối đã được gửi đến " + profile.full_name + "!");
   };
 
-  const handleStartChat = async () => {
-    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    const myId = storedUser.user_id || storedUser.id;
+  const handleStartChat = async (targetId = userId) => {
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
     }
 
     try {
-      const conv = await chatService.getOrInitPrivateChat(myId, userId);
+      const conv = await chatService.getOrInitPrivateChat(myId, targetId);
       if (conv && conv.conversation_id) {
         navigate('/friends', { state: { openChatId: conv.conversation_id } });
       }
     } catch (err) {
       console.error("Lỗi khi mở cuộc trò chuyện:", err);
       alert("Đã có lỗi xảy ra khi tạo cuộc hội thoại.");
+    }
+  };
+
+  const handleJoinActivity = async (activityId) => {
+    if (!myId) {
+      alert("Vui lòng đăng nhập để tham gia hoạt động.");
+      return;
+    }
+
+    try {
+      setIsJoining(true);
+      const data = await activityService.joinActivity(activityId, myId);
+      
+      if (data.message && data.message.includes('thành công')) {
+        alert("Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.");
+      } else {
+        alert(data.message || "Không thể gửi yêu cầu tham gia.");
+      }
+    } catch (err) {
+      console.error("Lỗi khi tham gia hoạt động:", err);
+      alert(err.message || "Lỗi kết nối khi gửi yêu cầu.");
+    } finally {
+      setIsJoining(false);
     }
   };
 
@@ -161,9 +181,15 @@ export default function PublicProfile() {
   }, [profile, myInterests]);
 
   const matchPercentage = useMemo(() => {
-    if (!profile || !profile.interests?.length) return 0;
-    return Math.round((commonInterests.length / profile.interests.length) * 100);
-  }, [commonInterests, profile]);
+    if (!profile || !profile.interests?.length || !myInterests.length) return 0;
+    
+    // Use Sørensen–Dice coefficient for better mutual matching
+    // Formula: (2 * |A ∩ B|) / (|A| + |B|)
+    const commonCount = commonInterests.length;
+    const totalPossible = profile.interests.length + myInterests.length;
+    
+    return Math.round((2 * commonCount / totalPossible) * 100);
+  }, [commonInterests, profile, myInterests]);
 
   if (loading) return <div className="pp-loading">Đang tải hồ sơ...</div>;
   if (error) return <div className="pp-error">{error}</div>;
@@ -361,13 +387,26 @@ export default function PublicProfile() {
 
                          <div className="post-actions-divider" />
 
-                         <div className="post-actions-bar">
+                          <div className="post-actions-bar">
                             {isActivity ? (
-                              <button className="action-btn message-btn" style={{ flex: 1 }}>Nhắn tin</button>
+                              <>
+                                {(myId && myId.toString() === post.user_id?.toString()) ? (
+                                  <span className="post-creator-label">✓ Bài viết của bạn</span>
+                                ) : (
+                                  <button 
+                                    className="action-btn join-btn" 
+                                    onClick={() => handleJoinActivity(post.id)}
+                                    disabled={isJoining}
+                                  >
+                                    {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                                  </button>
+                                )}
+                                <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id)}>Nhắn tin</button>
+                              </>
                             ) : (
-                             <button className="action-btn message-btn" style={{ flex: 1 }}>Bày tỏ cảm xúc</button>
-                           )}
-                         </div>
+                              <button className="action-btn message-btn" style={{ flex: 1 }}>Bày tỏ cảm xúc</button>
+                            )}
+                          </div>
                        </div>
                      );
                    })}
