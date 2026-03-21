@@ -1176,13 +1176,13 @@
   gap: 12px;
 }
 
-.form-group {
+.login-page .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px !important;
 }
 
-.form-group label {
+.login-page .form-group label {
   font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   font-weight: 500;
@@ -1192,12 +1192,11 @@
   line-height: 1.2 !important;
 }
 
-.form-group input {
+.login-page .form-group input {
   width: 100%;
   height: 56px;
   margin: 0 !important;
   border: none;
-  outline: none;
   border-radius: 12px;
   padding: 0 20px;
   background: rgba(10, 15, 30, 0.95) !important;
@@ -1207,12 +1206,12 @@
   transition: all 0.3s ease;
 }
 
-.form-group input:focus {
+.login-page .form-group input:focus {
   box-shadow: inset 0 0 0 1.5px rgba(78, 205, 196, 0.8);
   background: rgba(0, 0, 0, 0.98) !important;
 }
 
-.form-group input::placeholder {
+.login-page .form-group input::placeholder {
   color: rgba(255, 255, 255, 0.35);
 }
 

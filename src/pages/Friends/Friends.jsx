@@ -37,6 +37,7 @@ function Friends() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [showMoreTools, setShowMoreTools] = useState(false); // State để ẩn/hiện công cụ phụ
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const activeConvIdRef = useRef(null);
@@ -275,7 +276,7 @@ function Friends() {
             <button className="new-chat-btn"><Edit size={16} /></button>
           </div>
           <div className="chat-search-wrapper">
-            <Search size={16} color="#9ca3af" />
+            <Search size={18} color="#9ca3af" />
             <input
               type="text"
               className="chat-search-input"
@@ -427,51 +428,65 @@ function Friends() {
                 </div>
               )}
 
-              <div className="chat-input-tools">
-                <PlusCircle size={22} cursor="pointer" />
-                <ImageIcon size={22} cursor="pointer" onClick={() => fileInputRef.current?.click()} />
-                <MapPin size={22} cursor="pointer" onClick={() => setShowLocationPicker(true)} title="Gửi vị trí" />
-                
-                <div className="emoji-picker-wrapper">
-                  <Smile size={22} cursor="pointer" onClick={() => setShowEmojiPicker(val => !val)} title="Biểu tượng cảm xúc" />
-                  {showEmojiPicker && (
-                    <div className="emoji-picker-container">
-                      <EmojiPicker 
-                        onEmojiClick={onEmojiClick}
-                        autoFocusSearch={false}
-                        searchDisabled={true}
-                        previewConfig={{showPreview: false}}
-                        width={300}
-                        height={350}
-                      />
+              <div className="chat-input-wrapper">
+                <div className="chat-input-tools">
+                  <PlusCircle 
+                    size={22} 
+                    cursor="pointer" 
+                    className={`input-tool-icon ${showMoreTools ? 'active' : ''}`} 
+                    onClick={() => setShowMoreTools(!showMoreTools)}
+                    style={{ transition: 'transform 0.3s ease', transform: showMoreTools ? 'rotate(45deg)' : 'rotate(0)' }}
+                  />
+                  
+                  {showMoreTools && (
+                    <div className="extra-tools-group">
+                      <ImageIcon size={22} cursor="pointer" className="input-tool-icon" onClick={() => fileInputRef.current?.click()} />
+                      <MapPin size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowLocationPicker(true)} title="Gửi vị trí" />
+                      
+                      <div className="emoji-picker-wrapper">
+                        <Smile size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowEmojiPicker(val => !val)} title="Biểu tượng cảm xúc" />
+                        {showEmojiPicker && (
+                          <div className="emoji-picker-container">
+                            <EmojiPicker 
+                              onEmojiClick={onEmojiClick}
+                              autoFocusSearch={false}
+                              searchDisabled={true}
+                              previewConfig={{showPreview: false}}
+                              width={300}
+                              height={350}
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleImageUpload}
+                  />
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleImageUpload}
-                />
-              </div>
-              <div className="chat-input-wrapper">
+                
                 <input
                   type="text"
                   className="chat-input"
-                  placeholder="Chọn một người để nhắn tin..."
+                  placeholder="Nhập nội dung tin nhắn..."
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 />
+
+                <button
+                  className={`chat-send-btn ${inputMsg.trim() ? 'active' : ''}`}
+                  onClick={handleSend}
+                  disabled={!inputMsg.trim()}
+                >
+                  <Send size={18} />
+                </button>
               </div>
-              <button
-                className={`chat-send-btn ${inputMsg.trim() ? 'active' : ''}`}
-                onClick={handleSend}
-                disabled={!inputMsg.trim()}
-              >
-                <Send size={18} />
-              </button>
             </div>
 
             {/* === PANEL THÔNG TIN NHÓM (slide in từ phải) === */}

@@ -46,54 +46,79 @@ export default function Login() {
   };
 
   return (
-    <main className="bg">
-      <section className="card" aria-label="Login">
-        <h1 className="title">LOGIN</h1>
+    <div className="login-page">
+      <div className="stars">
+        <div className="meteor-group group-1">
+          <span className="shooting-star star-1"></span>
+          <span className="shooting-star star-2"></span>
+          <span className="shooting-star star-3"></span>
+        </div>
+        <div className="meteor-group group-2">
+          <span className="shooting-star star-4"></span>
+          <span className="shooting-star star-5"></span>
+          <span className="shooting-star star-6"></span>
+        </div>
+      </div>
+      <div className="glow glow-left"></div>
+      <div className="glow glow-right"></div>
 
-        {/* Khối hiển thị lỗi: Chỉ hiện ra khi biến errorMsg có chữ */}
-        {errorMsg && (
-          <div style={{ color: "#ff4d4f", textAlign: "center", marginBottom: "15px", fontWeight: "bold" }}>
-            {errorMsg}
-          </div>
-        )}
+      <div className="page-content">
+        <div className="left-content">
+          <h1 style={{ fontSize: '4.5rem', fontWeight: 800, color: 'rgb(72, 225, 223)', textShadow: '0 0 20px rgba(0, 255, 213, 0.4)' }}>VibeMatch</h1>
+          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '20px', lineHeight: 1.6, maxWidth: '400px' }}>
+            Khám phá, chia sẻ và kết nối với những người có cùng sở thích với bạn. Đăng nhập để tiếp tục hành trình của mình!
+          </p>
+        </div>
 
-        <form className="form" onSubmit={handleSubmit}>
-          <label className="field">
-            <span className="fieldIcon">👤</span>
-            <input
-              type="text"
-              name="identifier" // Đổi name thành tiếng Anh cho chuẩn mực
-              placeholder="Gmail hoặc Username" // Cập nhật lại placeholder cho khớp với DB
-              autoComplete="username"
-              required
-              // Trói chặt ô input vào State (Truyền hình trực tiếp)
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-            />
-          </label>
+        <div className="login-card">
+          <h2>Welcome Back</h2>
+          <p className="welcome-text">Trở lại và tiếp tục khám phá sở thích</p>
 
-          <label className="field">
-            <span className="fieldIcon">🔒</span>
-            <input
-              type="password"
-              name="password"
-              placeholder="password"
-              autoComplete="current-password"
-              required
-              // Trói chặt ô mật khẩu vào State
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
+          <form className="login-form" onSubmit={handleSubmit}>
+            {errorMsg && <div style={{ color: "#ff4d4f", textAlign: "center", fontWeight: "bold", background: "rgba(255,77,79,0.1)", padding: "10px", borderRadius: "8px" }}>{errorMsg}</div>}
 
-          <div className="row">
-            <label className="check">
-              <input type="checkbox" name="remember" />
-              <span>Remember me</span>
-            </label>
+            <div className="form-group">
+              <label>Email hoặc Tên đăng nhập</label>
+              <input
+                type="text"
+                name="identifier"
+                placeholder="Nhập email hoặc username..."
+                autoComplete="username"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+              />
+            </div>
 
+            <div className="form-group">
+              <label>Mật khẩu</label>
+              <div className="password-wrapper" style={{ position: 'relative', width: '100%' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="show-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}
+                >
+                  {showPassword ? "Ẩn" : "Hiện"}
+                </button>
+              </div>
+            </div>
 
-          </div>
+            <div className="options" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', width: '100%' }}>
+              <label className="checkbox" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}>
+                <input type="checkbox" name="remember" /> <span>Ghi nhớ tôi</span>
+              </label>
+              <a href="#" className="forgot-password" style={{ color: '#4ecdc4', textDecoration: 'none' }}>Quên mật khẩu?</a>
+            </div>
 
             <button type="submit" className="login-btn" disabled={isLoading} style={{ width: '100%' }}>
               {isLoading ? "Đang xử lý..." : "Đăng nhập ngay"}
