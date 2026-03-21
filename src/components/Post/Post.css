@@ -55,12 +55,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  align-items: flex-end;
 }
 
 .form-row-3 {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1.1fr 1.2fr;
   gap: 1rem;
+  align-items: flex-end;
 }
 
 /* Form Groups */
@@ -77,10 +79,11 @@
 .form-group label {
   font-size: 0.625rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   font-weight: 700;
   color: var(--color-text-muted);
   margin-left: 0.25rem;
+  white-space: nowrap;
 }
 
 /* Form Inputs */
