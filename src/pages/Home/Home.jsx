@@ -28,7 +28,14 @@ const getUserId = () => {
 function Home() {
   const navigate = useNavigate();
   const userString = localStorage.getItem('user');
-  const currentUser = userString ? JSON.parse(userString) : null;
+  let currentUser = null;
+  if (userString && userString !== "undefined") {
+    try {
+      currentUser = JSON.parse(userString);
+    } catch (e) {
+      console.error("Home.jsx: Lỗi parse user từ localStorage:", e);
+    }
+  }
   const CURRENT_USER_ID = currentUser?.user_id;
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
