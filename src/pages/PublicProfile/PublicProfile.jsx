@@ -222,7 +222,7 @@ export default function PublicProfile() {
           </div>
 
           <div className="pp-actions">
-            <button className="pp-btn pp-btn-primary pp-btn-message" onClick={handleStartChat}>Nhắn tin</button>
+            <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
             <button className="pp-btn pp-btn-gradient pp-btn-match" onClick={handleMatchRequest}>Ghép đôi</button>
             <button 
               className={`pp-btn ${isFollowing ? 'pp-btn-active' : 'pp-btn-secondary'}`} 

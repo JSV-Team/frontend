@@ -21,7 +21,10 @@ export const chatService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, partnerId }),
+        body: JSON.stringify({ 
+          userId: Number(userId), 
+          partnerId: String(partnerId) 
+        }),
       });
       const data = await response.json();
       if (!response.ok) throw data;
