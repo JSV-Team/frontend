@@ -33,6 +33,26 @@ export const postService = {
     }
   },
 
+  // Tạo trạng thái mới (cho trang Profile) - lưu vào DailyStatus
+  createStatus: async (userId, postData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/status/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi tạo trạng thái:', error);
+      throw error;
+    }
+  },
+
+
   // Lấy danh sách bài đăng của user
   getPostsByUserId: async (userId) => {
     try {
@@ -50,10 +70,13 @@ export const postService = {
         maxParticipants: p.max_participants || null,
         time: new Date(p.created_at).toLocaleString(),
         image: p.image_url || null,
-        reactions: p.reactions || {},
-        comments: p.comments || [],
-        shares: p.shares || 0
+        reactions: { like: p.reactions_count || 0 }, // Simplified for now
+        comments: Array(p.comments_count || 0).fill({}), // Just to show the count
+        shares: p.shares_count || 0,
+        type: p.post_type || 'activity'
       }));
+
+
     } catch (error) {
       console.error('Lỗi khi lấy danh sách bài đăng:', error);
       throw error;
@@ -61,9 +84,11 @@ export const postService = {
   },
 
   // Xóa bài đăng (nếu backend hỗ trợ)
-  deletePost: async (postId) => {
+  deletePost: async (postId, userId, type = 'activity') => {
     try {
-      const response = await fetch(`/api/activities/${postId}`, {
+      const baseUrl = type === 'status' ? `${API_BASE_URL}/status/${postId}` : `${API_BASE_URL}/${postId}`;
+      const url = `${baseUrl}?userId=${userId}`;
+      const response = await fetch(url, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -76,6 +101,8 @@ export const postService = {
       throw error;
     }
   },
+
+
 
   // Upload nhiều ảnh bài đăng
   uploadPostMedia: async (files) => {

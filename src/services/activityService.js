@@ -85,6 +85,16 @@ export const activityService = {
       throw error;
     }
   },
+  // Get activities for a specific user
+  getUserActivities: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/activities/user/${userId}`);
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user activities:', error);
+      throw error;
+    }
+  },
 };
 
 export default activityService;
