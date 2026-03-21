@@ -4,7 +4,7 @@ const API_BASE_URL = '/api';
 export const loginService = {
     login: async (identifier, password) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Báo cho BE biết mình gửi dữ liệu JSON
@@ -22,7 +22,12 @@ export const loginService = {
             }
 
             // Nếu thành công (200 OK)
-            return data; 
+            // data sẽ chứa { success, message, data (user), token }
+            return {
+                success: data.success,
+                user: data.data,
+                token: data.token
+            }; 
         } catch (error) {
             console.error('Lỗi khi gọi API login:', error);
             throw error;

@@ -1,0 +1,38 @@
+.vm-page {
+    min-height: 100vh;
+    padding: 16px;
+    background: #f6f7fb;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .vm-page {
+        padding: 12px;
+        gap: 16px;
+    }
+}
+
+.vm-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@media (max-width: 1100px) {
+    .vm-page {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dark Theme */
+[data-theme="dark"] .vm-page {
+    background: #111827;
+}
+
+[data-theme="dark"] .loading-container,
+[data-theme="dark"] .error-container {
+    background: #111827;
+}

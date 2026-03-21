@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { MapPin, Image as ImageIcon, X } from 'lucide-react';
 import useCreatePost from '../../hooks/useCreatePost';
+import uploadService from '../../services/uploadService';
 import './Post.css';
 
 function CreatePost({ onPostCreated }) {
@@ -18,8 +19,8 @@ function CreatePost({ onPostCreated }) {
   const fileInputRef = useRef(null);
 
   // Lấy thông tin user hiện tại từ localStorage
-  // linter-fix: redundant user pull
-
+  const storedUser = localStorage.getItem('user');
+  // const currentUser = storedUser ? JSON.parse(storedUser) : null;
   const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
   const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
 
@@ -90,11 +91,11 @@ function CreatePost({ onPostCreated }) {
     const postData = {
       userId: currentUser?.user_id,
       title: title.trim(),
-      content: content.trim(),
+      description: content.trim(),
       location,
-      maxParticipants: parseInt(maxParticipants) || 0,
-      duration: parseInt(duration) || 0,
-      imageUrl
+      max_participants: parseInt(maxParticipants) || 0,
+      duration_minutes: parseInt(duration) || 0,
+      media: imageUrl ? [{ url: imageUrl }] : []
     };
     createPost(postData);
   };
@@ -228,6 +229,7 @@ function CreatePost({ onPostCreated }) {
         </button>
       </div>
 
+      {uploadError && <p className="error-message">{uploadError}</p>}
       {error && <p className="error-message">{error}</p>}
     </div>
   );

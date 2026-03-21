@@ -1,0 +1,133 @@
+.pending-approval-container {
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.pending-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+}
+
+.pending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pending-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.pending-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.pending-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.pending-name {
+    font-size: 13px;
+    color: #4a4a4a;
+    line-height: 1.4;
+}
+
+.pending-name strong {
+    color: #1a1a1a;
+}
+
+.pending-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.accept-btn {
+    background-color: #e6f6ee;
+    color: #10b981;
+}
+
+.accept-btn:hover {
+    background-color: #d1f0df;
+}
+
+.reject-btn {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.reject-btn:hover {
+    background-color: #fecaca;
+}
+
+.pending-empty {
+    color: #666;
+    font-size: 13px;
+    text-align: center;
+    margin: 0;
+}
+
+/* Dark Theme */
+[data-theme="dark"] .pending-approval-container {
+    background-color: #1f2937;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .pending-title {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .pending-name {
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .pending-name strong {
+    color: #f9fafb;
+}
+
+[data-theme="dark"] .accept-btn {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+[data-theme="dark"] .accept-btn:hover {
+    background-color: rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .reject-btn {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+[data-theme="dark"] .reject-btn:hover {
+    background-color: rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="dark"] .pending-empty {
+    color: #9ca3af;
+}
