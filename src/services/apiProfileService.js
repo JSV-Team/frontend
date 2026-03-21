@@ -30,6 +30,22 @@ export const profileService = {
       throw error;
     }
   },
+  
+  // Lấy thông tin public profile của user khác
+  getPublicProfile: async (userId, myId) => {
+    try {
+      const url = myId 
+        ? `${API_BASE_URL}/profile/${userId}?myId=${myId}` 
+        : `${API_BASE_URL}/profile/${userId}`;
+      const response = await fetch(url);
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result;
+    } catch (error) {
+      console.error('Lỗi khi lấy public profile:', error);
+      throw error;
+    }
+  },
 
   // Cập nhật thông tin profile
   updateProfile: async (userId, profileData) => {
@@ -113,6 +129,62 @@ export const profileService = {
       return data;
     } catch (error) {
       console.error('Lỗi khi upload avatar:', error);
+      throw error;
+    }
+  },
+
+  // Theo dõi người dùng
+  followUser: async (userId, myId) => {
+    if (!myId) throw new Error('Vui lòng đăng nhập để theo dõi');
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}/follow`, {
+        method: 'POST',
+        headers: {
+          'x-auth-user-id': myId.toString()
+        }
+      });
+      
+      const contentType = response.headers.get('content-type');
+      let result;
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Lỗi Server (${response.status}): ${text.slice(0, 100)}...`);
+      }
+      
+      if (!response.ok) throw result;
+      return result;
+    } catch (error) {
+      console.error('Lỗi khi theo dõi:', error);
+      throw error;
+    }
+  },
+
+  // Bỏ theo dõi người dùng
+  unfollowUser: async (userId, myId) => {
+    if (!myId) throw new Error('Vui lòng đăng nhập để bỏ theo dõi');
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/${userId}/unfollow`, {
+        method: 'DELETE',
+        headers: {
+          'x-auth-user-id': myId.toString()
+        }
+      });
+      
+      const contentType = response.headers.get('content-type');
+      let result;
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Lỗi Server (${response.status}): ${text.slice(0, 100)}...`);
+      }
+      
+      if (!response.ok) throw result;
+      return result;
+    } catch (error) {
+      console.error('Lỗi khi bỏ theo dõi:', error);
       throw error;
     }
   },

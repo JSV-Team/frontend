@@ -35,7 +35,8 @@ export default function CreatePostPage() {
         media: mediaUrls.map(url => ({ url }))
       };
 
-      await postService.createPost(USER_ID, postData);
+      await postService.createStatus(USER_ID, postData);
+
       
       // Sau khi lưu thành công vào DB, chuyển hướng về trang danh sách
       navigate(`/profile/${USER_ID}/posts`);
