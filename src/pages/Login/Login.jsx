@@ -34,15 +34,19 @@ export default function Login() {
       console.log("Kết quả nhận được từ service:", result);
 
       if (result.success) {
-        console.log("Đăng nhập thành công! Đang lưu thông tin...");
-        // Đăng nhập thành công, lưu thông tin user và token vào localStorage
-        localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem("token", result.token);
-        console.log("Đã lưu vào localStorage. Chuyển trang sang /home...");
-        navigate("/home");
-      } else {
-        console.log("Đăng nhập thất bại (success = false)");
-        setErrorMsg("Đăng nhập thất bại. Vui lòng thử lại!");
+        const user = result.user; // service returns 'user', not 'data'
+        const token = result.token;
+
+        // Lưu thông tin vào bộ nhớ trình duyệt
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", user.role);
+
+        if (user.role === "admin") {
+          navigate("/admin", { replace: true });
+        } else {
+          navigate("/home", { replace: true });
+        }
       }
     } catch (error) {
       console.error("Lỗi khi xử lý login:", error);
@@ -79,7 +83,7 @@ export default function Login() {
               onChange={(e) => setIdentifier(e.target.value)}
             />
           </label>
-        
+
           <label className="field">
             <span className="fieldIcon">🔒</span>
             <input
