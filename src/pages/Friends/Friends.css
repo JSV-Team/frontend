@@ -871,3 +871,76 @@
 [data-theme="dark"] .chat-search-input::placeholder {
   color: #6b7280;
 }
+
+/* Emoji Picker Styles */
+.emoji-picker-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.emoji-picker-container {
+  position: absolute;
+  bottom: 150%; /* hiện lên phía trên nút */
+  right: -50px;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+/* Location Bubble Styles */
+.location-bubble {
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  background: white !important;
+  color: #1e293b !important;
+  overflow: hidden;
+}
+
+.message-location-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  transition: background-color 0.2s ease;
+}
+
+.message-location-content:hover {
+  background: #f1f5f9;
+}
+
+.message-location-content .location-icon {
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.location-text strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.location-text p {
+  margin: 0;
+  font-weight: 500;
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .location-bubble {
+  border-color: #4b5563;
+}
+
+[data-theme="dark"] .message-location-content {
+  background: #374151;
+}
+
+[data-theme="dark"] .location-text strong {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .location-text p {
+  color: #f9fafb;
+}
