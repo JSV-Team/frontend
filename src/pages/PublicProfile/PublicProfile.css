@@ -667,3 +667,157 @@
     font-size: 14px;
   }
 }
+
+/* ==================== ACTIVITY DETAIL MODAL ==================== */
+.pp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: ppFadeIn 0.2s ease;
+}
+
+@keyframes ppFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ppSlideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pp-modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+  animation: ppSlideUp 0.3s ease;
+}
+
+.pp-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.pp-modal-close:hover {
+  background: #e5e7eb;
+  color: #111827;
+  transform: rotate(90deg);
+}
+
+.pp-modal-header {
+  padding: 1.75rem 1.75rem 0 1.75rem;
+}
+
+.pp-modal-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.3;
+  padding-right: 2.5rem;
+}
+
+.pp-modal-body {
+  padding: 1.25rem 1.75rem;
+}
+
+.pp-modal-desc {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0 0 1.25rem 0;
+}
+
+.pp-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 14px;
+  border: 1px solid #f3f4f6;
+}
+
+.pp-modal-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pp-modal-meta-icon {
+  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.pp-modal-meta-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pp-modal-meta-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pp-modal-image {
+  margin-top: 1.25rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+}
+
+.pp-modal-image img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.pp-modal-footer {
+  padding: 1.25rem 1.75rem 1.75rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.pp-modal-footer .pp-btn {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+}

@@ -28,6 +28,7 @@ export default function PublicProfile() {
   // Current user's DailyStatus (if any)
   const [hasStory, setHasStory] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -304,18 +305,18 @@ export default function PublicProfile() {
                {userActivities.length > 0 ? (
                  <div className="pp-activities-grid">
                    {userActivities.map(activity => (
-                     <div key={activity.status_id} className="pp-activity-card">
+                     <div key={activity.status_id || activity.activity_id} className="pp-activity-card">
                        <div className="pp-activity-badge">ĐANG THAM GIA</div>
                        <div className="pp-activity-content">
-                         <h4 className="pp-activity-title">{activity.content}</h4>
+                         <h4 className="pp-activity-title">{activity.content || activity.title}</h4>
                          <div className="pp-activity-details">
                             {activity.location && <span>📍 {activity.location}</span>}
                             {activity.duration_minutes && <span>⏱ {activity.duration_minutes} phút</span>}
                             <span>👥 {activity.participant_count || 0}/{activity.max_participants || '--'}</span>
                          </div>
-                         <p className="pp-activity-desc">{activity.extra_content || ''}</p>
+                         <p className="pp-activity-desc">{activity.extra_content || activity.description || ''}</p>
                        </div>
-                       <button className="pp-activity-view-btn" onClick={() => navigate('/activities')}>Xem chi tiết</button>
+                       <button className="pp-activity-view-btn" onClick={() => setSelectedActivity(activity)}>Xem chi tiết</button>
                      </div>
                    ))}
                  </div>
@@ -418,6 +419,93 @@ export default function PublicProfile() {
           )}
         </div>
       </div>
+
+      {/* Activity Detail Modal */}
+      {selectedActivity && (
+        <div className="pp-modal-overlay" onClick={() => setSelectedActivity(null)}>
+          <div className="pp-modal" onClick={e => e.stopPropagation()}>
+            <button className="pp-modal-close" onClick={() => setSelectedActivity(null)}>✕</button>
+            
+            <div className="pp-modal-header">
+              <div className="pp-activity-badge" style={{ marginBottom: '0.5rem' }}>HOẠT ĐỘNG</div>
+              <h2 className="pp-modal-title">{selectedActivity.content || selectedActivity.title}</h2>
+            </div>
+
+            <div className="pp-modal-body">
+              {(selectedActivity.extra_content || selectedActivity.description) && (
+                <p className="pp-modal-desc">{selectedActivity.extra_content || selectedActivity.description}</p>
+              )}
+
+              <div className="pp-modal-meta">
+                {selectedActivity.location && (
+                  <div className="pp-modal-meta-item">
+                    <span className="pp-modal-meta-icon">📍</span>
+                    <div>
+                      <div className="pp-modal-meta-label">Địa điểm</div>
+                      <div className="pp-modal-meta-value">{selectedActivity.location}</div>
+                    </div>
+                  </div>
+                )}
+                {selectedActivity.duration_minutes && (
+                  <div className="pp-modal-meta-item">
+                    <span className="pp-modal-meta-icon">⏱</span>
+                    <div>
+                      <div className="pp-modal-meta-label">Thời lượng</div>
+                      <div className="pp-modal-meta-value">{selectedActivity.duration_minutes} phút</div>
+                    </div>
+                  </div>
+                )}
+                <div className="pp-modal-meta-item">
+                  <span className="pp-modal-meta-icon">👥</span>
+                  <div>
+                    <div className="pp-modal-meta-label">Số người tham gia</div>
+                    <div className="pp-modal-meta-value">{selectedActivity.participant_count || 0} / {selectedActivity.max_participants || '∞'}</div>
+                  </div>
+                </div>
+                {selectedActivity.created_at && (
+                  <div className="pp-modal-meta-item">
+                    <span className="pp-modal-meta-icon">📅</span>
+                    <div>
+                      <div className="pp-modal-meta-label">Ngày đăng</div>
+                      <div className="pp-modal-meta-value">{new Date(selectedActivity.created_at).toLocaleDateString('vi-VN')}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {selectedActivity.image_url && (
+                <div className="pp-modal-image">
+                  <img 
+                    src={selectedActivity.image_url.startsWith('http') ? selectedActivity.image_url : `http://127.0.0.1:3001${selectedActivity.image_url}`}
+                    alt="Activity"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="pp-modal-footer">
+              <button 
+                className="pp-btn pp-btn-primary"
+                onClick={() => {
+                  handleJoinActivity(selectedActivity.activity_id || selectedActivity.status_id);
+                }}
+                disabled={isJoining}
+              >
+                {isJoining ? 'Đang gửi...' : 'Tham gia hoạt động'}
+              </button>
+              <button 
+                className="pp-btn pp-btn-secondary"
+                onClick={() => {
+                  handleStartChat(selectedActivity.creator_id || selectedActivity.user_id || userId);
+                  setSelectedActivity(null);
+                }}
+              >
+                Nhắn tin người tổ chức
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
