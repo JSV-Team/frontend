@@ -179,8 +179,8 @@ function Home() {
                         </div>
                         <div className="user-info">
                           <div className="user-info-top">
-                            <h2 
-                              onClick={() => navigate(`/profile/${post.user_id}`)} 
+                            <h2
+                              onClick={() => navigate(`/profile/${post.user_id}`)}
                               style={{ cursor: 'pointer' }}
                               className="clickable-username"
                             >
@@ -289,8 +289,8 @@ function Home() {
                           >
                             {isJoining ? 'Đang gửi...' : 'Tham gia'}
                           </button>
-                          <button 
-                            className="action-btn message-btn" 
+                          <button
+                            className="action-btn message-btn"
                             onClick={() => handleMessageHost(post.user_id, post.status_id)}
                           >
                             Nhắn tin

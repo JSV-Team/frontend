@@ -147,8 +147,8 @@ function CreatePost({ onPostCreated }) {
         <div className="form-row-3">
           <div className="form-group full-width">
             <label>Địa điểm</label>
-            <div 
-              className="input-with-icon" 
+            <div
+              className="input-with-icon"
               onClick={() => setShowLocationPicker(true)}
               style={{ cursor: 'pointer' }}
             >
@@ -240,7 +240,7 @@ function CreatePost({ onPostCreated }) {
       {error && <p className="error-message">{error}</p>}
 
       {showLocationPicker && (
-        <LocationPicker 
+        <LocationPicker
           initialLocation={location}
           onClose={() => setShowLocationPicker(false)}
           onConfirm={(addr) => {
