@@ -106,13 +106,15 @@ function useMatchSocket(userId, token) {
 
         // match:found event handler - Match found
         socket.on('match:found', (data) => {
+          console.log('🎉 match:found event received:', data);
+          
           setQueueState(prev => ({
             ...prev,
             status: 'matched',
           }));
           setMatchData({
             matchedUser: data.matchedUser,
-            interestScore: data.interestScore,
+            interestScore: data.score || data.interestScore || 0,
             commonInterests: data.commonInterests,
             conversationId: data.conversationId,
           });

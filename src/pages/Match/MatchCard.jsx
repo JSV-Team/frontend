@@ -27,9 +27,12 @@ function MatchCard({
         >
           <div className="match-avatar-inner">
             <img
-              src={matchedUser.avatar_url || '/default-avatar.png'}
+              src={matchedUser.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedUser.username || 'User')}&background=random&size=200`}
               alt={matchedUser.username}
               className="match-avatar-image"
+              onError={(e) => {
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedUser.username || 'User')}&background=random&size=200`;
+              }}
             />
           </div>
           <div className="match-avatar-border" />

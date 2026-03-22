@@ -162,18 +162,34 @@ function MatchContainer() {
 
   // Handle message match
   const handleMessageMatch = () => {
-    if (matchData?.conversationId) {
-      navigate(`/chat/${matchData.conversationId}`);
-    } else if (matchContext.conversationId) {
-      navigate(`/chat/${matchContext.conversationId}`);
+    const conversationId = matchData?.conversationId || matchContext.conversationId;
+    if (conversationId) {
+      // Navigate to Friends page with conversation ID as state (using openChatId key)
+      navigate('/friends', { state: { openChatId: conversationId } });
+    } else {
+      // If no conversation ID, just go to Friends page
+      navigate('/friends');
     }
   };
 
   // Handle view profile
   const handleViewProfile = () => {
     const matchedUser = matchData?.matchedUser || matchContext.matchedUser;
+    console.log('🔍 handleViewProfile - matchedUser:', matchedUser);
+    
     if (matchedUser?.user_id) {
+      console.log('✅ Navigating to profile:', matchedUser.user_id);
       navigate(`/profile/${matchedUser.user_id}`);
+    } else {
+      console.log('❌ No user_id found in matchedUser');
+      // Try alternative field names
+      const userId = matchedUser?.userId || matchedUser?.id;
+      if (userId) {
+        console.log('✅ Found alternative userId:', userId);
+        navigate(`/profile/${userId}`);
+      } else {
+        console.error('❌ Cannot navigate - no user ID found');
+      }
     }
   };
 
