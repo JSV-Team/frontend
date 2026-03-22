@@ -52,11 +52,15 @@ export const profileService = {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
     
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Vui lòng đăng nhập để cập nhật profile');
+    
     try {
-      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}`, {
+      const response = await fetch(`${API_BASE_URL}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(profileData),
       });
@@ -95,13 +99,16 @@ export const profileService = {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
     
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Vui lòng đăng nhập để cập nhật sở thích');
+    
     try {
       // Note: Backend defines 'PUT /api/profile/interests' that requires auth middleware headers
       const response = await fetch(`${API_BASE_URL}/profile/interests`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-user-id': activeUserId.toString()
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ interests }),
       });
@@ -116,12 +123,20 @@ export const profileService = {
 
   // Upload ảnh profile
   uploadAvatar: async (file) => {
+    const token = localStorage.getItem('token');
+    
     try {
       const formData = new FormData();
       formData.append('avatar', file);
 
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
         method: 'POST',
+        headers: headers,
         body: formData,
       });
       const data = await response.json();
