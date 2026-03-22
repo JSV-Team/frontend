@@ -28,7 +28,7 @@ export default function ProfileEdit() {
       bio: profile?.bio || "",
       full_name: profile?.full_name || profile?.fullName || "",
       gender: profile?.gender || "",
-      dob: profile?.dob ? profile.dob.split('T')[0] : "",
+      dob: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-CA') : "",
       location: profile?.location || "",
       email: profile?.email || "",
     });
@@ -38,7 +38,7 @@ export default function ProfileEdit() {
     bio: profile?.bio || "",
     full_name: profile?.full_name || profile?.fullName || "",
     gender: profile?.gender || "",
-    dob: profile?.dob ? profile.dob.split('T')[0] : "",
+    dob: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-CA') : "",
     location: profile?.location || "",
     email: profile?.email || "",
     interests: Array.isArray(interests) ? interests : [],

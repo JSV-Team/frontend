@@ -194,7 +194,7 @@ const UserManagement = () => {
                   <div className="action-btns">
                     <button
                       className={`action-btn-text ${user.status === 'banned' ? 'warning' : ''}`}
-                      title={user.status === 'banned' ? 'Bỏ cấm' : 'Cấm người dùng'}
+                      title={user.status === 'banned' ? 'Mở cấm người dùng' : 'Cấm người dùng'}
                       onClick={() => handleToggleStatus(user.id, user.status)}
                     >
                       {user.status === 'banned' ? 'Mở cấm' : 'Cấm'}
@@ -206,6 +206,8 @@ const UserManagement = () => {
                     >
                       {user.isLocked ? 'Mở khóa' : 'Khóa'}
                     </button>
+
+
                   </div>
                 </td>
               </tr>
