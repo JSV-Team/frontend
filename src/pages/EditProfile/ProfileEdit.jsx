@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import InterestChips from "../../components/InterestChips/InterestChips";
+import Toast from "../../components/Toast/Toast";
 import { profileService } from "../../services/profileService";
 import "./ProfileEdit.css";
 
@@ -153,15 +154,18 @@ export default function ProfileEdit() {
 
   return (
     <div className="pe-wrap">
+      {msg.text && (
+        <Toast
+          type={msg.type === 'danger' ? 'error' : msg.type}
+          message={msg.text}
+          onClose={() => setMsg({ type: "", text: "" })}
+          duration={3000}
+        />
+      )}
+      
       <div className="card pe-card">
         <div className="card-body">
           <h4 className="pe-title">Thông tin chung</h4>
-          
-          {msg.text && (
-            <div className={`alert alert-${msg.type} pe-alert`} role="alert">
-              {msg.text}
-            </div>
-          )}
 
           <div className="pe-flex-container">
             {/* Cột trái: Avatar */}
@@ -272,9 +276,27 @@ export default function ProfileEdit() {
 
       <div className="card pe-card mt-4">
         <div className="card-body">
-          <h4 className="pe-title">Sở thích</h4>
           <div className="pe-interests-content">
-            <InterestChips value={interests} onChange={setInterests} />
+            <InterestChips 
+              value={interests} 
+              onChange={setInterests}
+              onSave={async (newInterests) => {
+                try {
+                  await profileService.updateInterests(USER_ID, newInterests);
+                  // Update localStorage user object
+                  const userString = localStorage.getItem("user");
+                  if (userString) {
+                    const userData = JSON.parse(userString);
+                    userData.interests = newInterests;
+                    localStorage.setItem("user", JSON.stringify(userData));
+                  }
+                  console.log('✅ Interests saved automatically');
+                } catch (error) {
+                  console.error('❌ Failed to save interests:', error);
+                  throw error;
+                }
+              }}
+            />
           </div>
         </div>
       </div>
