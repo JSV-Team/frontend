@@ -59,9 +59,13 @@ function Header() {
     // Hỏi nhẹ một câu cho chắc chắn, tránh lỡ tay bấm nhầm
     const isConfirm = window.confirm("Bạn có chắc chắn muốn đăng xuất không?");
     if (isConfirm) {
+      // Clear all localStorage data
       localStorage.removeItem("user"); // Tịch thu vé
       localStorage.removeItem("token"); // Thu hồi mã xác thực
-      navigate("/login"); // Đuổi ra cửa
+      localStorage.removeItem("role"); // Clear role
+      
+      // Force reload to clear all state and disconnect sockets
+      window.location.href = "/login";
     }
   };
 
