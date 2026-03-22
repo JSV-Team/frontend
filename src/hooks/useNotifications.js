@@ -3,7 +3,7 @@ import notificationService from '../services/notificationService';
 
 function useNotifications(initialUserId = null) {
   const userString = localStorage.getItem('user');
-  const currentUser = userString ? JSON.parse(userString) : null;
+  const currentUser = userString && userString !== 'undefined' ? JSON.parse(userString) : null;
   const effectiveUserId = initialUserId || currentUser?.user_id || currentUser?.id || null;
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);

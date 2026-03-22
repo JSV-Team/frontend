@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;

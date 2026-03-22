@@ -14,7 +14,7 @@ const PendingGroups = ({ reload = 0 }) => {
     const userString = localStorage.getItem('user');
     let currentUserId = null;
 
-    if (userString) {
+    if (userString && userString !== "undefined") {
       try {
         const currentUser = JSON.parse(userString);
         // Lấy user_id, dự phòng trường hợp API trả về là id

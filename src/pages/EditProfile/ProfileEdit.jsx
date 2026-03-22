@@ -69,11 +69,11 @@ export default function ProfileEdit() {
 
       // 2. Update profile with new avatar URL
       await profileService.updateProfile(USER_ID, { avatar_url: newAvatarUrl });
-      
+
       // 3. Refresh local state
       const fresh = await profileService.getProfile(USER_ID);
       setProfile(fresh);
-      
+
       // --- THE REMEDY ---
       // Update localStorage with the new avatar_url so Header can read it
       const userString = localStorage.getItem("user");
@@ -84,7 +84,7 @@ export default function ProfileEdit() {
         // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
       }
-      
+
       setMsg({ type: "success", text: "Cập nhật ảnh đại diện thành công! ✨" });
       setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
     } catch (err) {
@@ -162,7 +162,7 @@ export default function ProfileEdit() {
           duration={3000}
         />
       )}
-      
+
       <div className="card pe-card">
         <div className="card-body">
           <h4 className="pe-title">Thông tin chung</h4>
@@ -182,10 +182,10 @@ export default function ProfileEdit() {
                   <span>{uploading ? "..." : "Thay đổi ảnh"}</span>
                 </div>
               </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                style={{ display: "none" }} 
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
                 accept="image/*"
                 onChange={handleAvatarChange}
               />
@@ -221,7 +221,7 @@ export default function ProfileEdit() {
               <div className="pe-form-row mb-3">
                 <label className="pe-label-h">Giới tính</label>
                 <div className="pe-input-field">
-                  <select 
+                  <select
                     className="form-select pe-input"
                     value={form.gender}
                     onChange={(e) => onChange("gender", e.target.value)}
@@ -277,8 +277,8 @@ export default function ProfileEdit() {
       <div className="card pe-card mt-4">
         <div className="card-body">
           <div className="pe-interests-content">
-            <InterestChips 
-              value={interests} 
+            <InterestChips
+              value={interests}
               onChange={setInterests}
               onSave={async (newInterests) => {
                 try {

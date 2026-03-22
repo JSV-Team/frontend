@@ -20,7 +20,7 @@ const authHeaders = (extraHeaders = {}) => {
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;
@@ -34,7 +34,7 @@ export const profileService = {
   getProfile: async (userId) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
-    
+
     try {
       const loggedInUserId = getUserId();
       let url = `${API_BASE_URL}/profile/${activeUserId}`;
@@ -55,12 +55,12 @@ export const profileService = {
       throw error;
     }
   },
-  
+
   // Lấy thông tin public profile của user khác
   getPublicProfile: async (userId, myId) => {
     try {
-      const url = myId 
-        ? `${API_BASE_URL}/profile/${userId}?myId=${myId}` 
+      const url = myId
+        ? `${API_BASE_URL}/profile/${userId}?myId=${myId}`
         : `${API_BASE_URL}/profile/${userId}`;
       const response = await fetch(url);
       const result = await response.json();
@@ -77,10 +77,10 @@ export const profileService = {
   updateProfile: async (userId, profileData) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
-    
+
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Vui lòng đăng nhập để cập nhật profile');
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/profile`, {
         method: 'PUT',
@@ -103,13 +103,13 @@ export const profileService = {
   getInterests: async (userId) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
-    
+
     try {
       // GET /api/profile/:userId/interests là public route
       const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}/interests`);
       const result = await response.json();
       if (!response.ok) throw result;
-      
+
       // Backend trả về { success, data: [...] }
       return result.data || result;
     } catch (error) {
@@ -123,10 +123,10 @@ export const profileService = {
   updateInterests: async (userId, interests) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
-    
+
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Vui lòng đăng nhập để cập nhật sở thích');
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/profile/interests`, {
         method: 'PUT',
@@ -148,7 +148,7 @@ export const profileService = {
   // Upload ảnh profile
   uploadAvatar: async (file) => {
     const token = localStorage.getItem('token');
-    
+
     try {
       const formData = new FormData();
       formData.append('avatar', file);
@@ -180,7 +180,7 @@ export const profileService = {
         method: 'POST',
         headers: authHeaders(),
       });
-      
+
       const contentType = response.headers.get('content-type');
       let result;
       if (contentType && contentType.includes('application/json')) {
@@ -189,7 +189,7 @@ export const profileService = {
         const text = await response.text();
         throw new Error(`Lỗi Server (${response.status}): ${text.slice(0, 100)}...`);
       }
-      
+
       if (!response.ok) throw result;
       return result;
     } catch (error) {
@@ -206,7 +206,7 @@ export const profileService = {
         method: 'DELETE',
         headers: authHeaders(),
       });
-      
+
       const contentType = response.headers.get('content-type');
       let result;
       if (contentType && contentType.includes('application/json')) {
@@ -215,7 +215,7 @@ export const profileService = {
         const text = await response.text();
         throw new Error(`Lỗi Server (${response.status}): ${text.slice(0, 100)}...`);
       }
-      
+
       if (!response.ok) throw result;
       return result;
     } catch (error) {

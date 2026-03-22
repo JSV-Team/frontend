@@ -11,10 +11,9 @@ import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
 import './Home.css';
 
-// Helper func lấy user ID từ danh sách Auth (localStorage)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;

@@ -5,7 +5,7 @@ import './PendingApproval.css';
 // Lấy user ID từ localStorage giống như ListWaitingGroup
 const getUserId = () => {
     const userString = localStorage.getItem('user');
-    if (userString) {
+    if (userString && userString !== "undefined") {
         try {
             const userObj = JSON.parse(userString);
             return userObj?.user_id || userObj?.id || null;

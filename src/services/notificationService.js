@@ -3,7 +3,7 @@ const API_BASE_URL = '/api';
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;

@@ -5,13 +5,17 @@ import ProfileLayout from '../layouts/ProfileLayout';
 
 export default function ProfileViewSelector() {
   const { userId } = useParams();
-  
+
   // Get current logged-in user ID
   const userStr = localStorage.getItem('user');
   let myId = null;
-  if (userStr) {
-    const user = JSON.parse(userStr);
-    myId = (user.user_id || user.id || user.USER_ID)?.toString();
+  if (userStr && userStr !== 'undefined') {
+    try {
+      const user = JSON.parse(userStr);
+      myId = (user.user_id || user.id || user.USER_ID)?.toString();
+    } catch (e) {
+      console.error("ProfileViewSelector: Error parsing user", e);
+    }
   }
 
   // If viewing own profile, use the owner's layout (with Sidebar and Edit/Rep/Posts tabs)

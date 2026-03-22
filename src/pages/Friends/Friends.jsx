@@ -8,7 +8,7 @@ import './Friends.css';
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;
@@ -21,7 +21,7 @@ const getUserId = () => {
 function Friends() {
   const location = useLocation();
   const userString = localStorage.getItem('user');
-  const currentUser = userString ? JSON.parse(userString) : null;
+  const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
   const [conversations, setConversations] = useState([]);
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
@@ -69,14 +69,14 @@ function Friends() {
   useEffect(() => {
     const currentUserId = getUserId();
     const token = localStorage.getItem('token');
-    
+
     if (!currentUserId || !token) {
       console.error('Missing userId or token for socket connection');
       return;
     }
-    
+
     const newSocket = io('http://localhost:3001', {
-      auth: { 
+      auth: {
         userId: currentUserId,
         token: token
       },
@@ -87,7 +87,7 @@ function Friends() {
     newSocket.on('connect', () => {
       console.log('✅ Socket connected:', newSocket.id);
     });
-    
+
     newSocket.on('connect_error', (error) => {
       console.error('❌ Socket connection error:', error);
     });
@@ -314,7 +314,7 @@ function Friends() {
               >
                 <div className="avatar-container">
                   <img
-                    src={conv.conversation_type === 'private' 
+                    src={conv.conversation_type === 'private'
                       ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `http://localhost:3001${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
                       : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
                     }
@@ -403,8 +403,8 @@ function Friends() {
                             {msg.content && <div style={{ marginTop: '5px' }}>{msg.content}</div>}
                           </div>
                         ) : msg.msg_type === 'location' ? (
-                          <div 
-                            className="message-location-content" 
+                          <div
+                            className="message-location-content"
                             style={{ cursor: 'pointer' }}
                             onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(msg.content)}`, '_blank')}
                             title="Bấm để xem trên Google Maps"
@@ -444,28 +444,28 @@ function Friends() {
 
               <div className="chat-input-wrapper">
                 <div className="chat-input-tools">
-                  <PlusCircle 
-                    size={22} 
-                    cursor="pointer" 
-                    className={`input-tool-icon ${showMoreTools ? 'active' : ''}`} 
+                  <PlusCircle
+                    size={22}
+                    cursor="pointer"
+                    className={`input-tool-icon ${showMoreTools ? 'active' : ''}`}
                     onClick={() => setShowMoreTools(!showMoreTools)}
                     style={{ transition: 'transform 0.3s ease', transform: showMoreTools ? 'rotate(45deg)' : 'rotate(0)' }}
                   />
-                  
+
                   {showMoreTools && (
                     <div className="extra-tools-group">
                       <ImageIcon size={22} cursor="pointer" className="input-tool-icon" onClick={() => fileInputRef.current?.click()} />
                       <MapPin size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowLocationPicker(true)} title="Gửi vị trí" />
-                      
+
                       <div className="emoji-picker-wrapper">
                         <Smile size={22} cursor="pointer" className="input-tool-icon" onClick={() => setShowEmojiPicker(val => !val)} title="Biểu tượng cảm xúc" />
                         {showEmojiPicker && (
                           <div className="emoji-picker-container">
-                            <EmojiPicker 
+                            <EmojiPicker
                               onEmojiClick={onEmojiClick}
                               autoFocusSearch={false}
                               searchDisabled={true}
-                              previewConfig={{showPreview: false}}
+                              previewConfig={{ showPreview: false }}
                               width={300}
                               height={350}
                             />
@@ -483,7 +483,7 @@ function Friends() {
                     onChange={handleImageUpload}
                   />
                 </div>
-                
+
                 <input
                   type="text"
                   className="chat-input"
@@ -551,7 +551,7 @@ function Friends() {
             )}
 
             {showLocationPicker && (
-              <LocationPicker 
+              <LocationPicker
                 onClose={() => setShowLocationPicker(false)}
                 onConfirm={handleSendLocation}
               />
