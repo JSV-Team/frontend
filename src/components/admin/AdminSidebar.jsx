@@ -4,7 +4,6 @@ import {
   Users,
   FileText,
   BarChart3,
-  Shield,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -15,7 +14,6 @@ const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
   { to: "/admin/users", icon: Users, label: "Quản lý User" },
   { to: "/admin/posts", icon: FileText, label: "Quản lý Bài viết" },
-  { to: "/admin/reports", icon: Shield, label: "Báo cáo vi phạm" },
   { to: "/admin/statistics", icon: BarChart3, label: "Thống kê" },
   { to: "/admin/settings", icon: Settings, label: "Cài đặt" },
 ];

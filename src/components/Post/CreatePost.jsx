@@ -5,7 +5,7 @@ import uploadService from '../../services/uploadService';
 import LocationPicker from '../common/LocationPicker';
 import './Post.css';
 
-function CreatePost({ onPostCreated }) {
+function CreatePost({ onPostCreated, isProfilePost }) {
   const userString = localStorage.getItem('user');
   const currentUser = userString ? JSON.parse(userString) : null;
   const [title, setTitle] = useState('');
@@ -97,7 +97,8 @@ function CreatePost({ onPostCreated }) {
       location,
       max_participants: parseInt(maxParticipants) || 0,
       duration_minutes: parseInt(duration) || 0,
-      media: imageUrl ? [{ url: imageUrl }] : []
+      media: imageUrl ? [{ url: imageUrl }] : [],
+      isProfilePost: !!isProfilePost
     };
     createPost(postData);
   };
