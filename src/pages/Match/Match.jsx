@@ -1,11 +1,12 @@
 import React from 'react';
+import { MatchProvider } from '../../contexts/MatchContext';
+import MatchContainer from './MatchContainer';
 
 function Match() {
   return (
-    <div className="match-page">
-      <h1>Match</h1>
-      <p>Find and connect with people</p>
-    </div>
+    <MatchProvider>
+      <MatchContainer />
+    </MatchProvider>
   );
 }
 

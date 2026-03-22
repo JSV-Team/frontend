@@ -68,14 +68,28 @@ function Friends() {
   // Khởi tạo Socket
   useEffect(() => {
     const currentUserId = getUserId();
+    const token = localStorage.getItem('token');
+    
+    if (!currentUserId || !token) {
+      console.error('Missing userId or token for socket connection');
+      return;
+    }
+    
     const newSocket = io('http://localhost:3001', {
-      auth: { userId: currentUserId }, // Gửi kèm userId để server biết ai
+      auth: { 
+        userId: currentUserId,
+        token: token
+      },
     });
 
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
+      console.log('✅ Socket connected:', newSocket.id);
+    });
+    
+    newSocket.on('connect_error', (error) => {
+      console.error('❌ Socket connection error:', error);
     });
 
     // Lắng nghe tin nhắn mới tới

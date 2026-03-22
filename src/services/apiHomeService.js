@@ -52,13 +52,15 @@ export const apiHomeService = {
   // Join activity
   joinActivity: async (activityId, userId) => {
     const activeUserId = userId || getUserId();
+    const token = localStorage.getItem('token');
     try {
       const response = await fetch(`${API_BASE_URL}/activities/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ activityId, userId: activeUserId }),
+        body: JSON.stringify({ activityId }),
       });
       return await response.json();
     } catch (error) {

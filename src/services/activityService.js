@@ -38,12 +38,14 @@ export const activityService = {
   // Join activity
   joinActivity: async (activityId, userId) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/activities/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ activityId, userId }),
+        body: JSON.stringify({ activityId }),
       });
       return await response.json();
     } catch (error) {

@@ -75,10 +75,19 @@ export const profileService = {
   // Cập nhật thông tin profile
   // Backend route: PUT /api/profile (KHÔNG có :userId, dùng verifyToken lấy userId từ JWT)
   updateProfile: async (userId, profileData) => {
+    const activeUserId = userId || getUserId();
+    if (!activeUserId) throw new Error('No user id');
+    
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Vui lòng đăng nhập để cập nhật profile');
+    
     try {
       const response = await fetch(`${API_BASE_URL}/profile`, {
         method: 'PUT',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify(profileData),
       });
       const result = await response.json();
@@ -112,10 +121,19 @@ export const profileService = {
   // Cập nhật interests
   // Backend route: PUT /api/profile/interests (dùng verifyToken)
   updateInterests: async (userId, interests) => {
+    const activeUserId = userId || getUserId();
+    if (!activeUserId) throw new Error('No user id');
+    
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Vui lòng đăng nhập để cập nhật sở thích');
+    
     try {
       const response = await fetch(`${API_BASE_URL}/profile/interests`, {
         method: 'PUT',
-        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ interests }),
       });
       const data = await response.json();
@@ -129,13 +147,20 @@ export const profileService = {
 
   // Upload ảnh profile
   uploadAvatar: async (file) => {
+    const token = localStorage.getItem('token');
+    
     try {
       const formData = new FormData();
       formData.append('avatar', file);
 
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
         method: 'POST',
-        headers: authHeaders(), // Không set Content-Type, để browser tự set vì có FormData
+        headers: headers,
         body: formData,
       });
       const data = await response.json();
