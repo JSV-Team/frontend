@@ -1,7 +1,22 @@
 // New Profile Service - API calls related to profile
-// Using correct backend routes: /api/profile/:userId
+// Using correct backend routes: /api/profile
 
 const API_BASE_URL = '/api';
+
+// Helper: lấy JWT token từ localStorage
+const getToken = () => {
+  return localStorage.getItem('token');
+};
+
+// Helper: tạo Authorization header
+const authHeaders = (extraHeaders = {}) => {
+  const token = getToken();
+  const headers = { ...extraHeaders };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -21,7 +36,17 @@ export const profileService = {
     if (!activeUserId) throw new Error('No user id');
     
     try {
-      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}`);
+      const loggedInUserId = getUserId();
+      let url = `${API_BASE_URL}/profile/${activeUserId}`;
+      let options = {};
+
+      // Nếu đang lấy profile của chính mình, phải dùng auth route để lấy email chi tiết
+      if (String(activeUserId) === String(loggedInUserId)) {
+        url = `${API_BASE_URL}/profile`;
+        options = { headers: authHeaders() };
+      }
+
+      const response = await fetch(url, options);
       const result = await response.json();
       if (!response.ok) throw result;
       return result.data || result; // Return .data if available
@@ -48,6 +73,7 @@ export const profileService = {
   },
 
   // Cập nhật thông tin profile
+  // Backend route: PUT /api/profile (KHÔNG có :userId, dùng verifyToken lấy userId từ JWT)
   updateProfile: async (userId, profileData) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
@@ -79,15 +105,13 @@ export const profileService = {
     if (!activeUserId) throw new Error('No user id');
     
     try {
-      // The backend does not have a specific GET /profile/:id/interests route.
-      // We will fetch the full profile and extract the 'interests' property from it.
-      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}`);
+      // GET /api/profile/:userId/interests là public route
+      const response = await fetch(`${API_BASE_URL}/profile/${activeUserId}/interests`);
       const result = await response.json();
       if (!response.ok) throw result;
       
-      const profileData = result.data || result;
-      // Trả về thuộc tính interests nếu có, không thì trả rỗng mảng
-      return profileData.interests || [];
+      // Backend trả về { success, data: [...] }
+      return result.data || result;
     } catch (error) {
       console.error('Lỗi khi lấy interests:', error);
       throw error;
@@ -95,6 +119,7 @@ export const profileService = {
   },
 
   // Cập nhật interests
+  // Backend route: PUT /api/profile/interests (dùng verifyToken)
   updateInterests: async (userId, interests) => {
     const activeUserId = userId || getUserId();
     if (!activeUserId) throw new Error('No user id');
@@ -103,7 +128,6 @@ export const profileService = {
     if (!token) throw new Error('Vui lòng đăng nhập để cập nhật sở thích');
     
     try {
-      // Note: Backend defines 'PUT /api/profile/interests' that requires auth middleware headers
       const response = await fetch(`${API_BASE_URL}/profile/interests`, {
         method: 'PUT',
         headers: {
@@ -149,14 +173,12 @@ export const profileService = {
   },
 
   // Theo dõi người dùng
+  // Backend route: POST /api/profile/:userId/follow (dùng verifyToken)
   followUser: async (userId, myId) => {
-    if (!myId) throw new Error('Vui lòng đăng nhập để theo dõi');
     try {
       const response = await fetch(`${API_BASE_URL}/profile/${userId}/follow`, {
         method: 'POST',
-        headers: {
-          'x-auth-user-id': myId.toString()
-        }
+        headers: authHeaders(),
       });
       
       const contentType = response.headers.get('content-type');
@@ -177,14 +199,12 @@ export const profileService = {
   },
 
   // Bỏ theo dõi người dùng
+  // Backend route: DELETE /api/profile/:userId/unfollow (dùng verifyToken)
   unfollowUser: async (userId, myId) => {
-    if (!myId) throw new Error('Vui lòng đăng nhập để bỏ theo dõi');
     try {
       const response = await fetch(`${API_BASE_URL}/profile/${userId}/unfollow`, {
         method: 'DELETE',
-        headers: {
-          'x-auth-user-id': myId.toString()
-        }
+        headers: authHeaders(),
       });
       
       const contentType = response.headers.get('content-type');
@@ -203,6 +223,24 @@ export const profileService = {
       throw error;
     }
   },
+
+  // Đổi mật khẩu
+  // Backend route: PUT /api/profile/password (dùng verifyToken)
+  changePassword: async (currentPassword, newPassword) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/password`, {
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi đổi mật khẩu:', error);
+      throw error;
+    }
+  },
 };
 
 export default profileService;
@@ -217,4 +255,3 @@ export const getProfileFromLocalStorage = () => {
   const saved = localStorage.getItem('userProfile');
   return saved ? JSON.parse(saved) : null;
 };
-

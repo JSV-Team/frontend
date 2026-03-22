@@ -206,171 +206,274 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Violation Pie Chart */}
-        <div className="pie-section glass-card">
-          <div className="section-header">
+        {/* Violation Chart — vertical stack */}
+        <div className="pie-section glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* 1. Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <h3 className="section-title">Báo cáo vi phạm</h3>
+            <span style={{
+              fontSize: '11px', fontWeight: 700, color: '#6366f1',
+              background: '#eef2ff', padding: '3px 10px', borderRadius: '99px'
+            }}>Theo loại</span>
           </div>
-          <div className="pie-container" style={{ height: '220px' }}>
+
+          {/* 2. Donut chart — căn giữa */}
+          <div style={{ width: '160px', height: '160px', position: 'relative', margin: '0 auto 18px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={data.reportData}
+                  data={[
+                    { name: 'Spam',               value: data.reportData[0]?.value || 35 },
+                    { name: 'Nội dung độc hại',  value: data.reportData[1]?.value || 25 },
+                    { name: 'Fake news',          value: data.reportData[2]?.value || 20 },
+                    { name: 'Vi phạm quy chuẩn', value: data.reportData[3]?.value || 20 },
+                  ]}
                   cx="50%" cy="50%"
-                  innerRadius={60} outerRadius={85}
-                  paddingAngle={5}
+                  innerRadius={48} outerRadius={70}
+                  paddingAngle={3}
                   dataKey="value"
+                  stroke="none"
+                  startAngle={90}
+                  endAngle={-270}
                 >
-                  {data.reportData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
+                  <Cell fill="#ef4444" />
+                  <Cell fill="#f59e0b" />
+                  <Cell fill="#3b82f6" />
+                  <Cell fill="#8b5cf6" />
                 </Pie>
-                <Tooltip />
+                <Tooltip
+                  contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', fontSize: '12px', padding: '8px 12px' }}
+                  formatter={(value) => [`${value}%`, '']}
+                />
               </PieChart>
             </ResponsiveContainer>
+            {/* Center label */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              pointerEvents: 'none'
+            }}>
+              <span style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>
+                {(data.reportData[0]?.value || 35) + (data.reportData[1]?.value || 25) +
+                 (data.reportData[2]?.value || 20) + (data.reportData[3]?.value || 20)}
+              </span>
+              <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600, marginTop: '2px' }}>Tổng %</span>
+            </div>
           </div>
-          <div className="pie-legend-new">
-            {data.reportData.map((entry, idx) => (
-              <div key={idx} className="legend-row">
-                <div className="legend-info">
-                  <div className="legend-dot-new" style={{ backgroundColor: entry.color }}></div>
-                  <span>{entry.name}</span>
+
+          {/* 3. Legend + mini bars */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[
+              { name: 'Spam',               value: data.reportData[0]?.value || 35, color: '#ef4444' },
+              { name: 'Nội dung độc hại',  value: data.reportData[1]?.value || 25, color: '#f59e0b' },
+              { name: 'Fake news',          value: data.reportData[2]?.value || 20, color: '#3b82f6' },
+              { name: 'Vi phạm quy chuẩn', value: data.reportData[3]?.value || 20, color: '#8b5cf6' },
+            ].map((item, idx) => {
+              const max = Math.max(35, 25, 20, 20);
+              return (
+                <div key={idx}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                      <div style={{ width: '9px', height: '9px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
+                      <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#475569' }}>{item.name}</span>
+                    </div>
+                    <span style={{ fontSize: '12.5px', fontWeight: 800, color: item.color }}>{item.value}%</span>
+                  </div>
+                  <div style={{ height: '5px', borderRadius: '99px', background: '#f1f5f9', overflow: 'hidden' }}>
+                    <div style={{
+                      height: '100%',
+                      width: `${(item.value / max) * 100}%`,
+                      background: `linear-gradient(90deg, ${item.color}88, ${item.color})`,
+                      borderRadius: '99px',
+                      transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
+                    }} />
+                  </div>
                 </div>
-                <span className="legend-val">{entry.value}%</span>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+
+
+      {/* Row 3: Matching Management */}
+      <div className="bottom-content-grid" style={{ gridTemplateColumns: '1fr' }}>
+        <div className="glass-card" style={{ padding: '28px' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
+              }}>
+                <Users size={20} />
+              </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>Quản lý Ghép đôi</h3>
+                <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>Tổng quan hoạt động ghép đôi</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Stat Cards Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
+            {[
+              { label: 'Đang chờ', value: data.matchData?.stats?.pending || 0, icon: <Clock size={18} />, grad: 'linear-gradient(135deg, #f59e0b, #f97316)', light: '#fff7ed', text: '#d97706' },
+              { label: 'Hoạt động', value: data.matchData?.stats?.active || 0, icon: <Users size={18} />, grad: 'linear-gradient(135deg, #10b981, #06b6d4)', light: '#f0fdf4', text: '#059669' },
+              { label: 'Từ chối', value: data.matchData?.stats?.rejected || 0, icon: <User size={18} />, grad: 'linear-gradient(135deg, #ef4444, #f43f5e)', light: '#fff1f2', text: '#e11d48' },
+              { label: 'Kết thúc', value: data.matchData?.stats?.ended || 0, icon: <Users size={18} />, grad: 'linear-gradient(135deg, #64748b, #94a3b8)', light: '#f8fafc', text: '#64748b' },
+            ].map((item, idx) => (
+              <div key={idx} style={{
+                background: '#fff', borderRadius: '16px', padding: '20px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                display: 'flex', alignItems: 'center', gap: '16px',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.09)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; }}
+              >
+                <div style={{
+                  width: '44px', height: '44px', borderRadius: '12px',
+                  background: item.grad, color: '#fff', flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `0 4px 12px ${item.text}40`
+                }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{item.label}</div>
+                  <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{item.value}</div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* Row 3: Matching Management & Recent Activity */}
-      <div className="bottom-content-grid">
-        <div className="chart-section glass-card">
-          <div className="section-header" style={{ marginBottom: '20px' }}>
-            <h3 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Users size={20} /> Quản lý Ghép đôi
-            </h3>
-          </div>
+          {/* Bottom: Classification + Recent Matches */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '24px' }}>
 
-          <div className="match-stats-grid">
-            <div className="match-mini-card">
-              <div className="icon-box warning"><Clock size={16} /></div>
-              <div className="info">
-                <span>Đang chờ</span>
-                <h4>{data.matchData?.stats?.pending || 0}</h4>
-              </div>
-            </div>
-            <div className="match-mini-card">
-              <div className="icon-box success"><User size={16} /></div>
-              <div className="info">
-                <span>Hoạt động</span>
-                <h4>{data.matchData?.stats?.active || 0}</h4>
-              </div>
-            </div>
-            <div className="match-mini-card">
-              <div className="icon-box danger"><User size={16} /></div>
-              <div className="info">
-                <span>Từ chối</span>
-                <h4>{data.matchData?.stats?.rejected || 0}</h4>
-              </div>
-            </div>
-            <div className="match-mini-card">
-              <div className="icon-box muted"><Users size={16} /></div>
-              <div className="info">
-                <span>Kết thúc</span>
-                <h4>{data.matchData?.stats?.ended || 0}</h4>
-              </div>
-            </div>
-          </div>
-
-          <div className="match-body-grid">
-            <div className="match-classification">
-              <h4 className="sub-title">Phân loại ghép đôi</h4>
-              <div style={{ height: '180px', position: 'relative' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={data.matchData?.classification || []}
-                      cx="50%" cy="50%"
-                      innerRadius={50} outerRadius={70}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      <Cell fill="#3b82f6" />
-                      <Cell fill="#a855f7" />
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="pie-overlay-labels">
-                  {(data.matchData?.classification || []).map((item, idx) => (
-                    <div key={idx} className="overlay-row">
-                      <div className="label">
-                        <div className="dot" style={{ backgroundColor: idx === 0 ? '#3b82f6' : '#a855f7' }}></div>
-                        <span>{item.name}</span>
+            {/* Phân loại - horizontal bars */}
+            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px' }}>
+              <h4 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Phân loại ghép đôi</h4>
+              {(() => {
+                const cls = data.matchData?.classification || [];
+                const colors = ['linear-gradient(90deg, #6366f1, #3b82f6)', 'linear-gradient(90deg, #a855f7, #ec4899)'];
+                const clColors = ['#6366f1', '#a855f7'];
+                const total = cls.reduce((s, c) => s + c.value, 0) || 1;
+                return cls.length > 0 ? cls.map((item, idx) => {
+                  const pct = Math.round((item.value / total) * 100);
+                  return (
+                    <div key={idx} style={{ marginBottom: idx < cls.length - 1 ? '18px' : 0 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: clColors[idx] }} />
+                          <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{item.name}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 800, color: clColors[idx] }}>{item.value}</span>
+                          <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>{pct}%</span>
+                        </div>
                       </div>
-                      <span className="val">{item.value}</span>
+                      <div style={{ height: '8px', borderRadius: '99px', background: '#e2e8f0', overflow: 'hidden' }}>
+                        <div style={{
+                          height: '100%', width: `${pct}%`,
+                          background: colors[idx], borderRadius: '99px',
+                          transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
+                          boxShadow: `0 2px 6px ${clColors[idx]}55`
+                        }} />
+                      </div>
                     </div>
+                  );
+                }) : (
+                  <div style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0', fontSize: '13px' }}>Không có dữ liệu</div>
+                );
+              })()}
+
+              {/* Tổng */}
+              <div style={{
+                marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e2e8f0',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+              }}>
+                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Tổng ghép đôi</span>
+                <span style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a' }}>
+                  {(data.matchData?.classification || []).reduce((s, c) => s + c.value, 0)}
+                </span>
+              </div>
+            </div>
+
+            {/* Ghép đôi gần đây - table style */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Ghép đôi gần đây</h4>
+              <div style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                {/* Table header */}
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
+                  padding: '11px 20px', background: '#f8fafc',
+                  borderBottom: '1px solid #e2e8f0'
+                }}>
+                  {['Cặp ghép đôi', 'Thời gian', 'Trạng thái'].map(h => (
+                    <span key={h} style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{h}</span>
                   ))}
                 </div>
-              </div>
-            </div>
 
-            <div className="recent-matches">
-              <h4 className="sub-title">Ghép đôi gần đây</h4>
-              <div className="match-list-small">
-                {(data.matchData?.recent || []).map(match => (
-                  <div key={match.id} className="match-item-small">
-                    <div className="match-avatars">
-                      <img src={match.avatars?.[0] || 'https://i.pravatar.cc/150?u=1'} alt="U1" />
-                      <img src={match.avatars?.[1] || 'https://i.pravatar.cc/150?u=2'} alt="U2" />
-                    </div>
-                    <div className="match-info-content">
-                      <div className="pair-name">{match.pair}</div>
-                      <div className="pair-time">{match.time}</div>
-                    </div>
-                    <span className={`match-status-badge ${match.status ? match.status.toLowerCase().replace(/\s/g, '-') : ''}`}>
-                      {match.status}
-                    </span>
+                {/* Rows */}
+                {(data.matchData?.recent || []).length > 0 ? (
+                  (data.matchData?.recent || []).map((match, idx) => {
+                    const statusMap = {
+                      'Đang hoạt động': { bg: '#dcfce7', color: '#16a34a', dot: '#22c55e' },
+                      'Đang chờ':       { bg: '#fff7ed', color: '#d97706', dot: '#f59e0b' },
+                      'Từ chối':        { bg: '#fee2e2', color: '#dc2626', dot: '#ef4444' },
+                      'Kết thúc':       { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8' },
+                    };
+                    const s = statusMap[match.status] || statusMap['Kết thúc'];
+                    return (
+                      <div key={match.id} style={{
+                        display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
+                        padding: '14px 20px', alignItems: 'center',
+                        borderBottom: idx < (data.matchData?.recent || []).length - 1 ? '1px solid #f1f5f9' : 'none',
+                        transition: 'background 0.15s',
+                      }}
+                        onMouseEnter={e => e.currentTarget.style.background = '#fafbff'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                      >
+                        {/* Pair */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ position: 'relative', width: '44px', height: '28px', flexShrink: 0 }}>
+                            <img src={match.avatars?.[0] || `https://i.pravatar.cc/150?u=${match.id}a`}
+                              alt="" style={{ width: '28px', height: '28px', borderRadius: '8px', border: '2px solid #fff', position: 'absolute', left: 0, top: 0, objectFit: 'cover' }} />
+                            <img src={match.avatars?.[1] || `https://i.pravatar.cc/150?u=${match.id}b`}
+                              alt="" style={{ width: '28px', height: '28px', borderRadius: '8px', border: '2px solid #fff', position: 'absolute', left: '14px', top: 0, objectFit: 'cover' }} />
+                          </div>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>{match.pair}</span>
+                        </div>
+                        {/* Time */}
+                        <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{match.time}</span>
+                        {/* Status */}
+                        <div style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '6px',
+                          padding: '4px 12px', borderRadius: '99px',
+                          background: s.bg, width: 'fit-content'
+                        }}>
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: s.dot }} />
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: s.color }}>{match.status}</span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+                    Chưa có dữ liệu ghép đôi
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <div className="pie-section glass-card">
-          <div className="section-header">
-            <h3 className="section-title">Hoạt động gần đây</h3>
-          </div>
-          <div className="activity-list-new">
-            {data.recentActivities.length > 0 ? data.recentActivities.map((act, idx) => (
-              <div key={idx} className="activity-item-new">
-                <div className="activity-dot" style={{ backgroundColor: act.dotColor }}></div>
-                <div className="activity-content-new">
-                  <p><strong>{act.user}</strong> {act.action}</p>
-                  <span>{act.time}</span>
-                </div>
-              </div>
-            )) : (
-              [
-                { user: 'Nguyễn Văn A', action: 'tạo hoạt động mới', time: '5 phút trước', color: '#10b981' },
-                { user: 'Trần Thị B', action: 'bị báo cáo vi phạm', time: '12 phút trước', color: '#ef4444' },
-                { user: 'Lê Văn C', action: 'đăng ký tài khoản', time: '30 phút trước', color: '#3b82f6' },
-                { user: 'Phạm Thị D', action: 'tham gia nhóm Bóng đá', time: '1 giờ trước', color: '#6366f1' }
-              ].map((act, idx) => (
-                <div key={idx} className="activity-item-new">
-                  <div className="activity-dot" style={{ backgroundColor: act.color }}></div>
-                  <div className="activity-content-new">
-                    <p><strong>{act.user}</strong> {act.action}</p>
-                    <span>{act.time}</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
       </div>
+
 
       <style>{`
         .admin-dashboard-wrapper {

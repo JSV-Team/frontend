@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Globe,
   Shield,
   Bell,
   Save,
@@ -8,11 +7,9 @@ import {
   ShieldAlert,
   Plus,
   Trash2,
-  X
 } from 'lucide-react';
 
 const SystemSettings = () => {
-  const [loading, setLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [keywords, setKeywords] = useState([]);
@@ -20,8 +17,6 @@ const SystemSettings = () => {
   const [keywordLoading, setKeywordLoading] = useState(false);
 
   const [settings, setSettings] = useState({
-    siteName: 'VibeMatch',
-    siteDescription: 'Nền tảng kết nối những người có chung sở thích',
     autoApprove: true,
     sensitiveFilter: true,
     autoBan: false,
@@ -44,16 +39,15 @@ const SystemSettings = () => {
       const result = await response.json();
       if (result.success && result.data) {
         const dbData = result.data;
-        setSettings({
-          siteName: dbData.site_name || 'VibeMatch',
-          siteDescription: dbData.site_description || 'Nền tảng kết nối những người có chung sở thích',
-          autoApprove: dbData.auto_approve,
-          sensitiveFilter: dbData.sensitive_filter,
-          autoBan: dbData.auto_ban,
-          notifyReports: dbData.notify_reports,
-          notifyNewUsers: dbData.notify_new_users,
-          notifySuspicious: dbData.notify_suspicious,
-        });
+        setSettings(prev => ({
+          ...prev,
+          autoApprove: dbData.autoApprove !== undefined ? dbData.autoApprove === 'true' : prev.autoApprove,
+          sensitiveFilter: dbData.sensitiveFilter !== undefined ? dbData.sensitiveFilter === 'true' : prev.sensitiveFilter,
+          autoBan: dbData.autoBan !== undefined ? dbData.autoBan === 'true' : prev.autoBan,
+          notifyReports: dbData.notifyReports !== undefined ? dbData.notifyReports === 'true' : prev.notifyReports,
+          notifyNewUsers: dbData.notifyNewUsers !== undefined ? dbData.notifyNewUsers === 'true' : prev.notifyNewUsers,
+          notifySuspicious: dbData.notifySuspicious !== undefined ? dbData.notifySuspicious === 'true' : prev.notifySuspicious,
+        }));
       }
     } catch (error) {
       console.error("Error fetching settings:", error);
@@ -77,11 +71,6 @@ const SystemSettings = () => {
 
   const handleToggle = (key) => {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSettings(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
@@ -178,39 +167,7 @@ const SystemSettings = () => {
 
       <div className="settings-layout">
         <div className="settings-main">
-          {/* Section 1: Cài đặt chung */}
-          <div className="premium-glass-card settings-section">
-            <div className="section-header">
-              <div className="icon-circle bg-indigo">
-                <Globe size={20} />
-              </div>
-              <h3 className="section-title">Cài đặt chung</h3>
-            </div>
-            <div className="section-body">
-              <div className="input-group">
-                <label>Tên hệ thống</label>
-                <input
-                  type="text"
-                  name="siteName"
-                  value={settings.siteName}
-                  onChange={handleInputChange}
-                  placeholder="Nhập tên hệ thống..."
-                />
-              </div>
-              <div className="input-group">
-                <label>Mô tả</label>
-                <textarea
-                  name="siteDescription"
-                  value={settings.siteDescription}
-                  onChange={handleInputChange}
-                  placeholder="Nhập mô tả hệ thống..."
-                  rows={3}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Kiểm duyệt nội dung */}
+          {/* Section 1: Kiểm duyệt nội dung */}
           <div className="premium-glass-card settings-section">
             <div className="section-header">
               <div className="icon-circle bg-blue">
@@ -295,7 +252,7 @@ const SystemSettings = () => {
                 <h3 className="section-title">Từ khóa cấm</h3>
               </div>
             </div>
-            
+
             <p className="section-description">Quản lý danh sách từ ngữ bị cấm (BannedKeywords)</p>
 
             <form className="keyword-input-box" onSubmit={handleAddKeyword}>
@@ -397,7 +354,6 @@ const SystemSettings = () => {
           justify-content: center;
           color: #fff;
         }
-        .bg-indigo { background: linear-gradient(135deg, #6366f1, #4f46e5); }
         .bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .bg-purple { background: linear-gradient(135deg, #a855f7, #9333ea); }
         .bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
@@ -419,38 +375,6 @@ const SystemSettings = () => {
           display: flex;
           flex-direction: column;
           gap: 20px;
-        }
-
-        .input-group {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .input-group label {
-          font-size: 14px;
-          font-weight: 600;
-          color: #475569;
-        }
-
-        .input-group input, 
-        .input-group textarea {
-          padding: 12px 14px;
-          border-radius: 10px;
-          border: 1px solid #e2e8f0;
-          background: #f8fafc;
-          font-size: 14px;
-          transition: all 0.2s;
-          color: #1e293b;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .input-group input:focus, 
-        .input-group textarea:focus {
-          outline: none;
-          background: #fff;
-          border-color: #6366f1;
         }
 
         .settings-toggle-row {
