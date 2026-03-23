@@ -25,7 +25,7 @@ function Notifications() {
     const currentUserId = getUserId();
     if (!currentUserId) return;
 
-    fetch(`http://localhost:3001/api/notifications?userId=${currentUserId}`)
+    fetch(`${apiConfig.API_URL}/api/notifications?userId=${currentUserId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');

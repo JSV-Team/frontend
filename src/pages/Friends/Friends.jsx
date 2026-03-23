@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
+import apiConfig from '../../config/apiConfig';
 import './Friends.css';
 
 const getUserId = () => {
@@ -75,7 +76,7 @@ function Friends() {
       return;
     }
 
-    const newSocket = io('http://localhost:3001', {
+    const newSocket = io(apiConfig.API_URL, {
       auth: {
         userId: currentUserId,
         token: token
@@ -213,7 +214,7 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch('http://localhost:3001/api/upload/image', {
+      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
         method: 'POST',
         body: formData,
       });
@@ -315,7 +316,7 @@ function Friends() {
                 <div className="avatar-container">
                   <img
                     src={conv.conversation_type === 'private'
-                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `http://localhost:3001${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
+                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `${apiConfig.API_URL}${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
                       : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
                     }
                     alt="Avatar"
@@ -395,7 +396,7 @@ function Friends() {
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
-                              src={msg.image_url?.startsWith('http') ? msg.image_url : `http://localhost:3001${msg.image_url}`}
+                              src={msg.image_url?.startsWith('http') ? msg.image_url : `${apiConfig.API_URL}${msg.image_url}`}
                               alt="Sent image"
                               className="message-image"
                             />

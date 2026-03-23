@@ -83,7 +83,7 @@ const PostManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/admin/activities', {
+      const response = await fetch(`${apiConfig.API_URL}/api/admin/activities`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -122,7 +122,7 @@ const PostManagement = () => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3001/api/admin/activities/${id}/status`, {
+      const response = await fetch(`${apiConfig.API_URL}/api/admin/activities/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const PostManagement = () => {
           return (
             <div key={act.id} className="post-card">
               <div className="post-card__image" style={{
-                backgroundImage: act.image_url ? `url(${act.image_url.startsWith('http') ? act.image_url : 'http://localhost:3001' + act.image_url})` : 'none',
+                backgroundImage: act.image_url ? `url(${act.image_url.startsWith('http') ? act.image_url : apiConfig.API_URL + act.image_url})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 position: 'relative'
@@ -334,7 +334,7 @@ const PostManagement = () => {
               width: '100%',
               height: (selectedPost.image || selectedPost.image_url) ? '250px' : '100px',
               background: (selectedPost.image || selectedPost.image_url) 
-                ? `url(${(selectedPost.image || selectedPost.image_url).startsWith('http') ? (selectedPost.image || selectedPost.image_url) : 'http://localhost:3001' + (selectedPost.image || selectedPost.image_url)}) center/cover`
+                ? `url(${(selectedPost.image || selectedPost.image_url).startsWith('http') ? (selectedPost.image || selectedPost.image_url) : apiConfig.API_URL + (selectedPost.image || selectedPost.image_url)}) center/cover`
                 : 'linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%)',
               borderTopLeftRadius: '24px',
               borderTopRightRadius: '24px',

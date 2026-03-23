@@ -9,6 +9,7 @@ import useNotifications from '../../hooks/useNotifications';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
+import apiConfig from '../../config/apiConfig';
 import './Home.css';
 
 const getUserId = () => {
@@ -255,7 +256,7 @@ function Home() {
                           {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
                           {console.log('Rendering image:', post.image_url)}
                           <img
-                            src={post.image_url.startsWith('http') ? post.image_url : `http://localhost:3001${post.image_url}`}
+                            src={post.image_url.startsWith('http') ? post.image_url : `${apiConfig.API_URL}${post.image_url}`}
                             alt="Post"
                             className="post-media-img"
                           />

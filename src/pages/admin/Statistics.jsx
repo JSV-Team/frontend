@@ -8,6 +8,7 @@ import {
   Calendar, ChevronRight, Hash, ArrowUpRight, ArrowDownRight,
   TrendingDown, PieChart, BarChart3
 } from 'lucide-react';
+import apiConfig from '../../../config/apiConfig';
 
 const Statistics = () => {
   const [loading, setLoading] = useState(true);
@@ -282,7 +283,7 @@ const Statistics = () => {
                     <div key={user.user_id} className="table-row">
                       <div className="col-user">
                         <img 
-                          src={user.avatar_url ? (user.avatar_url.startsWith('http') ? user.avatar_url : `http://localhost:3001${user.avatar_url}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
+                          src={user.avatar_url ? (user.avatar_url.startsWith('http') ? user.avatar_url : `${apiConfig.API_URL}${user.avatar_url}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
                           alt="" 
                           className="mini-avatar" 
                         />

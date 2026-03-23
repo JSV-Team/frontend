@@ -1,8 +1,9 @@
 // useMatchSocket - Socket.IO hook for real-time match events
 // Manages Socket.IO connection setup, event handlers, reconnection logic, and error handling
 import { useState, useEffect, useCallback, useRef } from 'react';
+import apiConfig from '../config/apiConfig';
 
-const SOCKET_URL = import.meta.env.VITE_WS_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_WS_URL || apiConfig.API_URL;
 const RECONNECTION_DELAY = 1000;
 const RECONNECTION_DELAY_MAX = 5000;
 const RECONNECTION_ATTEMPTS = 5;

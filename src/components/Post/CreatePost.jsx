@@ -3,6 +3,7 @@ import { MapPin, Image as ImageIcon, X } from 'lucide-react';
 import useCreatePost from '../../hooks/useCreatePost';
 import uploadService from '../../services/uploadService';
 import LocationPicker from '../common/LocationPicker';
+import apiConfig from '../../config/apiConfig';
 import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
@@ -54,7 +55,7 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch('http://localhost:3001/api/upload/image', {
+      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
         method: 'POST',
         body: formData,
       });

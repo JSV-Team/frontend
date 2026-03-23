@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
+import apiConfig from "../../config/apiConfig";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/login/register", {
+      const response = await fetch(`${apiConfig.API_URL}/api/login/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
