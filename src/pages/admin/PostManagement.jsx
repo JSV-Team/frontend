@@ -4,6 +4,7 @@ import {
   Search, Eye, CheckCircle, Trash2, Image as ImageIcon,
   AlertTriangle, Clock, MapPin, Tag, User, Star, X, AlignLeft, Users
 } from 'lucide-react';
+import apiConfig from '../../config/apiConfig';
 
 const PostManagement = () => {
   const location = useLocation();
