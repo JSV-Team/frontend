@@ -8,7 +8,7 @@ import {
   Calendar, ChevronRight, Hash, ArrowUpRight, ArrowDownRight,
   TrendingDown, PieChart, BarChart3
 } from 'lucide-react';
-import apiConfig from '../../../config/apiConfig';
+import apiConfig from '../../config/apiConfig';
 
 const Statistics = () => {
   const [loading, setLoading] = useState(true);
