@@ -13,15 +13,15 @@ import './Match.css';
 
 function MatchContainer() {
   const navigate = useNavigate();
-  
+
   // Get user info from localStorage
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
   const [userInterests, setUserInterests] = useState([]);
-  
+
   // Get global match context
   const matchContext = useMatch();
-  
+
   // Setup Socket.IO connection
   const {
     isConnected,
@@ -33,7 +33,7 @@ function MatchContainer() {
     clearMatch: socketClearMatch,
     socket,
   } = useMatchSocket(userId, token);
-  
+
   // Setup queue management
   const {
     queueState,
@@ -49,13 +49,13 @@ function MatchContainer() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
-    
-    if (storedUser && storedToken) {
+
+    if (storedUser && storedUser !== "undefined" && storedToken) {
       try {
         const user = JSON.parse(storedUser);
         setUserId(user.user_id);
         setToken(storedToken);
-        
+
         // Fetch user interests from API to get latest data
         const fetchUserInterests = async () => {
           try {
@@ -68,12 +68,12 @@ function MatchContainer() {
             if (response.ok) {
               const result = await response.json();
               console.log('📦 API result received:', result);
-              
+
               // API returns { success: true, data: { user_id, interests, ... } }
               const userData = result.data || result;
               console.log('📦 User data:', userData);
               console.log('📦 Interests from API:', userData.interests);
-              
+
               if (userData.interests && Array.isArray(userData.interests)) {
                 console.log('✅ Setting user interests:', userData.interests);
                 setUserInterests(userData.interests);
@@ -92,7 +92,7 @@ function MatchContainer() {
             }
           }
         };
-        
+
         fetchUserInterests();
       } catch (err) {
         console.error('Failed to parse user data:', err);
@@ -122,7 +122,7 @@ function MatchContainer() {
     console.log('   isConnected:', isConnected);
     console.log('   userInterests:', userInterests);
     console.log('   userInterests.length:', userInterests?.length);
-    
+
     if (!isConnected) {
       matchContext.setError('Socket not connected. Please try again.');
       return;
@@ -135,7 +135,7 @@ function MatchContainer() {
 
     matchContext.setIsLoading(true);
     matchContext.setUserInterests(userInterests);
-    
+
     try {
       // Join via socket (this will emit match:join event)
       socketJoinQueue();
@@ -149,7 +149,7 @@ function MatchContainer() {
   // Handle cancel queue
   const handleCancelQueue = async () => {
     matchContext.setIsLoading(true);
-    
+
     try {
       socketCancelQueue();
       matchContext.cancelSearch();
@@ -211,7 +211,7 @@ function MatchContainer() {
     >
       <div className="match-main">
         <MatchHeader />
-        
+
         <div className="match-layout">
           <MatchContent
             matchState={matchContext.matchState}
@@ -228,8 +228,8 @@ function MatchContainer() {
             onClearMatch={handleClearMatch}
             onClearError={matchContext.clearError}
           />
-          
-          <MatchSidebar 
+
+          <MatchSidebar
             matchData={matchData || socketMatchData}
             queueInfo={queueInfo}
           />

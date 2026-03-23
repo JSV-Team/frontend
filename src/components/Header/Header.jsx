@@ -16,8 +16,12 @@ function Header() {
     // Function to load user from localStorage
     const loadUser = () => {
       const userString = localStorage.getItem('user');
-      if (userString) {
-        setCurrentUser(JSON.parse(userString));
+      if (userString && userString !== 'undefined') {
+        try {
+          setCurrentUser(JSON.parse(userString));
+        } catch (e) {
+          console.error("Header: Error parsing user", e);
+        }
       }
     };
 

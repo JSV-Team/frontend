@@ -240,7 +240,7 @@ function Navbar({ onLogin, onRegister, isLoggedIn, onGoHome }) {
       {mobileOpen && (
         <div className="navbar__mobile">
           {isLoggedIn ? (
-             appLinks.map((l) => (
+            appLinks.map((l) => (
               <a key={l.path} href={l.path} className="navbar__mobile-link" onClick={(e) => { setMobileOpen(false); handleNavLinkClick(e, l.path); }}>{l.label}</a>
             ))
           ) : (
@@ -290,7 +290,7 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
           <div className="hero__cta">
             {isLoggedIn ? (
               <button className="btn btn--accent btn--lg" onClick={onGoHome}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
                 Về trang chủ ngay
               </button>
             ) : (
@@ -517,11 +517,11 @@ function CTASection({ onRegister, isLoggedIn, onGoHome }) {
         <button className="btn btn--accent btn--lg" onClick={isLoggedIn ? onGoHome : onRegister}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             {isLoggedIn ? (
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
             ) : (
               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
             )}
-            {isLoggedIn && <polyline points="9 22 9 12 15 12 15 22"/>}
+            {isLoggedIn && <polyline points="9 22 9 12 15 12 15 22" />}
           </svg>
           {isLoggedIn ? "Về trang chủ ngay" : "Bắt đầu miễn phí ngay"}
         </button>

@@ -7,15 +7,17 @@ import { Navigate } from 'react-router-dom';
 function AdminRoute({ children }) {
     const userString = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    
+
     let user = null;
-    try {
-        user = JSON.parse(userString);
-    } catch (e) {
-        user = null;
+    if (userString && userString !== 'undefined') {
+        try {
+            user = JSON.parse(userString);
+        } catch (e) {
+            user = null;
+        }
     }
 
-    if (!user || !token) {
+    if (!user || user === 'undefined' || !token) {
         return <Navigate to="/login" replace />;
     }
 

@@ -14,6 +14,28 @@ const Statistics = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('Growth');
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportData, setReportData] = useState([]);
+  const [reportLoading, setReportLoading] = useState(false);
+
+  const fetchInterestReport = async () => {
+    try {
+      setReportLoading(true);
+      setReportModalOpen(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/admin/user-interests-report', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await response.json();
+      if (result.success) {
+        setReportData(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching interest report:", error);
+    } finally {
+      setReportLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDetailedStats = async () => {
@@ -205,7 +227,7 @@ const Statistics = () => {
               <h3 className="card-title-modern">Xếp hạng Sở thích Mới nổi</h3>
               <p className="card-subtitle-modern">Khám phá điều cộng đồng đang quan tâm nhất</p>
             </div>
-            <button className="premium-btn-outline">
+            <button className="premium-btn-outline" onClick={fetchInterestReport}>
               Xem báo cáo chi tiết <ChevronRight size={16} />
             </button>
           </div>
@@ -231,6 +253,58 @@ const Statistics = () => {
           </div>
         </div>
       </div>
+
+      {/* Detailed Interest Report Modal */}
+      {reportModalOpen && (
+        <div className="report-modal-overlay" onClick={() => setReportModalOpen(false)}>
+          <div className="report-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header-premium">
+              <div className="title-area">
+                <Hash size={24} color="#6366f1" />
+                <h3>Báo cáo chi tiết sở thích người dùng</h3>
+              </div>
+              <button className="close-modal-btn" onClick={() => setReportModalOpen(false)}>×</button>
+            </div>
+            
+            <div className="modal-body-scroll">
+              {reportLoading ? (
+                <div className="modal-loading-modern">
+                   <div className="mini-spinner"></div>
+                   <span>Đang chuẩn bị danh sách...</span>
+                </div>
+              ) : (
+                <div className="user-interest-table">
+                  <div className="table-header">
+                    <div className="col">Người dùng</div>
+                    <div className="col">Danh sách sở thích</div>
+                  </div>
+                  {reportData.map((user, i) => (
+                    <div key={user.user_id} className="table-row">
+                      <div className="col-user">
+                        <img 
+                          src={user.avatar_url ? (user.avatar_url.startsWith('http') ? user.avatar_url : `http://localhost:3001${user.avatar_url}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
+                          alt="" 
+                          className="mini-avatar" 
+                        />
+                        <div className="user-meta-mini">
+                           <span className="p-name">{user.full_name}</span>
+                           <span className="p-id">ID: #{user.user_id}</span>
+                        </div>
+                      </div>
+                      <div className="col-interests">
+                        {user.interests && user.interests.map((interest, j) => (
+                          <span key={j} className="interest-tag-mini">{interest}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {reportData.length === 0 && <p className="empty-report">Không có dữ liệu người dùng.</p>}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         .statistics-page {
@@ -552,6 +626,152 @@ const Statistics = () => {
           border-radius: 50%;
           animation: spin 1s linear infinite;
         }
+
+        /* Modal Styles */
+        .report-modal-overlay {
+          position: fixed;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(4px);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+        .report-modal-content {
+          background: #fff;
+          width: 100%;
+          max-width: 800px;
+          border-radius: 28px;
+          max-height: 85vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalScaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header-premium {
+          padding: 24px 32px;
+          border-bottom: 1px solid #f1f5f9;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .modal-header-premium .title-area {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .modal-header-premium h3 {
+          margin: 0;
+          font-size: 20px;
+          font-weight: 800;
+          color: #1e293b;
+        }
+        .close-modal-btn {
+          font-size: 28px;
+          background: none;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+          line-height: 1;
+        }
+        .modal-body-scroll {
+          padding: 32px;
+          overflow-y: auto;
+          flex: 1;
+        }
+        .user-interest-table {
+          width: 100%;
+        }
+        .table-header {
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          padding: 0 16px 12px 16px;
+          border-bottom: 2px solid #f1f5f9;
+          color: #64748b;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .table-row {
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          padding: 16px;
+          border-bottom: 1px solid #f1f5f9;
+          align-items: center;
+          transition: background 0.2s;
+        }
+        .table-row:hover { background: #f8fafc; }
+        .col-user {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .user-meta-mini {
+          display: flex;
+          flex-direction: column;
+        }
+        .user-meta-mini .p-name {
+          font-weight: 700;
+          color: #1e293b;
+          font-size: 14px;
+        }
+        .user-meta-mini .p-id {
+          font-size: 11px;
+          color: #94a3b8;
+        }
+        .mini-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          object-fit: cover;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .col-interests {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .interest-tag-mini {
+          background: #6366f110;
+          color: #6366f1;
+          padding: 4px 12px;
+          border-radius: 99px;
+          font-size: 11px;
+          font-weight: 700;
+          border: 1px solid #6366f120;
+        }
+        .modal-loading-modern {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 60px 0;
+          gap: 16px;
+          color: #64748b;
+          font-weight: 600;
+        }
+        .mini-spinner {
+          width: 32px;
+          height: 32px;
+          border: 3px solid #6366f120;
+          border-left-color: #6366f1;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+        .empty-report {
+          text-align: center;
+          padding: 40px 0;
+          color: #94a3b8;
+        }
+
         @keyframes spin {
           to { transform: rotate(360deg); }
         }

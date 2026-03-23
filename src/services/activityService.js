@@ -45,7 +45,7 @@ export const activityService = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ activityId }),
+        body: JSON.stringify({ activityId, userId }),
       });
       return await response.json();
     } catch (error) {

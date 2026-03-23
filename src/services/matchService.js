@@ -10,7 +10,7 @@ const getAuthToken = () => {
 // Helper to get user ID from localStorage
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
-  if (storedUser) {
+  if (storedUser && storedUser !== "undefined") {
     try {
       const userObj = JSON.parse(storedUser);
       return userObj?.user_id || userObj?.id || null;
@@ -32,7 +32,7 @@ const fetchWithAuth = async (url, options = {}) => {
 
   const response = await fetch(url, { ...options, headers });
   const result = await response.json();
-  
+
   if (!response.ok) {
     throw result;
   }
@@ -49,12 +49,12 @@ export const matchService = {
         userId,
         interests,
       };
-      
+
       const result = await fetchWithAuth(`${API_BASE_URL}/match/join`, {
         method: 'POST',
         body: JSON.stringify(payload),
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error joining match queue:', error);
@@ -67,12 +67,12 @@ export const matchService = {
   cancelSearch: async () => {
     try {
       const userId = getUserId();
-      
+
       const result = await fetchWithAuth(`${API_BASE_URL}/match/cancel`, {
         method: 'POST',
         body: JSON.stringify({ userId }),
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error canceling match search:', error);
@@ -87,7 +87,7 @@ export const matchService = {
       const result = await fetchWithAuth(`${API_BASE_URL}/match/history`, {
         method: 'GET',
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error fetching match history:', error);
@@ -102,7 +102,7 @@ export const matchService = {
       const result = await fetchWithAuth(`${API_BASE_URL}/match/stats`, {
         method: 'GET',
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error fetching match stats:', error);

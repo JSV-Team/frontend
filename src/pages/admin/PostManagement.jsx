@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Search, Eye, CheckCircle, Trash2, Image as ImageIcon,
-  AlertTriangle, Clock, MapPin, Tag, User, Star
+  AlertTriangle, Clock, MapPin, Tag, User, Star, X, AlignLeft, Users
 } from 'lucide-react';
 
 const PostManagement = () => {
@@ -13,6 +13,7 @@ const PostManagement = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activities, setActivities] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -219,8 +220,13 @@ const PostManagement = () => {
 
           return (
             <div key={act.id} className="post-card">
-              <div className="post-card__image">
-                <ImageIcon size={40} />
+              <div className="post-card__image" style={{
+                backgroundImage: act.image_url ? `url(${act.image_url.startsWith('http') ? act.image_url : 'http://localhost:3001' + act.image_url})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                position: 'relative'
+              }}>
+                {!act.image_url && <ImageIcon size={40} />}
                 <div className={`post-card__status ${isPublished ? 'published' : (isPending ? 'pending' : 'removed')}`}>
                   {isPublished ? 'Đã đăng' : (isPending ? 'Chờ duyệt' : 'Đã gỡ')}
                 </div>
@@ -255,7 +261,10 @@ const PostManagement = () => {
               </div>
 
               <div className="post-card__actions">
-                <button className="action-btn-full btn-view">
+                <button 
+                  className="action-btn-full btn-view"
+                  onClick={() => setSelectedPost(act)}
+                >
                   <Eye size={16} /> Xem
                 </button>
 
@@ -292,9 +301,185 @@ const PostManagement = () => {
         })}
       </div>
 
-      {filteredActivities.length === 0 && (
-        <div style={{ padding: '60px', textAlign: 'center', background: '#fff', borderRadius: '20px', marginTop: '24px', border: '1px solid var(--admin-border)' }}>
-          <p style={{ color: 'var(--admin-text-muted)', fontSize: '15px' }}>Không tìm thấy bài viết nào.</p>
+      {/* Modal View Post */}
+      {selectedPost && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.65)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          padding: '20px'
+        }} onClick={() => setSelectedPost(null)}>
+          <div style={{
+            background: 'white',
+            borderRadius: '24px',
+            width: '100%',
+            maxWidth: '650px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            position: 'relative',
+            animation: 'modalSlideUp 0.3s ease-out'
+          }} onClick={e => e.stopPropagation()}>
+            
+            {/* Header image (if any) */}
+            <div style={{
+              width: '100%',
+              height: (selectedPost.image || selectedPost.image_url) ? '250px' : '100px',
+              background: (selectedPost.image || selectedPost.image_url) 
+                ? `url(${(selectedPost.image || selectedPost.image_url).startsWith('http') ? (selectedPost.image || selectedPost.image_url) : 'http://localhost:3001' + (selectedPost.image || selectedPost.image_url)}) center/cover`
+                : 'linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%)',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              position: 'relative'
+            }}>
+              <button 
+                onClick={() => setSelectedPost(null)}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  background: 'rgba(255,255,255,0.9)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  transition: 'all 0.2s'
+                }}>
+                <X size={20} color="#334155" />
+              </button>
+            </div>
+
+            <div style={{ padding: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+                <div style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  color: 'white',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '20px',
+                  marginRight: '16px',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
+                }}>
+                  {(selectedPost.user || selectedPost.full_name || 'U').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
+                    {selectedPost.user || selectedPost.full_name || selectedPost.username || 'Người dùng ẩn danh'}
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px', fontSize: '14px', color: '#64748b' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Clock size={14} /> {selectedPost.time || new Date(selectedPost.created_at).toLocaleString('vi-VN') || 'Vừa xong'}
+                    </span>
+                    {(selectedPost.status || 'pending').toLowerCase() === 'published' ? (
+                      <span style={{ background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã đăng</span>
+                    ) : (selectedPost.status || 'pending').toLowerCase() === 'pending' ? (
+                      <span style={{ background: '#fef3c7', color: '#d97706', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Chờ duyệt</span>
+                    ) : (
+                      <span style={{ background: '#fee2e2', color: '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã gỡ</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '16px', lineHeight: '1.3' }}>
+                {selectedPost.title}
+              </h2>
+
+              {selectedPost.content && (
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                    <AlignLeft size={18} color="#64748b" style={{ marginTop: '3px' }}/>
+                    <p style={{ margin: 0, color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{selectedPost.content}</p>
+                  </div>
+                </div>
+              )}
+
+              {selectedPost.images && selectedPost.images.length > 1 && (
+                <div style={{ display: 'grid', gridTemplateColumns: selectedPost.images.length === 2 ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+                  {selectedPost.images.slice(1).map((img, idx) => (
+                    <img 
+                      key={idx} 
+                      src={img.startsWith('http') ? img : `http://localhost:3001${img}`} 
+                      alt={`Post image ${idx + 1}`} 
+                      style={{ 
+                        width: '100%', 
+                        borderRadius: '12px', 
+                        objectFit: 'cover', 
+                        height: selectedPost.images.length === 2 ? 'auto' : '200px', 
+                        maxHeight: '400px', 
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
+                      }} 
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+                {(selectedPost.location || selectedPost.category) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '12px', borderRadius: '10px' }}>
+                    <MapPin size={20} color="#3b82f6" />
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Địa điểm / Danh mục</div>
+                      <div style={{ fontSize: '14px', color: '#1e293b', fontWeight: '600' }}>{selectedPost.location || selectedPost.category || 'Không xác định'}</div>
+                    </div>
+                  </div>
+                )}
+                
+                {(selectedPost.max_participants || selectedPost.duration_minutes) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '12px', borderRadius: '10px' }}>
+                    <Users size={20} color="#10b981" />
+                    <div>
+                      <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Tham gia / Thời lượng</div>
+                      <div style={{ fontSize: '14px', color: '#1e293b', fontWeight: '600' }}>
+                        {selectedPost.max_participants ? `${selectedPost.max_participants} người` : ''} 
+                        {selectedPost.max_participants && selectedPost.duration_minutes ? ' • ' : ''}
+                        {selectedPost.duration_minutes ? `${selectedPost.duration_minutes} phút` : ''}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {(selectedPost.tags || []).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
+                  {selectedPost.tags.map((tag, idx) => (
+                    <span key={idx} style={{ background: '#e0f2fe', color: '#0369a1', padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: '500' }}>
+                      #{tag}
+                    </span>
+                  ))}
+                  {selectedPost.isFeatured && (
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef3c7', color: '#b45309', padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: '600' }}>
+                      <Star size={14} fill="#b45309" /> Nổi bật
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes modalSlideUp {
+              from { opacity: 0; transform: translateY(40px) scale(0.95); }
+              to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+          `}} />
         </div>
       )}
     </div>

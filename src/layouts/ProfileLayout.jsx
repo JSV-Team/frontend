@@ -51,16 +51,16 @@ export default function ProfileLayout() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Lấy profile data
         const profileData = await profileService.getProfile(USER_ID);
         setProfile(profileData);
-        
+
         // Lấy interests
         const interestsData = await profileService.getInterests(USER_ID);
         // interestsData là array của objects { interest_id, name }
         setInterests(interestsData.map(i => i.name));
-        
+
         setError(null);
       } catch (err) {
         console.error("Error fetching profile:", err);

@@ -7,7 +7,7 @@ import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
   const userString = localStorage.getItem('user');
-  const currentUser = userString ? JSON.parse(userString) : null;
+  const currentUser = userString && userString !== 'undefined' ? JSON.parse(userString) : null;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
