@@ -20,12 +20,12 @@ function Notifications() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Fetch notifications from API with dynamic userId
+  const refreshNotifications = () => {
     const currentUserId = getUserId();
     if (!currentUserId) return;
 
-    fetch(`${apiConfig.API_URL}/api/notifications?userId=${currentUserId}`)
+    setLoading(true);
+    fetch(`/api/notifications?userId=${currentUserId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');
@@ -33,16 +33,20 @@ function Notifications() {
         return response.json();
       })
       .then(data => {
-        // Handle the API response structure
-        const notificationsList = data.value || data || [];
+        const notificationsList = data.value || data.data || data || [];
         setNotifications(notificationsList);
         setLoading(false);
+        setError(null);
       })
       .catch(err => {
         console.error('Error fetching notifications:', err);
         setError('Không thể tải thông báo');
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    refreshNotifications();
   }, []);
 
   const getTimeAgo = (dateString) => {

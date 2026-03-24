@@ -91,9 +91,9 @@ export default function ProfileLayout() {
 
   const stats = {
     reputation: profile?.reputation_score || 0,
-    fer: profile?.fer_score || 0,
-    fing: profile?.fing_score || 0,
-    group: profile?.group_score || 0,
+    fer: profile?.followers_count || 0,
+    fing: profile?.following_count || 0,
+    group: profile?.groups_count || 0,
   };
 
   return (
