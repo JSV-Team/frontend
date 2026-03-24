@@ -1,49 +1,14 @@
 import React from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-import { useState, useEffect } from 'react';
-// Mock user ID for testing (since there's no login yet)
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
 function Notifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Fetch notifications from API with dynamic userId
-    const currentUserId = getUserId();
-    if (!currentUserId) return;
-
-    fetch(`${apiConfig.API_URL}/api/notifications?userId=${currentUserId}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch notifications');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Handle the API response structure
-        const notificationsList = data.value || data || [];
-        setNotifications(notificationsList);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching notifications:', err);
-        setError('Không thể tải thông báo');
-        setLoading(false);
-      });
-  }, []);
+  const { 
+    notifications, 
+    loading, 
+    error, 
+    refreshNotifications,
+    markAsRead
+  } = useNotifications();
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -169,6 +134,7 @@ function Notifications() {
               <div
                 key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
+                onClick={() => !notification.is_read && markAsRead(notification.notification_id)}
               >
                 {getNotificationIcon(notification.type)}
                 <div className="notification-content">

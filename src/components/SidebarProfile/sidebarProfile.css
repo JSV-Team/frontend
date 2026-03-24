@@ -92,4 +92,6 @@
 .sb-row b {
     font-size: 16px;
     font-weight: 700;
+    word-break: break-all;
+    overflow-wrap: anywhere;
 }
