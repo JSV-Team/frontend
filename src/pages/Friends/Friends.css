@@ -120,6 +120,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border-bottom: 1px solid #f9fafb;
+  position: relative;
 }
 
 .conversation-item:hover {
@@ -129,6 +130,25 @@
 .conversation-item.active {
   background: #eff6ff;
   border-left: 4px solid #3b82f6;
+}
+
+.conv-unread-badge {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
 .avatar-container {
@@ -823,6 +843,11 @@
 [data-theme="dark"] .conversation-item.active {
   background: #374151;
   border-left-color: #60a5fa;
+}
+
+[data-theme="dark"] .conv-unread-badge {
+  background: #ef4444;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.5);
 }
 
 [data-theme="dark"] .conv-title {

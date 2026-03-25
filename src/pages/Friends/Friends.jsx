@@ -155,6 +155,26 @@ function Friends() {
     setLoading(true);
     const currentUserId = getUserId();
     
+    // Mark conversation as read
+    const markAsRead = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${apiConfig.BASE_API}/chat/conversations/${activeConvId}/read`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        // Trigger event to refresh unread count in header
+        window.dispatchEvent(new Event('unreadMessagesUpdated'));
+      } catch (error) {
+        console.error('Error marking conversation as read:', error);
+      }
+    };
+
+    markAsRead();
+    
     chatService.getMessages(activeConvId, currentUserId)
       .then(data => {
         if (Array.isArray(data)) {
@@ -368,6 +388,11 @@ function Friends() {
                   </div>
                   <div className="conv-last-msg">{conv.last_message || 'Chưa có tin nhắn...'}</div>
                 </div>
+                {conv.unread_count > 0 && (
+                  <div className="conv-unread-badge">
+                    {conv.unread_count > 9 ? '9+' : conv.unread_count}
+                  </div>
+                )}
               </div>
             ))
           )}
