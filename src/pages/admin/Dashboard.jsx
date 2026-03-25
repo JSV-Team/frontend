@@ -61,11 +61,10 @@ const Dashboard = () => {
       { name: 'Fake news', value: 20, color: '#3b82f6' },
       { name: 'Vi phạm quy chuẩn', value: 20, color: '#8b5cf6' }
     ],
-    matchData: {
-      stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
-      classification: [],
-      recent: []
-    },
+      matchData: {
+        stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
+        recent: []
+      },
     recentActivities: [
       { user: 'Hệ thống', action: 'đang tải dữ liệu...', time: 'Vừa xong', dotColor: '#3853b8' }
     ]
@@ -352,56 +351,7 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom: Classification + Recent Matches */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '24px' }}>
-
-            {/* Phân loại - horizontal bars */}
-            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px' }}>
-              <h4 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Phân loại ghép đôi</h4>
-              {(() => {
-                const cls = data.matchData?.classification || [];
-                const colors = ['linear-gradient(90deg, #6366f1, #3b82f6)', 'linear-gradient(90deg, #a855f7, #ec4899)'];
-                const clColors = ['#6366f1', '#a855f7'];
-                const total = cls.reduce((s, c) => s + c.value, 0) || 1;
-                return cls.length > 0 ? cls.map((item, idx) => {
-                  const pct = Math.round((item.value / total) * 100);
-                  return (
-                    <div key={idx} style={{ marginBottom: idx < cls.length - 1 ? '18px' : 0 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: clColors[idx] }} />
-                          <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{item.name}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '13px', fontWeight: 800, color: clColors[idx] }}>{item.value}</span>
-                          <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>{pct}%</span>
-                        </div>
-                      </div>
-                      <div style={{ height: '8px', borderRadius: '99px', background: '#e2e8f0', overflow: 'hidden' }}>
-                        <div style={{
-                          height: '100%', width: `${pct}%`,
-                          background: colors[idx], borderRadius: '99px',
-                          transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
-                          boxShadow: `0 2px 6px ${clColors[idx]}55`
-                        }} />
-                      </div>
-                    </div>
-                  );
-                }) : (
-                  <div style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0', fontSize: '13px' }}>Không có dữ liệu</div>
-                );
-              })()}
-
-              {/* Tổng */}
-              <div style={{
-                marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e2e8f0',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-              }}>
-                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Tổng ghép đôi</span>
-                <span style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a' }}>
-                  {(data.matchData?.classification || []).reduce((s, c) => s + c.value, 0)}
-                </span>
-              </div>
-            </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
 
             {/* Ghép đôi gần đây - table style */}
             <div>
