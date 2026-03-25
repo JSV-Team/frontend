@@ -63,19 +63,23 @@ export default function ProfileEdit() {
     try {
       // 1. Upload to backend — backend tự UPDATE avatar_url trong DB rồi
       const res = await profileService.uploadAvatar(file);
-      // Backend trả về { success, data: { url, ... } } — dùng url tương đối
-      const newAvatarUrl = res.data?.url || res.data?.fullUrl || res.url;
+      console.log('📤 Upload response:', res);
 
       // 2. Refresh local state từ DB (lấy giá trị mới nhất)
       const fresh = await profileService.getProfile(USER_ID);
+      console.log('🔄 Fresh profile from DB:', fresh);
       setProfile(fresh);
 
       // 3. Cập nhật localStorage để Header/Sidebar hiển thị đúng
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);
-        // Ưu tiên avatar_url mới từ server
-        userData.avatar_url = fresh?.avatar_url || newAvatarUrl;
+        console.log('📦 Current localStorage user:', userData);
+        
+        // CRITICAL: Luôn cập nhật avatar_url từ fresh profile
+        userData.avatar_url = fresh.avatar_url;
+        
+        console.log('✅ Updated localStorage user:', userData);
         localStorage.setItem("user", JSON.stringify(userData));
         window.dispatchEvent(new Event('userUpdated'));
       }
@@ -134,7 +138,9 @@ export default function ProfileEdit() {
       if (userString) {
         const userData = JSON.parse(userString);
         userData.full_name = form.full_name.trim();
-        userData.avatar_url = fresh.avatar_url || fresh.avatar || userData.avatar_url;
+        // CRITICAL: Always update avatar_url from fresh profile
+        userData.avatar_url = fresh.avatar_url;
+        console.log('✅ Saving to localStorage:', userData);
         localStorage.setItem("user", JSON.stringify(userData));
         // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
