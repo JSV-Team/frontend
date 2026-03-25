@@ -20,16 +20,6 @@ import './Home.css';
 function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const userString = localStorage.getItem('user');
-  let currentUser = null;
-  if (userString && userString !== "undefined") {
-    try {
-      currentUser = JSON.parse(userString);
-    } catch (e) {
-      console.error("Home.jsx: Lỗi parse user từ localStorage:", e);
-    }
-  }
-  const CURRENT_USER_ID = currentUser?.user_id;
   const currentUser = useCurrentUser(); // Auto-updates when user changes
   const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
