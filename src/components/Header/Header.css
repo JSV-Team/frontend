@@ -1,15 +1,22 @@
-/* Header Styles - Blue Theme */
 .header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--color-surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--color-border-light);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   height: 80px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .header {
+  background: rgba(0, 0, 0, 0.2);
+  /* Much more transparent */
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+  /* Remove shadow to avoid "frame" feeling */
 }
 
 .header-container {
@@ -87,6 +94,12 @@
   color: #1e40af;
   background: #eff6ff;
   box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .nav-tab.active {
+  color: #fff;
+  background: rgba(108, 127, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(108, 127, 255, 0.3);
 }
 
 .nav-tab.active::after {
@@ -309,11 +322,6 @@
 }
 
 /* Dark theme support for header */
-[data-theme="dark"] .header {
-  background: var(--color-surface);
-  border-bottom-color: var(--color-border);
-}
-
 [data-theme="dark"] .header-logo h1 {
   background: linear-gradient(135deg, #60a5fa, #93c5fd);
   -webkit-background-clip: text;
@@ -330,22 +338,16 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
-[data-theme="dark"] .nav-tab.active {
-  color: #60a5fa;
-  background: rgba(59, 130, 246, 0.15);
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3);
-}
-
 [data-theme="dark"] .notification-icon,
 [data-theme="dark"] .notification-btn {
-  background: var(--color-bg-light);
-  color: var(--color-text-secondary);
-  border-color: var(--color-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] .notification-icon:hover,
 [data-theme="dark"] .notification-btn:hover {
-  background: #4b5563;
+  background: rgba(255, 255, 255, 0.1);
   color: #60a5fa;
   border-color: #60a5fa;
 }

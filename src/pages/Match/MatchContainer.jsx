@@ -9,10 +9,14 @@ import { useMatch } from '../../contexts/MatchContext';
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';
+import { useTheme } from '../../contexts/ThemeContext';
+import Aurora from '../../components/Aurora/Aurora';
+import Particles from '../../components/Particles/Particles';
 import './Match.css';
 
 function MatchContainer() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   // Get user info from localStorage
   const [userId, setUserId] = useState(null);
@@ -208,7 +212,32 @@ function MatchContainer() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
+      data-theme={theme}
     >
+      {theme === 'dark' && (
+        <div className="match-bg">
+          <Aurora
+            colorStops={["#3A29FF", "#FF94B4", "#4332FF"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={0.5}
+          />
+          <div className="particles-wrapper">
+            <Particles
+              particleColors={["#ffffff", "#8E2DE2", "#4A00E0"]}
+              particleCount={1000}
+              particleSpread={15}
+              speed={0.2}
+              particleBaseSize={100}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              pixelRatio={1}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="match-main">
         <MatchHeader />
 

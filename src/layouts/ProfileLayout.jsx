@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
 import { profileService } from "../services/profileService";
 import SidebarProfile from "../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../components/TopTabs/TopTabs";
 import StatBar from "../components/StatBar/StatBar";
+import { ThemeContext } from "../contexts/ThemeContext";
+import Aurora from "../components/Aurora/Aurora";
+import Particles from "../components/Particles/Particles";
 import "../pages/profileLayout.css";
+
 
 // Lấy userId từ localStorage (đã được lưu khi login)
 const getStoredUserId = () => {
@@ -24,7 +28,9 @@ export default function ProfileLayout() {
   const { userId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme } = useContext(ThemeContext);
   const [loading, setLoading] = useState(true);
+
   const [profile, setProfile] = useState(null);
   const [interests, setInterests] = useState([]);
   const [error, setError] = useState(null);
@@ -98,7 +104,31 @@ export default function ProfileLayout() {
 
   return (
     <div className="vm-page">
+      {theme === 'dark' && (
+        <div className="home-bg">
+          <Aurora
+            colorStops={["#d666ff", "#e15b83", "#5227FF"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={1.2}
+          />
+          <div className="particles-wrapper">
+            <Particles
+              particleColors={["#ffffff", "#8E2DE2", "#4A00E0"]}
+              particleCount={1000}
+              particleSpread={15}
+              speed={0.2}
+              particleBaseSize={100}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              pixelRatio={1}
+            />
+          </div>
+        </div>
+      )}
       <SidebarProfile
+
         profile={{
           ...profile,
           fullName: profile?.full_name || profile?.fullName || "User",

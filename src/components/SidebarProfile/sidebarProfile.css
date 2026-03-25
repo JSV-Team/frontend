@@ -1,14 +1,22 @@
 .sb-wrap {
-    border-radius: 28px;
-    padding: 30px 16px;
-    background: #8b5cf6;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    height: 100%;
+    min-height: 400px;
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+    position: relative;
+    z-index: 2;
     color: #fff;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    height: 100%;
-    min-height: 400px;
-    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+}
+
+[data-theme="dark"] .sb-wrap {
+    background: #242d34 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 1100px) {
@@ -43,12 +51,19 @@
     justify-content: center;
 }
 
-.sb-title {
+.sb-fullname {
     text-align: center;
     font-size: 24px;
     font-weight: 800;
     margin: 0 0 10px 0;
     letter-spacing: -0.5px;
+}
+
+[data-theme="dark"] .sb-fullname {
+    background: linear-gradient(135deg, #fff, #e2e8f0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .sb-card {
@@ -59,6 +74,11 @@
     border-radius: 8px;
     padding: 8px 12px;
     transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .sb-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sb-bio-card {

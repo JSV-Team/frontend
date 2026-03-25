@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-import { useState, useEffect } from 'react';
+import { ThemeContext } from '../../contexts/ThemeContext';
+import Aurora from '../../components/Aurora/Aurora';
+import Particles from '../../components/Particles/Particles';
+
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -15,7 +18,9 @@ const getUserId = () => {
   }
   return null;
 };
+
 function Notifications() {
+  const { theme } = useContext(ThemeContext);
   const { 
     notifications, 
     loading, 
@@ -23,6 +28,7 @@ function Notifications() {
     refreshNotifications,
     markAsRead
   } = useNotifications();
+
 
   useEffect(() => {
     refreshNotifications();
@@ -130,7 +136,31 @@ function Notifications() {
 
   return (
     <div className="notifications-page">
+      {theme === 'dark' && (
+        <div className="home-bg">
+          <Aurora
+            colorStops={["#d666ff", "#e15b83", "#5227FF"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={1.2}
+          />
+          <div className="particles-wrapper">
+            <Particles
+              particleColors={["#ffffff", "#8E2DE2", "#4A00E0"]}
+              particleCount={1000}
+              particleSpread={15}
+              speed={0.2}
+              particleBaseSize={100}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              pixelRatio={1}
+            />
+          </div>
+        </div>
+      )}
       <div className="notifications-container">
+
         <div className="notifications-header">
           <h1 className="notifications-title">Thông báo</h1>
           <span className="notifications-count">

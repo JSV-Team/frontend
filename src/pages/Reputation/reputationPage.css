@@ -192,10 +192,13 @@
 
 .rp-row div:nth-child(4) {
     font-weight: 700;
-    color: #ef4444; /* Đỏ hco điểm trừ, có thể đổi theo logic */
+    color: #ef4444;
+    /* Đỏ hco điểm trừ, có thể đổi theo logic */
 }
+
 .rp-row div:nth-child(4)[data-positive="true"] {
-    color: #10b981; /* Xanh cho điểm cộng */
+    color: #10b981;
+    /* Xanh cho điểm cộng */
 }
 
 .rp-row div:last-child {
@@ -246,12 +249,16 @@
         align-items: flex-start;
         gap: 20px;
     }
-    
-    .rp-tableHead, .rp-row {
+
+    .rp-tableHead,
+    .rp-row {
         grid-template-columns: 1.5fr 1.5fr 1fr;
     }
-    .rp-tableHead div:nth-child(3), .rp-tableHead div:nth-child(5),
-    .rp-row div:nth-child(3), .rp-row div:nth-child(5) {
+
+    .rp-tableHead div:nth-child(3),
+    .rp-tableHead div:nth-child(5),
+    .rp-row div:nth-child(3),
+    .rp-row div:nth-child(5) {
         display: none;
     }
 }

@@ -424,7 +424,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 680px; /* Match home feed width for consistency */
+  max-width: 680px;
+  /* Match home feed width for consistency */
   margin: 0 auto;
 }
 
@@ -621,7 +622,8 @@
 }
 
 /* Loading/Error States */
-.pp-loading, .pp-error {
+.pp-loading,
+.pp-error {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -643,23 +645,23 @@
     text-align: center;
     margin-top: -70px;
   }
-  
+
   .pp-avatar-section {
     flex-direction: column;
     align-items: center;
     gap: 10px;
   }
-  
+
   .pp-user-info {
     text-align: center;
   }
-  
+
   .pp-actions {
     justify-content: center;
     margin-top: 15px;
     width: 100%;
   }
-  
+
   .pp-btn {
     flex: 1;
     min-width: 120px;
@@ -683,13 +685,25 @@
 }
 
 @keyframes ppFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes ppSlideUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .pp-modal {

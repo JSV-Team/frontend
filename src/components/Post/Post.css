@@ -21,7 +21,7 @@
   height: 48px;
   border-radius: var(--radius-full);
   overflow: hidden;
-  border: 2px solid var(--color-surface);
+  border: 2px solid transparent;
   box-shadow: var(--shadow-md);
   flex-shrink: 0;
 }
@@ -113,20 +113,28 @@
 
 /* Dark Theme Overrides for Post Component */
 [data-theme="dark"] .create-activity {
-  background: var(--color-surface);
-  border-color: var(--color-border);
+  background: #242d34 !important;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .activity-post {
+  background: #242d34 !important;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="dark"] .form-input,
 [data-theme="dark"] .form-textarea {
-  background: var(--color-bg-light);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--color-text-primary);
-  border-color: var(--color-border);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] .form-input:focus,
 [data-theme="dark"] .form-textarea:focus {
-  background: var(--color-border-light);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .create-activity-footer {

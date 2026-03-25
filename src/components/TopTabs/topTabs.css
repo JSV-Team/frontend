@@ -29,3 +29,21 @@
     background: var(--color-primary);
     box-shadow: var(--shadow-primary);
 }
+
+[data-theme="dark"] .tt-tab {
+    background: #242d34 !important;
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tt-tab:hover {
+    background: #2d3741 !important;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .tt-tab.active {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary);
+    color: #fff;
+}

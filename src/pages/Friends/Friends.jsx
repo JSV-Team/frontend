@@ -6,8 +6,10 @@ import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
-import chatService from '../../services/chatService';
 import { buildAvatarUrl } from '../../services/profileService';
+import { useTheme } from '../../contexts/ThemeContext';
+import Aurora from '../../components/Aurora/Aurora';
+import Particles from '../../components/Particles/Particles';
 import './Friends.css';
 
 const getUserId = () => {
@@ -24,6 +26,7 @@ const getUserId = () => {
 };
 function Friends() {
   const location = useLocation();
+  const { theme } = useTheme();
   const userString = localStorage.getItem('user');
   const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
@@ -151,7 +154,7 @@ function Friends() {
     if (!activeConvId) return;
     setLoading(true);
     const currentUserId = getUserId();
-    
+
     chatService.getMessages(activeConvId, currentUserId)
       .then(data => {
         if (Array.isArray(data)) {
@@ -222,7 +225,7 @@ function Friends() {
       const res = await fetch(`/api/upload/image`, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: formData,
       });
@@ -285,7 +288,30 @@ function Friends() {
   const activeConv = conversations.find(c => c.conversation_id === activeConvId);
 
   return (
-    <div className="friends-page">
+    <div className="friends-page" data-theme={theme}>
+      {theme === 'dark' && (
+        <div className="friends-bg">
+          <Aurora
+            colorStops={["#3A29FF", "#FF94B4", "#4332FF"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={0.5}
+          />
+          <div className="particles-wrapper">
+            <Particles
+              particleColors={["#ffffff", "#8E2DE2", "#4A00E0"]}
+              particleCount={1000}
+              particleSpread={15}
+              speed={0.2}
+              particleBaseSize={100}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              pixelRatio={1}
+            />
+          </div>
+        </div>
+      )}
       {/* CỘT TRÁI: Danh sách */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">

@@ -11,6 +11,9 @@ import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
 import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
+import Aurora from '../../components/Aurora/Aurora';
+import Particles from '../../components/Particles/Particles';
+import { useTheme } from '../../contexts/ThemeContext';
 import './Home.css';
 
 const getUserId = () => {
@@ -38,6 +41,7 @@ function Home() {
     }
   }
   const CURRENT_USER_ID = currentUser?.user_id;
+  const { theme } = useTheme();
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
@@ -140,6 +144,29 @@ function Home() {
 
   return (
     <div className="home-container">
+      {theme === 'dark' && (
+        <div className="home-bg">
+          <Aurora 
+            colorStops={["#d666ff", "#e15b83", "#5227FF"]} 
+            blend={0.5} 
+            amplitude={1.0} 
+            speed={1.2} 
+          />
+          <div className="particles-wrapper">
+            <Particles
+              particleColors={["#ffffff", "#8E2DE2", "#4A00E0"]}
+              particleCount={1000}
+              particleSpread={15}
+              speed={0.2}
+              particleBaseSize={100}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              pixelRatio={1}
+            />
+          </div>
+        </div>
+      )}
       <div className="home-main">
         <div className="home-layout">
           {/* Left Sidebar - Pending Groups & Approvals */}

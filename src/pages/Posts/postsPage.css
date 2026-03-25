@@ -9,7 +9,7 @@
   background: #fff;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .ps-h1 {
@@ -61,7 +61,8 @@
   color: #111827;
 }
 
-.ps-loading, .ps-empty {
+.ps-loading,
+.ps-empty {
   text-align: center;
   padding: 40px;
   color: #6b7280;
