@@ -1,5 +1,5 @@
 import apiConfig from '../config/apiConfig';
-const API_BASE_URL = `${apiConfig.BASE_API}/posts` || '/api/posts';
+const API_BASE_URL = `${apiConfig.BASE_API}/posts`;
 
 export const postService = {
   // Tạo bài đăng mới

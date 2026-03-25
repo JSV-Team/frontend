@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import useMatchSocket from '../../hooks/useMatchSocket';
 import useMatchQueue from '../../hooks/useMatchQueue';
 import { useMatch } from '../../contexts/MatchContext';
+import apiConfig from "../../config/apiConfig";
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';

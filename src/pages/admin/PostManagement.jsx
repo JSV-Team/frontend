@@ -84,7 +84,7 @@ const PostManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiConfig.API_URL}/api/admin/activities`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/activities`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -123,7 +123,7 @@ const PostManagement = () => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiConfig.API_URL}/api/admin/activities/${id}/status`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/activities/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

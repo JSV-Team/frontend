@@ -218,7 +218,7 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
+      const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`
