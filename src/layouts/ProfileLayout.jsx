@@ -3,7 +3,6 @@ import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
 import { profileService } from "../services/profileService";
 import SidebarProfile from "../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../components/TopTabs/TopTabs";
-import StatBar from "../components/StatBar/StatBar";
 import { useTheme } from "../contexts/ThemeContext";
 import Particles from "../components/Particles/Particles";
 import Aurora from "../components/Aurora/Aurora";
@@ -160,7 +159,6 @@ export default function ProfileLayout() {
 
       <main className="vm-main">
         <TopTabs active={getActiveTab()} />
-        <StatBar stats={stats} />
 
         <Outlet
           context={{
