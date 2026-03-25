@@ -6,6 +6,7 @@ import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Friends.css';
 
 const getUserId = () => {
@@ -217,7 +218,7 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`/api/upload/image`, {
+      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -317,7 +318,7 @@ function Friends() {
                 <div className="avatar-container">
                   <img
                     src={conv.conversation_type === 'private'
-                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `${apiConfig.API_URL}${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
+                      ? (buildAvatarUrl(conv.other_avatar_url) || 'https://i.pravatar.cc/150')
                       : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
                     }
                     alt="Avatar"
@@ -397,7 +398,7 @@ function Friends() {
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
-                              src={msg.image_url?.startsWith('http') ? msg.image_url : `${apiConfig.API_URL}${msg.image_url}`}
+                              src={buildAvatarUrl(msg.image_url)}
                               alt="Sent image"
                               className="message-image"
                             />
@@ -532,7 +533,7 @@ function Friends() {
                         <div key={m.user_id} className="member-item">
                           <div className="member-avatar">
                             {m.avatar_url
-                              ? <img src={m.avatar_url} alt={m.full_name} />
+                              ? <img src={buildAvatarUrl(m.avatar_url)} alt={m.full_name} />
                               : <span>{(m.full_name || '?').charAt(0).toUpperCase()}</span>
                             }
                           </div>

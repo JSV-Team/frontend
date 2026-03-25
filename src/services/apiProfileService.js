@@ -1,7 +1,19 @@
 // New Profile Service - API calls related to profile
 // Using correct backend routes: /api/profile
 
-const API_BASE_URL = '/api';
+// Central API configuration
+const API_URL = import.meta.env.VITE_API_URL ||
+                (window.location.hostname.includes('vercel.app')
+                  ? 'https://backend-1wyh.onrender.com'
+                  : 'http://localhost:3001');
+
+const apiConfig = {
+  API_URL,
+  BASE_API: `${API_URL}/api`,
+  UPLOAD_URL: `${API_URL.replace(/\/$/, '')}/uploads`
+};
+
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 // Helper: lấy JWT token từ localStorage
 const getToken = () => {
@@ -160,20 +172,18 @@ export const profileService = {
 
   // Upload ảnh profile
   uploadAvatar: async (file) => {
-    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const token = getToken();
 
     try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
+      // Use relative path to avoid Mixed Content issues
+      // This will use the same protocol/host as the frontend
       const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
         method: 'POST',
-        headers: headers,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       const data = await response.json();
@@ -257,6 +267,66 @@ export const profileService = {
 };
 
 export default profileService;
+
+/**
+ * Build URL đầy đủ từ avatar_url (có thể là tương đối hoặc tuyệt đối).
+ * Dùng VITE_API_URL nếu có, fallback về window.location.origin.
+ */
+export const buildAvatarUrl = (url) => {
+  if (!url) return null;
+
+  let cleanUrl = String(url).trim();
+  
+  // Step 1: Aggressively strip any hardcoded local hosts/IPs
+  const localPatterns = [
+    /https?:\/\/127\.0\.0\.1(:\d+)?/gi,
+    /https?:\/\/localhost(:\d+)?/gi,
+    /127\.0\.0\.1(:\d+)?/gi,
+    /localhost(:\d+)?/gi
+  ];
+  
+  localPatterns.forEach(pattern => {
+    cleanUrl = cleanUrl.replace(pattern, '');
+  });
+
+  // Step 2: If it's a social/external URL (google, facebook, pravatar), let it be
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    if (window.location.protocol === 'https:' && cleanUrl.startsWith('http:')) {
+      return cleanUrl.replace('http:', 'https:');
+    }
+    return cleanUrl;
+  }
+
+  // Step 3: Build base URL from centralized apiConfig
+  // We want the root backend URL (stripped of /api)
+  let base = (apiConfig.API_URL || '').replace(/\/api$/, '').trim();
+  
+  console.log('🔍 buildAvatarUrl debug:', {
+    inputUrl: url,
+    cleanUrl,
+    apiConfigURL: apiConfig.API_URL,
+    base,
+    VITE_API_URL: import.meta.env.VITE_API_URL
+  });
+  
+  // Final fallback to window origin if base is still relative or local
+  if (!base || base.includes('127.0.0.1') || base.includes('localhost')) {
+    // If we're on a production domain but base is local, fallback to current origin
+    if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+       base = window.location.origin;
+    }
+  }
+
+  const finalUrl = `${base.replace(/\/$/, '')}/${cleanUrl.replace(/^\//, '')}`;
+  
+  // Final Force HTTPS check for production
+  if (window.location.protocol === 'https:' && finalUrl.startsWith('http:')) {
+    return finalUrl.replace('http:', 'https:');
+  }
+  
+  console.log('✅ Final avatar URL:', finalUrl);
+  return finalUrl;
+};
 
 // Hàm tiện ích để lưu vào localStorage
 export const saveProfileToLocalStorage = (profile) => {

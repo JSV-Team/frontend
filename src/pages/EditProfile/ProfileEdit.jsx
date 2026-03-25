@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import InterestChips from "../../components/InterestChips/InterestChips";
 import Toast from "../../components/Toast/Toast";
 import LocationPicker from "../../components/common/LocationPicker";
-import { profileService } from "../../services/profileService";
+import { profileService, buildAvatarUrl } from "../../services/profileService";
 import "./ProfileEdit.css";
 
 export default function ProfileEdit() {
@@ -57,38 +57,31 @@ export default function ProfileEdit() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("avatar", file);
-
     setUploading(true);
     setMsg({ type: "", text: "" });
 
     try {
-      // 1. Upload to backend
+      // 1. Upload to backend — backend tự UPDATE avatar_url trong DB rồi
       const res = await profileService.uploadAvatar(file);
-      // Backend trả về { success, data: { url, fullUrl, ... } }
-      const newAvatarUrl = res.data?.fullUrl || res.data?.url || res.url;
+      // Backend trả về { success, data: { url, ... } } — dùng url tương đối
+      const newAvatarUrl = res.data?.url || res.data?.fullUrl || res.url;
 
-      // 2. Update profile with new avatar URL
-      await profileService.updateProfile(USER_ID, { avatar_url: newAvatarUrl });
-
-      // 3. Refresh local state
+      // 2. Refresh local state từ DB (lấy giá trị mới nhất)
       const fresh = await profileService.getProfile(USER_ID);
       setProfile(fresh);
 
-      // --- THE REMEDY ---
-      // Update localStorage with the new avatar_url so Header can read it
+      // 3. Cập nhật localStorage để Header/Sidebar hiển thị đúng
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);
-        userData.avatar_url = newAvatarUrl;
+        // Ưu tiên avatar_url mới từ server
+        userData.avatar_url = fresh?.avatar_url || newAvatarUrl;
         localStorage.setItem("user", JSON.stringify(userData));
-        // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
       }
 
       setMsg({ type: "success", text: "Cập nhật ảnh đại diện thành công! ✨" });
-      setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
+      setTimeout(() => setMsg({ type: "", text: "" }), 3000);
     } catch (err) {
       console.error("Upload error:", err);
       setMsg({ type: "danger", text: "Không thể tải ảnh lên. Thử lại sau." });
@@ -178,7 +171,7 @@ export default function ProfileEdit() {
             <div className="pe-avatar-section">
               <div className="pe-avatar-box" onClick={handleAvatarClick}>
                 {currentAvatar ? (
-                  <img src={currentAvatar.startsWith('http') ? currentAvatar : `http://127.0.0.1:3001${currentAvatar}`} alt="Avatar" />
+                  <img src={buildAvatarUrl(currentAvatar)} alt="Avatar" />
                 ) : (
                   <div className="pe-avatar-placeholder">
                     {form.full_name?.charAt(0).toUpperCase() || "?"}

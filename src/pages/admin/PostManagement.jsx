@@ -418,7 +418,7 @@ const PostManagement = () => {
                   {selectedPost.images.slice(1).map((img, idx) => (
                     <img 
                       key={idx} 
-                      src={img.startsWith('http') ? img : `http://localhost:3001${img}`} 
+                      src={img.startsWith('http') ? img : `${apiConfig.API_URL}${img}`} 
                       alt={`Post image ${idx + 1}`} 
                       style={{ 
                         width: '100%', 
