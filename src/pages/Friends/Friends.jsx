@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
+import { Send, MoreVertical, LogOut, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -396,8 +396,6 @@ function Friends() {
                   <h3>{activeConv?.activity_title || 'Chat Nhóm'}</h3>
                 </div>
                 <div className="chat-actions">
-                  <button className="icon-btn"><Phone size={18} /></button>
-                  <button className="icon-btn"><Video size={18} /></button>
                   <button
                     className={`icon-btn ${showInfo ? 'active' : ''}`}
                     title="Thông tin nhóm"
