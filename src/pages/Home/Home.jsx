@@ -141,11 +141,12 @@ function Home() {
 
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
+                const postId = post.post_id || post.status_id || post.activity_id;
                 const isOwner = post.user_id === CURRENT_USER_ID;
-                const isJoining = joiningIds.has(post.status_id);
+                const isJoining = joiningIds.has(postId);
 
                 return (
-                  <div key={post.status_id} className="post-card">
+                  <div key={postId} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
                         <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
@@ -179,12 +180,12 @@ function Home() {
                       <div className="post-options-container" style={{ position: 'relative' }}>
                         <button
                           className="more-button"
-                          onClick={() => setActiveMenuId(activeMenuId === post.status_id ? null : post.status_id)}
+                          onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
                         >
                           <MoreHorizontal size={24} />
                         </button>
 
-                        {activeMenuId === post.status_id && isOwner && (
+                        {activeMenuId === postId && isOwner && (
                           <div className="post-options-menu" style={{
                             position: 'absolute',
                             right: 0,
@@ -211,7 +212,7 @@ function Home() {
                               }}
                               onClick={() => {
                                 setActiveMenuId(null);
-                                handleDeletePost(post.status_id);
+                                handleDeletePost(postId);
                               }}
                             >
                               Xóa bài viết
@@ -264,14 +265,14 @@ function Home() {
                         <>
                           <button
                             className="action-btn join-btn"
-                            onClick={() => handleJoinPost(post.status_id)}
+                            onClick={() => handleJoinPost(postId)}
                             disabled={isJoining}
                           >
                             {isJoining ? 'Đang gửi...' : 'Tham gia'}
                           </button>
                           <button
                             className="action-btn message-btn"
-                            onClick={() => handleMessageHost(post.user_id, post.status_id)}
+                            onClick={() => handleMessageHost(post.user_id, postId)}
                           >
                             Nhắn tin
                           </button>
