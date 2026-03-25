@@ -301,6 +301,14 @@ export const buildAvatarUrl = (url) => {
   // We want the root backend URL (stripped of /api)
   let base = (apiConfig.API_URL || '').replace(/\/api$/, '').trim();
   
+  console.log('🔍 buildAvatarUrl debug:', {
+    inputUrl: url,
+    cleanUrl,
+    apiConfigURL: apiConfig.API_URL,
+    base,
+    VITE_API_URL: import.meta.env.VITE_API_URL
+  });
+  
   // Final fallback to window origin if base is still relative or local
   if (!base || base.includes('127.0.0.1') || base.includes('localhost')) {
     // If we're on a production domain but base is local, fallback to current origin
@@ -316,6 +324,7 @@ export const buildAvatarUrl = (url) => {
     return finalUrl.replace('http:', 'https:');
   }
   
+  console.log('✅ Final avatar URL:', finalUrl);
   return finalUrl;
 };
 
