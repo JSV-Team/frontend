@@ -9,6 +9,14 @@
   color: white;
 }
 
+.galaxy-text {
+  background: linear-gradient(135deg, #6c7fff 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
 /* Lớp sao */
 .stars {
   position: absolute;
@@ -1154,11 +1162,13 @@
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 6px;
-  color: rgb(72, 225, 223);
+  background: linear-gradient(135deg, #6c7fff 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .welcome-text {
@@ -1207,7 +1217,7 @@
 }
 
 .login-page .form-group input:focus {
-  box-shadow: inset 0 0 0 1.5px rgba(78, 205, 196, 0.8);
+  box-shadow: inset 0 0 0 1.5px rgba(108, 127, 255, 0.8);
   background: rgba(0, 0, 0, 0.98) !important;
 }
 
@@ -1244,9 +1254,10 @@
   font-weight: 700;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, #4ecdc4, #2b948c);
+  background: linear-gradient(135deg, #6c7fff 0%, #ff6b6b 100%);
   transition: transform 0.2s ease, opacity 0.2s ease;
   margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(108, 127, 255, 0.3);
 }
 
 .login-btn:hover {
@@ -1261,7 +1272,7 @@
 }
 
 .signup-link {
-  color: #4ecdc4;
+  color: #6c7fff;
   text-decoration: none;
   font-weight: 600;
   margin-left: 5px;

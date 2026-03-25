@@ -64,7 +64,7 @@ export default function Login() {
 
       <div className="page-content">
         <div className="left-content">
-          <h1 style={{ fontSize: '4.5rem', fontWeight: 800, color: 'rgb(72, 225, 223)', textShadow: '0 0 20px rgba(0, 255, 213, 0.4)' }}>VibeMatch</h1>
+          <h1 className="galaxy-text" style={{ fontSize: '4.5rem', fontWeight: 800 }}>VibeMatch</h1>
           <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '20px', lineHeight: 1.6, maxWidth: '400px' }}>
             Khám phá, chia sẻ và kết nối với những người có cùng sở thích với bạn. Đăng nhập để tiếp tục hành trình của mình!
           </p>
@@ -117,7 +117,7 @@ export default function Login() {
               <label className="checkbox" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}>
                 <input type="checkbox" name="remember" /> <span>Ghi nhớ tôi</span>
               </label>
-              <a href="#" className="forgot-password" style={{ color: '#4ecdc4', textDecoration: 'none' }}>Quên mật khẩu?</a>
+              <a href="#" className="forgot-password" style={{ color: '#6c7fff', textDecoration: 'none' }}>Quên mật khẩu?</a>
             </div>
 
             <button type="submit" className="login-btn" disabled={isLoading} style={{ width: '100%' }}>
@@ -133,7 +133,7 @@ export default function Login() {
                   e.preventDefault();
                   navigate('/register');
                 }}
-                style={{ color: '#4ecdc4', textDecoration: 'none', fontWeight: 600 }}
+                style={{ color: '#6c7fff', textDecoration: 'none', fontWeight: 600 }}
               >
                 Đăng ký ngay
               </a>
