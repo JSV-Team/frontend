@@ -254,7 +254,7 @@ export default function ProfileEdit() {
                     onClick={() => setIsPickerOpen(true)}
                     readOnly
                     placeholder="Bấm để chọn địa điểm từ bản đồ..."
-                    style={{ cursor: 'pointer', background: '#f8fafc' }}
+                    style={{ cursor: 'pointer' }}
                   />
                 </div>
               </div>
