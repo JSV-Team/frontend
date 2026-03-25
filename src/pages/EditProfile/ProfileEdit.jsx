@@ -4,6 +4,7 @@ import InterestChips from "../../components/InterestChips/InterestChips";
 import Toast from "../../components/Toast/Toast";
 import LocationPicker from "../../components/common/LocationPicker";
 import { profileService, buildAvatarUrl } from "../../services/profileService";
+import { MapPin } from "lucide-react";
 import "./ProfileEdit.css";
 
 export default function ProfileEdit() {
@@ -254,18 +255,22 @@ export default function ProfileEdit() {
               <div className="pe-form-row mb-3">
                 <label className="pe-label-h">Địa điểm</label>
                 <div className="pe-input-field">
-                  <input
-                    className="form-control pe-input"
-                    value={form.location}
-                    onClick={() => setIsPickerOpen(true)}
-                    onFocus={(e) => {
-                      e.target.blur(); // Ngăn focus để không hiện bàn phím
-                      setIsPickerOpen(true);
-                    }}
-                    readOnly
-                    placeholder="Bấm để chọn địa điểm từ bản đồ..."
-                    style={{ cursor: 'pointer', backgroundColor: '#f8fafc' }}
-                  />
+                  <div className="pe-location-group">
+                    <input
+                      className="form-control pe-input pe-location-input"
+                      value={form.location}
+                      onChange={(e) => onChange("location", e.target.value)}
+                      placeholder="Nhập địa điểm hoặc chọn từ bản đồ..."
+                    />
+                    <button 
+                      type="button" 
+                      className="pe-map-icon-btn"
+                      onClick={() => setIsPickerOpen(true)}
+                      title="Chọn địa điểm từ bản đồ"
+                    >
+                      <MapPin size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
 
