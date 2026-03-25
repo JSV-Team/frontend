@@ -1,20 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-import { useState, useEffect } from 'react';
-// Mock user ID for testing (since there's no login yet)
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
 function Notifications() {
   const { 
     notifications, 
@@ -152,6 +138,7 @@ function Notifications() {
               <div
                 key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
+                onClick={() => !notification.is_read && markAsRead(notification.notification_id)}
               >
                 {getNotificationIcon(notification.type)}
                 <div className="notification-content">
