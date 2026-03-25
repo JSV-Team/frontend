@@ -31,6 +31,20 @@
   --transition-slow: 300ms ease;
 }
 
+/* Global Background Containers */
+.home-aurora-bg, .home-particles-bg, .home-grainient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.home-aurora-bg { z-index: 0; opacity: 0.6; }
+.home-particles-bg { z-index: 1; }
+.home-grainient-bg { z-index: 0; }
+
 /* Dark Theme */
 [data-theme="dark"] {
   --color-bg-light: #111827;

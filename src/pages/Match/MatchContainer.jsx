@@ -12,6 +12,7 @@ import MatchSidebar from './MatchSidebar';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import './Match.css';
 
 function MatchContainer() {
@@ -240,6 +241,13 @@ function MatchContainer() {
             />
           </div>
         </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
 
       <div className="match-main">

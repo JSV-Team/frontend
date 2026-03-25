@@ -13,6 +13,7 @@ import apiConfig from '../../config/apiConfig';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import './Home.css';
 
 const getUserId = () => {
@@ -170,6 +171,13 @@ function Home() {
             />
           </div>
         </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
       <div className="home-main">
         <div className="home-layout">

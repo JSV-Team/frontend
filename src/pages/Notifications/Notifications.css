@@ -1,7 +1,7 @@
 /* Notifications Page Styles */
 .notifications-page {
   min-height: calc(100vh - 80px);
-  background: var(--color-bg-light);
+  background: transparent;
   padding: 20px;
   position: relative;
   z-index: 1;

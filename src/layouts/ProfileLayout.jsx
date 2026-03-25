@@ -7,6 +7,7 @@ import StatBar from "../components/StatBar/StatBar";
 import { useTheme } from "../contexts/ThemeContext";
 import Particles from "../components/Particles/Particles";
 import Aurora from "../components/Aurora/Aurora";
+import Grainient from "../components/Grainient/Grainient";
 import "../pages/profileLayout.css";
 
 // Lấy userId từ localStorage (đã được lưu khi login)
@@ -79,7 +80,12 @@ export default function ProfileLayout() {
 
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f6f7fb' }}>
+      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'transparent' }}>
+        {theme === 'light' && (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        )}
         <p>Đang tải...</p>
       </div>
     );
@@ -87,7 +93,12 @@ export default function ProfileLayout() {
 
   if (error) {
     return (
-      <div className="error-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f6f7fb' }}>
+      <div className="error-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'transparent' }}>
+        {theme === 'light' && (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        )}
         <p style={{ color: 'red' }}>{error}</p>
       </div>
     );
@@ -129,6 +140,13 @@ export default function ProfileLayout() {
             />
           </div>
         </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
 
       <SidebarProfile

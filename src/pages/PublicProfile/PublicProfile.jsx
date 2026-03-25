@@ -7,6 +7,7 @@ import { chatService } from '../../services/chatService';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import './PublicProfile.css';
 
 export default function PublicProfile() {
@@ -186,6 +187,13 @@ export default function PublicProfile() {
             />
           </div>
         </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
 
       {/* 1. Header Section */}
