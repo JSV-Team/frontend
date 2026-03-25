@@ -6,6 +6,8 @@
   font-family: inherit;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.02);
+  position: relative;
+  z-index: 1;
 }
 
 /* --- CỘT TRÁI --- */
@@ -750,7 +752,7 @@
 
 /* ===================== DARK THEME ===================== */
 [data-theme="dark"] .friends-page {
-  background: #1f2937;
+  background: transparent;
 }
 
 [data-theme="dark"] .chat-sidebar {

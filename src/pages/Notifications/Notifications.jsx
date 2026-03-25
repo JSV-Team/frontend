@@ -2,6 +2,9 @@ import React from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 import { useState, useEffect } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -19,6 +22,7 @@ function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     // Fetch notifications from API with dynamic userId
@@ -113,6 +117,17 @@ function Notifications() {
   if (loading) {
     return (
       <div className="notifications-page">
+        {/* Background effects - only visible in dark mode */}
+        {theme === 'dark' && (
+          <>
+            <div className="home-aurora-bg">
+              <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+            </div>
+            <div className="home-particles-bg">
+              <Particles particleColors={['#c653b6', '#8b5cf6', '#6366f1']} particleCount={200} particleSpread={10} speed={0.1} particleBaseSize={400} moveParticlesOnHover={false} alphaParticles={true} disableRotation={false} sizeRandomness={1} cameraDistance={20} pixelRatio={1} />
+            </div>
+          </>
+        )}
         <div className="notifications-container">
           <h1 className="notifications-title">Thông báo</h1>
           <div className="notifications-loading">
@@ -127,6 +142,17 @@ function Notifications() {
   if (error) {
     return (
       <div className="notifications-page">
+        {/* Background effects - only visible in dark mode */}
+        {theme === 'dark' && (
+          <>
+            <div className="home-aurora-bg">
+              <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+            </div>
+            <div className="home-particles-bg">
+              <Particles particleColors={['#c653b6', '#8b5cf6', '#6366f1']} particleCount={200} particleSpread={10} speed={0.1} particleBaseSize={400} moveParticlesOnHover={false} alphaParticles={true} disableRotation={false} sizeRandomness={1} cameraDistance={20} pixelRatio={1} />
+            </div>
+          </>
+        )}
         <div className="notifications-container">
           <h1 className="notifications-title">Thông báo</h1>
           <div className="notifications-error">
@@ -147,6 +173,17 @@ function Notifications() {
 
   return (
     <div className="notifications-page">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+          <div className="home-particles-bg">
+            <Particles particleColors={['#c653b6', '#8b5cf6', '#6366f1']} particleCount={200} particleSpread={10} speed={0.1} particleBaseSize={400} moveParticlesOnHover={false} alphaParticles={true} disableRotation={false} sizeRandomness={1} cameraDistance={20} pixelRatio={1} />
+          </div>
+        </>
+      )}
       <div className="notifications-container">
         <div className="notifications-header">
           <h1 className="notifications-title">Thông báo</h1>

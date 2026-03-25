@@ -10,6 +10,9 @@ import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, Mor
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
 import apiConfig from '../../config/apiConfig';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
 import './Home.css';
 
 const getUserId = () => {
@@ -27,6 +30,7 @@ const getUserId = () => {
 
 function Home() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const userString = localStorage.getItem('user');
   let currentUser = null;
   if (userString && userString !== "undefined") {
@@ -139,6 +143,34 @@ function Home() {
 
   return (
     <div className="home-container">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
       <div className="home-main">
         <div className="home-layout">
           {/* Left Sidebar - Pending Groups & Approvals */}

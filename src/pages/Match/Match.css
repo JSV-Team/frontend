@@ -4,12 +4,16 @@
   background: var(--color-bg-light, #f5f5f5);
   padding-top: 100px;
   padding-bottom: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .match-main {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1.5rem;
+  position: relative;
+  z-index: 2;
 }
 
 .match-layout {
@@ -604,7 +608,7 @@
 
 /* ==================== DARK MODE ==================== */
 [data-theme="dark"] .match-container {
-  background: var(--color-bg-dark, #1a1a1a);
+  background: transparent;
 }
 
 [data-theme="dark"] .match-content {
@@ -629,8 +633,9 @@
 }
 
 [data-theme="dark"] .interest-tag {
-  background: var(--color-bg-dark, #1a1a1a);
+  background: var(--color-surface-dark, #2a2a2a);
   border-color: var(--color-border-dark, #444);
+  color: var(--color-text-primary);
 }
 
 [data-theme="dark"] .btn-cancel-matching {
