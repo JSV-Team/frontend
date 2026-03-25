@@ -110,7 +110,14 @@ function Friends() {
       setConversations(prev => {
         const index = prev.findIndex(c => c.conversation_id === msg.conversation_id);
         if (index > -1) {
-          const updatedConv = { ...prev[index], last_message: msg.content };
+          const updatedConv = { 
+            ...prev[index], 
+            last_message: msg.content,
+            // Chỉ tăng unread_count nếu không phải conversation đang active
+            unread_count: msg.conversation_id === activeConvIdRef.current 
+              ? 0 
+              : (prev[index].unread_count || 0) + 1
+          };
           const newConvs = [...prev];
           newConvs.splice(index, 1);
           newConvs.unshift(updatedConv); // Add to top
@@ -118,6 +125,9 @@ function Friends() {
         }
         return prev;
       });
+      
+      // Trigger event to refresh unread count in header
+      window.dispatchEvent(new Event('unreadMessagesUpdated'));
     });
 
     return () => newSocket.disconnect();
@@ -166,6 +176,16 @@ function Friends() {
             'Content-Type': 'application/json'
           }
         });
+        
+        // Update local conversation list to remove unread count
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.conversation_id === activeConvId 
+              ? { ...conv, unread_count: 0 }
+              : conv
+          )
+        );
+        
         // Trigger event to refresh unread count in header
         window.dispatchEvent(new Event('unreadMessagesUpdated'));
       } catch (error) {
