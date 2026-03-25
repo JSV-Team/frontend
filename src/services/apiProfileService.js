@@ -1,7 +1,9 @@
 // New Profile Service - API calls related to profile
 // Using correct backend routes: /api/profile
 
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 // Helper: lấy JWT token từ localStorage
 const getToken = () => {
@@ -145,22 +147,33 @@ export const profileService = {
     }
   },
 
+  // Lấy tất cả sở thích có trong hệ thống
+  getAllAvailableInterests: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/all-interests`);
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result;
+    } catch (error) {
+      console.error('Lỗi khi lấy tất cả sở thích:', error);
+      throw error;
+    }
+  },
+
   // Upload ảnh profile
   uploadAvatar: async (file) => {
-    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const token = getToken();
 
     try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
+      // Use relative path to avoid Mixed Content issues
+      // This will use the same protocol/host as the frontend
       const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
         method: 'POST',
-        headers: headers,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       const data = await response.json();
@@ -244,6 +257,56 @@ export const profileService = {
 };
 
 export default profileService;
+
+/**
+ * Build URL đầy đủ từ avatar_url (có thể là tương đối hoặc tuyệt đối).
+ * FIXED: Luôn dùng backend URL từ apiConfig, không fallback về window.location.origin
+ */
+export const buildAvatarUrl = (url) => {
+  if (!url) return null;
+
+  let cleanUrl = String(url).trim();
+  
+  // Step 1: Strip any hardcoded local hosts/IPs
+  const localPatterns = [
+    /https?:\/\/127\.0\.0\.1(:\d+)?/gi,
+    /https?:\/\/localhost(:\d+)?/gi,
+  ];
+  
+  localPatterns.forEach(pattern => {
+    cleanUrl = cleanUrl.replace(pattern, '');
+  });
+
+  // Step 2: If it's already a full external URL (pravatar, ui-avatars, etc), return as-is
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    // Force HTTPS in production
+    if (window.location.protocol === 'https:' && cleanUrl.startsWith('http:')) {
+      return cleanUrl.replace('http:', 'https:');
+    }
+    return cleanUrl;
+  }
+
+  // Step 3: Build full URL using backend API_URL
+  // CRITICAL: Always use apiConfig.API_URL (backend domain), NOT window.location.origin (frontend domain)
+  const backendUrl = apiConfig.API_URL || 'https://backend-1wyh.onrender.com';
+  
+  // Remove /api suffix if present
+  const baseUrl = backendUrl.replace(/\/api$/, '');
+  
+  // Ensure cleanUrl starts with /
+  const relativePath = cleanUrl.startsWith('/') ? cleanUrl : `/${cleanUrl}`;
+  
+  const finalUrl = `${baseUrl}${relativePath}`;
+  
+  console.log('🔍 buildAvatarUrl:', {
+    input: url,
+    cleaned: cleanUrl,
+    backend: backendUrl,
+    final: finalUrl
+  });
+  
+  return finalUrl;
+};
 
 // Hàm tiện ích để lưu vào localStorage
 export const saveProfileToLocalStorage = (profile) => {

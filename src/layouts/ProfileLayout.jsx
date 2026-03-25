@@ -75,6 +75,19 @@ export default function ProfileLayout() {
     };
 
     fetchData();
+
+    // Listen for profile updates (avatar change, etc.)
+    const handleProfileUpdate = () => {
+      console.log('🔄 ProfileLayout: Detected profile update, reloading...');
+      fetchData();
+    };
+
+    window.addEventListener('userUpdated', handleProfileUpdate);
+
+    // Cleanup listener
+    return () => {
+      window.removeEventListener('userUpdated', handleProfileUpdate);
+    };
   }, [USER_ID]);
 
   if (loading) {

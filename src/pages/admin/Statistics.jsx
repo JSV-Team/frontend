@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import { 
   BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Legend, Cell
@@ -8,7 +9,7 @@ import {
   Calendar, ChevronRight, Hash, ArrowUpRight, ArrowDownRight,
   TrendingDown, PieChart, BarChart3
 } from 'lucide-react';
-import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
 
 const Statistics = () => {
   const [loading, setLoading] = useState(true);
@@ -24,7 +25,7 @@ const Statistics = () => {
       setReportLoading(true);
       setReportModalOpen(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/user-interests-report', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/user-interests-report`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -44,7 +45,7 @@ const Statistics = () => {
         setLoading(true);
         setError(null);
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/admin/detailed-stats', {
+        const response = await fetch(`${apiConfig.BASE_API}/admin/detailed-stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -283,7 +284,7 @@ const Statistics = () => {
                     <div key={user.user_id} className="table-row">
                       <div className="col-user">
                         <img 
-                          src={user.avatar_url ? (user.avatar_url.startsWith('http') ? user.avatar_url : `${apiConfig.API_URL}${user.avatar_url}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
+                          src={buildAvatarUrl(user.avatar_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
                           alt="" 
                           className="mini-avatar" 
                         />

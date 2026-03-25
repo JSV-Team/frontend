@@ -1,5 +1,6 @@
 // Notification Service - API calls related to notifications
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -12,13 +13,25 @@ const getUserId = () => {
   return null;
 };
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': token ? `Bearer ${token}` : ''
+  };
+};
+
 export const notificationService = {
   // Get all notifications cho user hiện tại
-  getNotifications: async (userId) => {
-    const activeUserId = userId || getUserId();
+  getNotifications: async () => {
     try {
-      if (!activeUserId) throw new Error('No user id');
-      const response = await fetch(`${API_BASE_URL}/notifications?userId=${activeUserId}`);
+      const response = await fetch(`${API_BASE_URL}/notifications`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -26,10 +39,12 @@ export const notificationService = {
     }
   },
 
-  // Get notifications by user ID
+  // Get notifications by user ID (Manual)
   getNotificationsByUserId: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`);
+      const response = await fetch(`${API_BASE_URL}/notifications?userId=${userId}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         const errText = await response.text();
         throw new Error(`Server error ${response.status}: ${errText}`);
@@ -42,11 +57,15 @@ export const notificationService = {
   },
 
   // Get unread notifications count
-  getUnreadCount: async (userId) => {
+  getUnreadCount: async () => {
     try {
-      const activeUserId = userId || getUserId();
-      if (!activeUserId) return 0;
-      const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${activeUserId}`);
+      const response = await fetch(`${API_BASE_URL}/notifications/unread/count`, {
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -59,9 +78,7 @@ export const notificationService = {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
       });
       if (!response.ok) {
         const errText = await response.text();
@@ -82,9 +99,7 @@ export const notificationService = {
 
       const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ userId: activeUserId }),
       });
       if (!response.ok) {
@@ -103,6 +118,7 @@ export const notificationService = {
     try {
       const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       if (!response.ok) {
         const errText = await response.text();

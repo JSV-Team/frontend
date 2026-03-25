@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar,
   PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
@@ -75,7 +76,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/stats', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/stats`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();

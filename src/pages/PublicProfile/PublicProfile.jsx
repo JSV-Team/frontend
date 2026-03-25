@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { profileService } from '../../services/profileService';
+import { profileService, buildAvatarUrl } from '../../services/profileService';
 import { postService } from '../../services/postService';
 import { activityService } from '../../services/activityService';
 import { chatService } from '../../services/chatService';
@@ -196,7 +196,7 @@ export default function PublicProfile() {
           <div className="pp-header-top-row">
             <div className={`pp-avatar-ring ${hasStory ? 'active-story' : ''}`}>
               <img
-                src={profile.avatar_url ? (profile.avatar_url.startsWith('http') ? profile.avatar_url : `http://127.0.0.1:3001${profile.avatar_url}`) : 'https://i.pravatar.cc/150'}
+                src={buildAvatarUrl(profile.avatar_url) || 'https://i.pravatar.cc/150'}
                 alt="Avatar"
                 className="pp-avatar-img"
               />
@@ -313,7 +313,7 @@ export default function PublicProfile() {
                             <div className="avatar-container">
                               <div className="avatar-inner">
                                 <img
-                                  src={profile.avatar_url ? (profile.avatar_url.startsWith('http') ? profile.avatar_url : `http://127.0.0.1:3001${profile.avatar_url}`) : 'https://i.pravatar.cc/150'}
+                                  src={buildAvatarUrl(profile.avatar_url) || 'https://i.pravatar.cc/150'}
                                   alt={profile.username}
                                 />
                               </div>
@@ -342,7 +342,7 @@ export default function PublicProfile() {
                           {post.image && (
                             <div className="post-media-container">
                               <img
-                                src={post.image.startsWith('http') ? post.image : `http://127.0.0.1:3001${post.image}`}
+                                src={buildAvatarUrl(post.image)}
                                 alt="Post content"
                                 className="post-media-img"
                               />
@@ -445,7 +445,7 @@ export default function PublicProfile() {
               {selectedActivity.image_url && (
                 <div className="pp-modal-image">
                   <img
-                    src={selectedActivity.image_url.startsWith('http') ? selectedActivity.image_url : `http://127.0.0.1:3001${selectedActivity.image_url}`}
+                    src={buildAvatarUrl(selectedActivity.image_url)}
                     alt="Activity"
                   />
                 </div>

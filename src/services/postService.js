@@ -1,26 +1,25 @@
-const API_BASE_URL = '/api/posts';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = `${apiConfig.BASE_API}/posts`;
 
 export const postService = {
   // Tạo bài đăng mới
   createPost: async (userIdOrData, maybeData) => {
-    let userId, postData;
+    let postData;
     
-    // Handle flexible arguments to fix NULL creator_id issue
+    // Handle flexible arguments
     if (maybeData === undefined) {
-      // If called with 1 arg: createPost(postDataWithUserId)
-      userId = userIdOrData?.userId || 2;
       postData = userIdOrData;
     } else {
-      // If called with 2 args: createPost(userId, postData) 
-      userId = userIdOrData;
       postData = maybeData;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/${userId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
@@ -112,7 +111,7 @@ export const postService = {
         formData.append('media', file);
       });
 
-      const response = await fetch(`/api/upload/post-media`, {
+      const response = await fetch(`${apiConfig.BASE_API}/upload/post-media`, {
         method: 'POST',
         body: formData,
       });

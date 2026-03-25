@@ -1,4 +1,5 @@
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 export const uploadService = {
   uploadImage: async (file) => {
@@ -22,8 +23,12 @@ export const uploadService = {
     formData.append('image', file);
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/upload/image`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
 

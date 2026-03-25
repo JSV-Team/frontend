@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Heart, User, MessageCircle } from 'lucide-react';
+import { buildAvatarUrl } from '../../services/profileService';
 
 function MatchCard({
   matchedUser,
@@ -27,7 +28,7 @@ function MatchCard({
         >
           <div className="match-avatar-inner">
             <img
-              src={matchedUser.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedUser.username || 'User')}&background=random&size=200`}
+              src={buildAvatarUrl(matchedUser.avatar_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedUser.username || 'User')}&background=random&size=200`}
               alt={matchedUser.username}
               className="match-avatar-image"
               onError={(e) => {

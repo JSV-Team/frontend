@@ -4,11 +4,12 @@ import useCreatePost from '../../hooks/useCreatePost';
 import uploadService from '../../services/uploadService';
 import LocationPicker from '../common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
-  const userString = localStorage.getItem('user');
-  const currentUser = userString && userString !== 'undefined' ? JSON.parse(userString) : null;
+  const currentUser = useCurrentUser(); // Auto-updates when user changes
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -21,12 +22,6 @@ function CreatePost({ onPostCreated, isProfilePost }) {
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Lấy thông tin user hiện tại từ localStorage
-  const storedUser = localStorage.getItem('user');
-  // const currentUser = storedUser ? JSON.parse(storedUser) : null;
-  const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
-  const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
-
   const { createPost, loading, error } = useCreatePost(() => {
     setTitle('');
     setContent('');
@@ -37,6 +32,10 @@ function CreatePost({ onPostCreated, isProfilePost }) {
     setImagePreview('');
     onPostCreated();
   });
+
+  if (!currentUser) {
+    return null; // Don't render if no user (Moved AFTER all hooks to follow React rules)
+  }
 
   // Gọi khi người dùng chọn file từ máy
   const handleImageChange = async (e) => {
@@ -55,8 +54,12 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -64,7 +67,9 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       if (!res.ok) throw new Error(data.message || 'Upload thất bại');
 
       // Lưu URL server trả về (path tương đối)
-      setImageUrl(data.imageUrl);
+      // Backend trả về data: { url: '/uploads/...', ... } hoặc data: { imageUrl: '...' }
+      const finalUrl = data.data?.url || data.url || data.imageUrl || (data.data && data.data.imageUrl);
+      setImageUrl(finalUrl);
     } catch (err) {
       setUploadError('Lỗi upload: ' + err.message);
       setImagePreview('');
@@ -109,9 +114,7 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       <div className="create-activity-header">
         <div className="user-avatar">
           <img
-            src={currentUser?.avatar_url
-              ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
-              : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
+            src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
             alt={currentUser?.full_name || currentUser?.username || 'User'}
             referrerPolicy="no-referrer"
           />

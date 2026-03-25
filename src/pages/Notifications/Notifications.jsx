@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 import { useState, useEffect } from 'react';
@@ -23,30 +23,17 @@ function Notifications() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { theme } = useTheme();
+function Notifications() {
+  const { 
+    notifications, 
+    loading, 
+    error, 
+    refreshNotifications,
+    markAsRead
+  } = useNotifications();
 
   useEffect(() => {
-    // Fetch notifications from API with dynamic userId
-    const currentUserId = getUserId();
-    if (!currentUserId) return;
-
-    fetch(`${apiConfig.API_URL}/api/notifications?userId=${currentUserId}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch notifications');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Handle the API response structure
-        const notificationsList = data.value || data || [];
-        setNotifications(notificationsList);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching notifications:', err);
-        setError('Không thể tải thông báo');
-        setLoading(false);
-      });
+    refreshNotifications();
   }, []);
 
   const getTimeAgo = (dateString) => {
@@ -206,6 +193,7 @@ function Notifications() {
               <div
                 key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
+                onClick={() => !notification.is_read && markAsRead(notification.notification_id)}
               >
                 {getNotificationIcon(notification.type)}
                 <div className="notification-content">
