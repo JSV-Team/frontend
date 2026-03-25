@@ -1,5 +1,6 @@
 // Match Service - API calls related to interest-based matching
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 // Helper to get JWT token from localStorage
 const getAuthToken = () => {

@@ -33,7 +33,7 @@ function Home() {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
 
     try {
-      await activityService.deleteActivity(activityId, currentUserId);
+      await activityService.deleteActivity(activityId, CURRENT_USER_ID);
       alert('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {

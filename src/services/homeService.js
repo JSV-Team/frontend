@@ -1,5 +1,6 @@
 // Home Service - API calls related to home page
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 export const homeService = {
   // Get home page data

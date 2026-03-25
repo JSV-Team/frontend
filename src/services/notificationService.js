@@ -1,5 +1,6 @@
 // Notification Service - API calls related to notifications
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
