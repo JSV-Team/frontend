@@ -209,80 +209,105 @@
   transform: rotate(90deg) scale(1.1);
 }
 
-/* ==================== INPUT CONTAINER ==================== */
+/* ==================== SEARCH CONTAINER ==================== */
 .chip-input-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  position: relative;
 }
 
-.chip-input-wrapper {
+.chip-search-wrapper {
   display: flex;
   gap: 12px;
-  align-items: stretch;
+  align-items: center;
+  position: relative;
 }
 
-.chip-input {
+.search-icon-inside {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #CD8C8C;
+  pointer-events: none;
+  display: flex;
+}
+
+.chip-search-input {
   flex: 1;
   border-radius: 12px;
-  padding: 14px 18px;
+  padding: 14px 18px 14px 44px;
   border: 2px solid rgba(205, 140, 140, 0.2);
   background: white;
   color: var(--color-text-primary);
   font-size: 14px;
   transition: all 0.3s ease;
   font-family: inherit;
+  width: 100%;
 }
 
-.chip-input:focus {
+.chip-search-input:focus {
   border-color: #CD8C8C;
   background: white;
   box-shadow: 0 0 0 4px rgba(205, 140, 140, 0.1);
   outline: none;
 }
 
-.chip-input::placeholder {
-  color: var(--color-text-muted);
+.suggestions-panel {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(205, 140, 140, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  animation: slideDown 0.3s ease;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
-.chip-add-btn {
-  background: linear-gradient(135deg, #CD8C8C, #d9a0a0);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 24px;
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.suggestions-label {
+  font-size: 13px;
   font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.suggestions-list {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestion-item {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(205, 140, 140, 0.3);
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.chip-add-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #b87878, #CD8C8C);
+.suggestion-item:hover {
+  background: rgba(205, 140, 140, 0.1);
+  border-color: #CD8C8C;
+  color: #CD8C8C;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(205, 140, 140, 0.4);
 }
 
-.chip-add-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.chip-add-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.chip-input-hint {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  text-align: right;
-  padding-right: 4px;
+.suggestion-item span {
+  white-space: nowrap;
 }
 
 /* ==================== DARK MODE ==================== */
@@ -301,8 +326,26 @@
   color: var(--color-text-primary);
 }
 
-[data-theme="dark"] .chip-input:focus {
-  background: var(--color-surface);
+[data-theme="dark"] .suggestions-panel {
+  background: var(--color-surface-elevated, #2d2d2d);
+  border-color: rgba(205, 140, 140, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .suggestion-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .suggestion-item:hover {
+  background: rgba(205, 140, 140, 0.2);
+  border-color: #CD8C8C;
+  color: #CD8C8C;
+}
+
+[data-theme="dark"] .search-icon-inside {
+  color: #CD8C8C;
 }
 
 /* ==================== RESPONSIVE ==================== */
@@ -317,12 +360,7 @@
     gap: 12px;
   }
 
-  .chip-input-wrapper {
-    flex-direction: column;
-  }
-
-  .chip-add-btn {
-    width: 100%;
-    justify-content: center;
+  .chip-search-wrapper {
+    flex-direction: row;
   }
 }

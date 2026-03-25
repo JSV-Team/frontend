@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import useNotifications from '../../hooks/useNotifications';
 import './Header.css';
+
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('Home');
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount } = useNotifications();
 
   // Lấy thông tin user từ localStorage (chỉ chứa dữ liệu login, không cache profile)
   const [currentUser, setCurrentUser] = useState(null);
@@ -105,8 +108,14 @@ function Header() {
             className={`notification-btn ${currentTab === 'Notifications' ? 'active' : ''}`}
             onClick={() => navigate('/notifications')}
             title="Thông báo"
+            style={{ position: 'relative' }}
           >
             <Bell size={24} />
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
           <div className="user-avatar" onClick={() => {
