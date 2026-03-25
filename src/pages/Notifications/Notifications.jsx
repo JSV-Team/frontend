@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-import { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
 import apiConfig from '../../config/apiConfig';
+
 // Mock user ID for testing (since there's no login yet)
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -20,11 +20,7 @@ const getUserId = () => {
   }
   return null;
 };
-function Notifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { theme } = useTheme();
+
 function Notifications() {
   const { 
     notifications, 
@@ -33,6 +29,7 @@ function Notifications() {
     refreshNotifications,
     markAsRead
   } = useNotifications();
+  const { theme } = useTheme();
 
   useEffect(() => {
     refreshNotifications();

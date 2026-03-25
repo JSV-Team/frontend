@@ -63,13 +63,21 @@ export default function ProfileLayout() {
 
         // Lấy interests
         const interestsData = await profileService.getInterests(USER_ID);
-        // interestsData là array của objects { interest_id, name }
-        setInterests(interestsData.map(i => i.name));
+        // Safety check for interestsData
+        if (Array.isArray(interestsData)) {
+          setInterests(interestsData.map(i => i.name));
+        } else if (interestsData && Array.isArray(interestsData.data)) {
+          setInterests(interestsData.data.map(i => i.name));
+        } else {
+          console.warn("ProfileLayout: interestsData is not an array:", interestsData);
+          setInterests([]);
+        }
 
         setError(null);
       } catch (err) {
         console.error("Error fetching profile:", err);
-        setError("Không thể tải thông tin profile");
+        const msg = err.message || (typeof err === 'string' ? err : "Không thể tải thông tin profile");
+        setError(msg);
       } finally {
         setLoading(false);
       }
@@ -93,26 +101,55 @@ export default function ProfileLayout() {
 
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'transparent' }}>
-        {theme === 'light' && (
+      <div className="pp-loading">
+        {theme === 'light' ? (
           <div className="home-grainient-bg">
             <Grainient />
           </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
         )}
-        <p>Đang tải...</p>
+        <div className="loading-content">
+          <div className="spinner"></div>
+          <p>Đang tải profile...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
+    const isAuthError = error.includes("xác thực") || error.includes("hết hạn") || error.includes("403");
     return (
-      <div className="error-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'transparent' }}>
-        {theme === 'light' && (
+      <div className="pp-error">
+        {theme === 'light' ? (
           <div className="home-grainient-bg">
             <Grainient />
           </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
         )}
-        <p style={{ color: 'red' }}>{error}</p>
+        <div className="error-content">
+          <p style={{ color: '#ef4444', fontWeight: 'bold' }}>{error}</p>
+          {isAuthError && (
+             <p style={{ fontSize: '0.9rem', marginTop: '10px' }}>
+               Vui lòng đăng xuất và đăng nhập lại để làm mới phiên làm việc.
+             </p>
+          )}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button className="pp-btn pp-btn-secondary" onClick={() => window.location.reload()}>Thử lại</button>
+            {isAuthError && (
+              <button className="pp-btn pp-btn-primary" onClick={() => {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}>Đăng nhập lại</button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

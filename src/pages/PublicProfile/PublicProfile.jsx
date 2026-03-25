@@ -86,7 +86,7 @@ export default function PublicProfile() {
       setError(null);
     } catch (err) {
       console.error("Error loading public profile:", err);
-      setError("Không thể tải thông tin người dùng này.");
+      setError(err.message || "Không thể tải thông tin người dùng này.");
     } finally {
       setLoading(false);
     }
@@ -154,9 +154,45 @@ export default function PublicProfile() {
     return Math.round((2 * commonCount / totalPossible) * 100);
   }, [commonInterests, profile, myInterests]);
 
-  if (loading) return <div className="pp-loading">Đang tải hồ sơ...</div>;
-  if (error) return <div className="pp-error">{error}</div>;
-  if (!profile) return <div className="pp-error">Người dùng không tồn tại.</div>;
+  if (loading) {
+    return (
+      <div className="pp-loading">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="loading-content">
+          <div className="spinner"></div>
+          <p>Đang tải hồ sơ...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="pp-error">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="error-content">
+          <p>{error || "Người dùng không tồn tại."}</p>
+          <button className="pp-btn pp-btn-secondary" onClick={() => window.location.reload()}>Thử lại</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pp-container">

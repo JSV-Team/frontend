@@ -19,6 +19,7 @@ export default function ProfileViewSelector() {
   }
 
   // If viewing own profile, use the owner's layout (with Sidebar and Edit/Rep/Posts tabs)
+  console.log("ProfileViewSelector: comparing", { userId, myId, isMatch: userId === myId });
   if (userId === myId) {
     return <ProfileLayout />;
   }
