@@ -264,10 +264,37 @@ export default profileService;
  */
 export const buildAvatarUrl = (url) => {
   if (!url) return null;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  // URL tương đối (vd: /uploads/img-xxx.jpg)
+
+  // Step 1: Clean contaminated URLs from DB (leftovers from localhost testing)
+  let cleanUrl = url;
+  if (url.includes('127.0.0.1:3001')) {
+    cleanUrl = url.split('127.0.0.1:3001')[1];
+  } else if (url.includes('localhost:3001')) {
+    cleanUrl = url.split('localhost:3001')[1];
+  }
+
+  // Step 2: If it's already a valid absolute production URL, return it
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    // Force HTTPS if the page is on HTTPS to avoid Mixed Content
+    if (window.location.protocol === 'https:' && cleanUrl.startsWith('http:')) {
+      return cleanUrl.replace('http:', 'https:');
+    }
+    return cleanUrl;
+  }
+
+  // Step 3: Use VITE_API_URL or dynamic origin to build full URL
+  // We remove '/api' suffix as uploads are served from root
   const base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '') || window.location.origin;
-  return `${base}${url}`;
+  
+  // Join base and cleanUrl safely
+  const finalUrl = `${base.replace(/\/$/, '')}/${cleanUrl.replace(/^\//, '')}`;
+  
+  // Force HTTPS on production
+  if (window.location.protocol === 'https:' && finalUrl.startsWith('http:')) {
+    return finalUrl.replace('http:', 'https:');
+  }
+  
+  return finalUrl;
 };
 
 // Hàm tiện ích để lưu vào localStorage

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import useNotifications from '../../hooks/useNotifications';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Header.css';
 
 function Header() {
@@ -123,9 +124,7 @@ function Header() {
             navigate(`/profile/${userId}`);
           }} title="Trang cá nhân">
             <img
-              src={currentUser?.avatar_url
-                ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
-                : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
+              src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
               alt="User Avatar"
               referrerPolicy="no-referrer"
             />
