@@ -40,27 +40,39 @@
     width: 100%;
     padding: 12px 16px;
     border-radius: 8px;
-    border: 1px solid var(--color-border, #475569);
-    background: var(--color-bg-light, #334155);
-    color: var(--color-text-primary, #f1f5f9);
+    border: 1px solid var(--color-border, #374151) !important;
+    background: var(--color-bg-light, #111827) !important;
+    color: var(--color-text-primary, #f9fafb) !important;
+    -webkit-text-fill-color: var(--color-text-primary, #f9fafb) !important;
     font-size: 15px;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
 .ep-input::placeholder {
-    color: var(--color-text-muted, #94a3b8);
+    color: var(--color-text-muted, #6b7280);
+    -webkit-text-fill-color: var(--color-text-muted, #6b7280);
+    opacity: 1;
 }
 
 .ep-input:focus {
     outline: none;
-    border-color: var(--color-primary, #cd8c8c);
+    border-color: var(--color-primary, #cd8c8c) !important;
     box-shadow: 0 0 0 3px rgba(205, 140, 140, 0.1);
 }
 
 .ep-input:read-only {
     cursor: pointer;
-    background: var(--color-bg-light, #334155);
+    background: var(--color-bg-light, #111827) !important;
+    color: var(--color-text-primary, #f9fafb) !important;
+    -webkit-text-fill-color: var(--color-text-primary, #f9fafb) !important;
+}
+
+.ep-input:-webkit-autofill,
+.ep-input:-webkit-autofill:hover,
+.ep-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-bg-light, #111827) inset !important;
+    -webkit-text-fill-color: var(--color-text-primary, #f9fafb) !important;
 }
 
 .ep-dateWrap {
