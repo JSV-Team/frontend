@@ -118,7 +118,7 @@ export default function ProfileEdit() {
         dob: form.dob || null,
         location: form.location.trim(),
         email: form.email.trim(),
-        avatar_url: currentAvatar // Explicitly keep current avatar
+        avatar_url: (currentAvatar || "").replace(/https?:\/\/[^\/]+/, "").replace(/^[^\/]+:\d+/, "") 
       });
 
       // 2) update interests

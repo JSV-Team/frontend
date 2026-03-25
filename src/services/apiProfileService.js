@@ -1,17 +1,7 @@
 // New Profile Service - API calls related to profile
 // Using correct backend routes: /api/profile
 
-// Central API configuration
-const API_URL = import.meta.env.VITE_API_URL ||
-                (window.location.hostname.includes('vercel.app')
-                  ? 'https://backend-1wyh.onrender.com'
-                  : 'http://localhost:3001');
-
-const apiConfig = {
-  API_URL,
-  BASE_API: `${API_URL}/api`,
-  UPLOAD_URL: `${API_URL.replace(/\/$/, '')}/uploads`
-};
+import apiConfig from '../config/apiConfig';
 
 const API_BASE_URL = apiConfig.BASE_API || '/api';
 
