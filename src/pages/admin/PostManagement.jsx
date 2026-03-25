@@ -155,7 +155,6 @@ const PostManagement = () => {
     let matchesTab = false;
     if (tab === 'all') matchesTab = true;
     else if (tab === 'published') matchesTab = (status === 'published' || status === 'active' || status === 'approved');
-    else if (tab === 'pending') matchesTab = (status === 'pending');
     else if (tab === 'removed') matchesTab = (status === 'removed' || status === 'deleted');
 
     const searchText = searchQuery.toLowerCase();
@@ -173,13 +172,13 @@ const PostManagement = () => {
 
       <div className="admin-filters" style={{ marginTop: '24px' }}>
         <div className="filter-tabs">
-          {['All', 'Published', 'Pending', 'Removed'].map(tab => (
+          {['All', 'Published', 'Removed'].map(tab => (
             <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'All' ? 'Tất cả' : (tab === 'Published' ? 'Đã đăng' : (tab === 'Pending' ? 'Chờ duyệt' : 'Đã gỡ'))}
+              {tab === 'All' ? 'Tất cả' : (tab === 'Published' ? 'Đã đăng' : 'Đã gỡ')}
             </button>
           ))}
         </div>
@@ -228,8 +227,8 @@ const PostManagement = () => {
                 position: 'relative'
               }}>
                 {!act.image_url && <ImageIcon size={40} />}
-                <div className={`post-card__status ${isPublished ? 'published' : (isPending ? 'pending' : 'removed')}`}>
-                  {isPublished ? 'Đã đăng' : (isPending ? 'Chờ duyệt' : 'Đã gỡ')}
+                <div className={`post-card__status ${isPublished ? 'published' : 'removed'}`}>
+                  {isPublished ? 'Đã đăng' : 'Đã gỡ'}
                 </div>
               </div>
 
@@ -277,17 +276,6 @@ const PostManagement = () => {
                     Khôi phục
                   </button>
                 ) : (
-                  isPending && (
-                    <button
-                      className="action-btn-full btn-approve"
-                      onClick={() => handleStatusChange(act.id, 'published')}
-                    >
-                      Duyệt
-                    </button>
-                  )
-                )}
-
-                {!isRemoved && (
                   <button
                     className="action-btn-full btn-remove"
                     title="Gỡ bài viết"
@@ -391,8 +379,6 @@ const PostManagement = () => {
                     </span>
                     {(selectedPost.status || 'pending').toLowerCase() === 'published' ? (
                       <span style={{ background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã đăng</span>
-                    ) : (selectedPost.status || 'pending').toLowerCase() === 'pending' ? (
-                      <span style={{ background: '#fef3c7', color: '#d97706', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Chờ duyệt</span>
                     ) : (
                       <span style={{ background: '#fee2e2', color: '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã gỡ</span>
                     )}

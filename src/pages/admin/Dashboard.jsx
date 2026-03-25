@@ -18,8 +18,7 @@ const Dashboard = () => {
     stats: [
       { title: 'Tổng người dùng', value: '1,280', trend: '+ 2%', trendType: 'up' },
       { title: 'Tổng bài viết', value: '3,500', trend: '+ 5%', trendType: 'up' },
-      { title: 'Hoạt động nhóm', value: '85', trend: '+ 12%', trendType: 'up' },
-      { title: 'Báo cáo chờ xử lý', value: '12', trend: 'Cần xử lý', trendType: 'up' }
+      { title: 'Hoạt động nhóm', value: '85', trend: '+ 12%', trendType: 'up' }
     ],
     activityData: {
       Week: [
@@ -55,12 +54,7 @@ const Dashboard = () => {
         { name: '2026', value: 9800 }
       ]
     },
-    reportData: [
-      { name: 'Spam', value: 35, color: '#ef4444' },
-      { name: 'Nội dung độc hại', value: 25, color: '#f59e0b' },
-      { name: 'Fake news', value: 20, color: '#3b82f6' },
-      { name: 'Vi phạm quy chuẩn', value: 20, color: '#8b5cf6' }
-    ],
+    reportData: [],
       matchData: {
         stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
         recent: []
@@ -126,9 +120,9 @@ const Dashboard = () => {
 
       {/* Row 1: 4 Cards (Dàn ngang 4 ô) */}
       <div className="stats-row">
-        {data.stats.map((stat, idx) => {
-          const icons = [<Users size={24} />, <FileText size={24} />, <Activity size={24} />, <AlertTriangle size={24} />];
-          const colors = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b'];
+        {data.stats.slice(0, 3).map((stat, idx) => {
+          const icons = [<Users size={24} />, <FileText size={24} />, <Activity size={24} />];
+          const colors = ['#6366f1', '#3b82f6', '#10b981'];
           return (
             <div key={idx} className="stat-card-new">
               <div className="stat-card-header">
@@ -205,93 +199,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Violation Chart — vertical stack */}
-        <div className="pie-section glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
-          {/* 1. Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h3 className="section-title">Báo cáo vi phạm</h3>
-            <span style={{
-              fontSize: '11px', fontWeight: 700, color: '#6366f1',
-              background: '#eef2ff', padding: '3px 10px', borderRadius: '99px'
-            }}>Theo loại</span>
-          </div>
-
-          {/* 2. Donut chart — căn giữa */}
-          <div style={{ width: '160px', height: '160px', position: 'relative', margin: '0 auto 18px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: 'Spam',               value: data.reportData[0]?.value || 35 },
-                    { name: 'Nội dung độc hại',  value: data.reportData[1]?.value || 25 },
-                    { name: 'Fake news',          value: data.reportData[2]?.value || 20 },
-                    { name: 'Vi phạm quy chuẩn', value: data.reportData[3]?.value || 20 },
-                  ]}
-                  cx="50%" cy="50%"
-                  innerRadius={48} outerRadius={70}
-                  paddingAngle={3}
-                  dataKey="value"
-                  stroke="none"
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <Cell fill="#ef4444" />
-                  <Cell fill="#f59e0b" />
-                  <Cell fill="#3b82f6" />
-                  <Cell fill="#8b5cf6" />
-                </Pie>
-                <Tooltip
-                  contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', fontSize: '12px', padding: '8px 12px' }}
-                  formatter={(value) => [`${value}%`, '']}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center label */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              pointerEvents: 'none'
-            }}>
-              <span style={{ fontSize: '20px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>
-                {(data.reportData[0]?.value || 35) + (data.reportData[1]?.value || 25) +
-                 (data.reportData[2]?.value || 20) + (data.reportData[3]?.value || 20)}
-              </span>
-              <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600, marginTop: '2px' }}>Tổng %</span>
-            </div>
-          </div>
-
-          {/* 3. Legend + mini bars */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {[
-              { name: 'Spam',               value: data.reportData[0]?.value || 35, color: '#ef4444' },
-              { name: 'Nội dung độc hại',  value: data.reportData[1]?.value || 25, color: '#f59e0b' },
-              { name: 'Fake news',          value: data.reportData[2]?.value || 20, color: '#3b82f6' },
-              { name: 'Vi phạm quy chuẩn', value: data.reportData[3]?.value || 20, color: '#8b5cf6' },
-            ].map((item, idx) => {
-              const max = Math.max(35, 25, 20, 20);
-              return (
-                <div key={idx}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                      <div style={{ width: '9px', height: '9px', borderRadius: '3px', background: item.color, flexShrink: 0 }} />
-                      <span style={{ fontSize: '12.5px', fontWeight: 600, color: '#475569' }}>{item.name}</span>
-                    </div>
-                    <span style={{ fontSize: '12.5px', fontWeight: 800, color: item.color }}>{item.value}%</span>
-                  </div>
-                  <div style={{ height: '5px', borderRadius: '99px', background: '#f1f5f9', overflow: 'hidden' }}>
-                    <div style={{
-                      height: '100%',
-                      width: `${(item.value / max) * 100}%`,
-                      background: `linear-gradient(90deg, ${item.color}88, ${item.color})`,
-                      borderRadius: '99px',
-                      transition: 'width 1s cubic-bezier(0.16,1,0.3,1)',
-                    }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </div>
 
 
@@ -463,7 +370,7 @@ const Dashboard = () => {
         /* Row 1 Cards */
         .stats-row {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 20px;
           margin-bottom: 24px;
         }
@@ -516,7 +423,7 @@ const Dashboard = () => {
         /* Main Grids */
         .dashboard-main-grid, .bottom-content-grid {
           display: grid;
-          grid-template-columns: 1.8fr 1fr;
+          grid-template-columns: 1fr;
           gap: 24px;
           margin-bottom: 30px;
         }

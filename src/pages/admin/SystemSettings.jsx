@@ -18,7 +18,6 @@ const SystemSettings = () => {
 
   const [settings, setSettings] = useState({
     sensitiveFilter: true,
-    notifyNewUsers: false,
   });
 
   useEffect(() => {
@@ -38,7 +37,6 @@ const SystemSettings = () => {
         setSettings(prev => ({
           ...prev,
           sensitiveFilter: dbData.sensitiveFilter !== undefined ? dbData.sensitiveFilter === 'true' : prev.sensitiveFilter,
-          notifyNewUsers: dbData.notifyNewUsers !== undefined ? dbData.notifyNewUsers === 'true' : prev.notifyNewUsers,
         }));
       }
     } catch (error) {
@@ -177,22 +175,6 @@ const SystemSettings = () => {
             </div>
           </div>
 
-          {/* Section 3: Thông báo */}
-          <div className="premium-glass-card settings-section">
-            <div className="section-header">
-              <div className="icon-circle bg-purple">
-                <Bell size={20} />
-              </div>
-              <h3 className="section-title">Thông báo</h3>
-            </div>
-            <div className="section-body">
-              <Toggle
-                active={settings.notifyNewUsers}
-                onClick={() => handleToggle('notifyNewUsers')}
-                label="User đăng ký mới"
-              />
-            </div>
-          </div>
 
           <div className="button-row">
             <button
