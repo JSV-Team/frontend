@@ -6,7 +6,6 @@ import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
-import chatService from '../../services/chatService';
 import { buildAvatarUrl } from '../../services/profileService';
 import './Friends.css';
 
@@ -219,7 +218,7 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`/api/upload/image`, {
+      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`

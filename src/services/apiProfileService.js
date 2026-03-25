@@ -1,7 +1,9 @@
 // New Profile Service - API calls related to profile
 // Using correct backend routes: /api/profile
 
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 // Helper: lấy JWT token từ localStorage
 const getToken = () => {
@@ -160,20 +162,17 @@ export const profileService = {
 
   // Upload ảnh profile
   uploadAvatar: async (file) => {
-    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('image', file);
+    const token = getToken();
 
     try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-
-      const headers = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
+      // Use absolute URL from apiConfig
+      const response = await fetch(`${apiConfig.API_URL}/api/upload/avatar`, {
         method: 'POST',
-        headers: headers,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       const data = await response.json();
@@ -265,31 +264,45 @@ export default profileService;
 export const buildAvatarUrl = (url) => {
   if (!url) return null;
 
-  // Step 1: Clean contaminated URLs from DB (leftovers from localhost testing)
-  let cleanUrl = url;
-  if (url.includes('127.0.0.1:3001')) {
-    cleanUrl = url.split('127.0.0.1:3001')[1];
-  } else if (url.includes('localhost:3001')) {
-    cleanUrl = url.split('localhost:3001')[1];
-  }
+  let cleanUrl = String(url).trim();
+  
+  // Step 1: Aggressively strip any hardcoded local hosts/IPs
+  // This handles http://127.0.0.1:3001/uploads/..., 127.0.0.1:3001/uploads/..., etc.
+  const localPatterns = [
+    /https?:\/\/127\.0\.0\.1(:\d+)?/gi,
+    /https?:\/\/localhost(:\d+)?/gi,
+    /127\.0\.0\.1(:\d+)?/gi,
+    /localhost(:\d+)?/gi
+  ];
+  
+  localPatterns.forEach(pattern => {
+    cleanUrl = cleanUrl.replace(pattern, '');
+  });
 
-  // Step 2: If it's already a valid absolute production URL, return it
+  // Step 2: If it's a social/external URL (google, facebook, pravatar), let it be
   if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
-    // Force HTTPS if the page is on HTTPS to avoid Mixed Content
+    // Force HTTPS if on HTTPS page
     if (window.location.protocol === 'https:' && cleanUrl.startsWith('http:')) {
       return cleanUrl.replace('http:', 'https:');
     }
     return cleanUrl;
   }
 
-  // Step 3: Use VITE_API_URL or dynamic origin to build full URL
-  // We remove '/api' suffix as uploads are served from root
-  const base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '') || window.location.origin;
+  // Step 3: At this point, it should be a relative path like /uploads/img.jpg
+  // We need to point it to the BACKEND server.
+  // We use VITE_API_URL if available, else fallback to current origin (not ideal but safe)
+  let base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '').trim();
   
-  // Join base and cleanUrl safely
+  // If VITE_API_URL is missing or also contaminated (misconfigured env), 
+  // we fallback to window.location.origin but warn in console
+  if (!base || base.includes('127.0.0.1') || base.includes('localhost')) {
+    base = window.location.origin;
+    console.warn('VibeMatch: VITE_API_URL is missing or local. Using window.origin as fallback for images.');
+  }
+
   const finalUrl = `${base.replace(/\/$/, '')}/${cleanUrl.replace(/^\//, '')}`;
   
-  // Force HTTPS on production
+  // Final Force HTTPS check
   if (window.location.protocol === 'https:' && finalUrl.startsWith('http:')) {
     return finalUrl.replace('http:', 'https:');
   }
