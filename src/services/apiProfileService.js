@@ -163,12 +163,13 @@ export const profileService = {
   // Upload ảnh profile
   uploadAvatar: async (file) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('avatar', file);
     const token = getToken();
 
     try {
-      // Use absolute URL from apiConfig
-      const response = await fetch(`${apiConfig.API_URL}/api/upload/avatar`, {
+      // Use relative path to avoid Mixed Content issues
+      // This will use the same protocol/host as the frontend
+      const response = await fetch(`${API_BASE_URL}/upload/avatar`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
