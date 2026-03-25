@@ -10,6 +10,7 @@ import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, Mor
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Home.css';
 
 const getUserId = () => {
@@ -171,7 +172,7 @@ function Home() {
                         <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
                           <div className="avatar-inner">
                             <img
-                              src={post.avatar_url || 'https://i.pravatar.cc/150?img=1'}
+                              src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
                               alt={post.username || 'User'}
                               referrerPolicy="no-referrer"
                             />
@@ -256,7 +257,7 @@ function Home() {
                           {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
                           {console.log('Rendering image:', post.image_url)}
                           <img
-                            src={post.image_url.startsWith('http') ? post.image_url : `${apiConfig.API_URL}${post.image_url}`}
+                            src={buildAvatarUrl(post.image_url)}
                             alt="Post"
                             className="post-media-img"
                           />

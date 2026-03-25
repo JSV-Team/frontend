@@ -4,6 +4,7 @@ import useCreatePost from '../../hooks/useCreatePost';
 import uploadService from '../../services/uploadService';
 import LocationPicker from '../common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
@@ -109,9 +110,7 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       <div className="create-activity-header">
         <div className="user-avatar">
           <img
-            src={currentUser?.avatar_url
-              ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
-              : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
+            src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
             alt={currentUser?.full_name || currentUser?.username || 'User'}
             referrerPolicy="no-referrer"
           />
