@@ -5,11 +5,11 @@ import uploadService from '../../services/uploadService';
 import LocationPicker from '../common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
-  const userString = localStorage.getItem('user');
-  const currentUser = userString && userString !== 'undefined' ? JSON.parse(userString) : null;
+  const currentUser = useCurrentUser(); // Auto-updates when user changes
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -22,11 +22,9 @@ function CreatePost({ onPostCreated, isProfilePost }) {
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Lấy thông tin user hiện tại từ localStorage
-  const storedUser = localStorage.getItem('user');
-  // const currentUser = storedUser ? JSON.parse(storedUser) : null;
-  const avatarUrl = currentUser?.avatar_url || 'https://i.pravatar.cc/150?img=1';
-  const fullName = currentUser?.full_name || currentUser?.username || 'Người dùng';
+  if (!currentUser) {
+    return null; // Don't render if no user
+  }
 
   const { createPost, loading, error } = useCreatePost(() => {
     setTitle('');

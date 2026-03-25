@@ -6,6 +6,7 @@ import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import NotificationsWidget from '../../components/NotificationsWidget/NotificationsWidget';
 import useListPost from '../../hooks/useListPost';
 import useNotifications from '../../hooks/useNotifications';
+import useCurrentUser, { useCurrentUserId } from '../../hooks/useCurrentUser';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
@@ -13,31 +14,10 @@ import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
 import './Home.css';
 
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
-
 function Home() {
   const navigate = useNavigate();
-  const userString = localStorage.getItem('user');
-  let currentUser = null;
-  if (userString && userString !== "undefined") {
-    try {
-      currentUser = JSON.parse(userString);
-    } catch (e) {
-      console.error("Home.jsx: Lỗi parse user từ localStorage:", e);
-    }
-  }
-  const CURRENT_USER_ID = currentUser?.user_id;
+  const currentUser = useCurrentUser(); // Auto-updates when user changes
+  const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
@@ -45,8 +25,7 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-  const currentUserId = getUserId();
-  const { notifications, unreadCount } = useNotifications(currentUserId);
+  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -68,7 +47,7 @@ function Home() {
 
     setJoiningIds(prev => new Set(prev).add(activityId));
     try {
-      const data = await activityService.joinActivity(activityId, currentUserId);
+      const data = await activityService.joinActivity(activityId, CURRENT_USER_ID);
 
       if (data.message && data.message.includes('thành công')) {
         alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
@@ -162,7 +141,7 @@ function Home() {
 
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
-                const isOwner = post.user_id === getUserId();
+                const isOwner = post.user_id === CURRENT_USER_ID;
                 const isJoining = joiningIds.has(post.status_id);
 
                 return (
