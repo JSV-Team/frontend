@@ -145,6 +145,19 @@ export const profileService = {
     }
   },
 
+  // Lấy tất cả sở thích có trong hệ thống
+  getAllAvailableInterests: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/all-interests`);
+      const result = await response.json();
+      if (!response.ok) throw result;
+      return result.data || result;
+    } catch (error) {
+      console.error('Lỗi khi lấy tất cả sở thích:', error);
+      throw error;
+    }
+  },
+
   // Upload ảnh profile
   uploadAvatar: async (file) => {
     const token = localStorage.getItem('token');

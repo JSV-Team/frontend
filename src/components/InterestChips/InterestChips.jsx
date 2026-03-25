@@ -1,22 +1,56 @@
-import { useState } from "react";
-import { Heart, Plus, X } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Heart, Plus, X, Search } from "lucide-react";
+import { profileService } from "../../services/profileService";
 import "./interestChips.css";
 
 export default function InterestChips({ value = [], onChange, onSave }) {
   const [input, setInput] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [allInterests, setAllInterests] = useState([]);
+  const containerRef = useRef(null);
 
-  const addInterest = async () => {
-    const v = input.trim();
-    if (!v) return;
-    if (value.some((x) => x.toLowerCase() === v.toLowerCase())) {
-      setInput("");
-      return;
+  // Lấy tất cả sở thích từ database khi mount
+  useEffect(() => {
+    const fetchAllInterests = async () => {
+      try {
+        const data = await profileService.getAllAvailableInterests();
+        // data có thể là array of objects { interest_id, name } hoặc array strings
+        const names = data.map(item => typeof item === 'string' ? item : item.name);
+        setAllInterests(names);
+      } catch (error) {
+        console.error("Lỗi khi fetch all interests:", error);
+      }
+    };
+    fetchAllInterests();
+  }, []);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsFocused(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Lọc danh sách gợi ý dựa trên input và những cái chưa chọn
+  // Nếu input rỗng nhưng đang focus, hiện một số cái phổ biến nhất
+  const suggestions = allInterests.filter(item => 
+    (input ? item.toLowerCase().includes(input.toLowerCase()) : true) && 
+    !value.some(v => v.toLowerCase() === item.toLowerCase())
+  ).slice(0, input ? 20 : 15); // Giới hạn số lượng hiển thị cho gọn
+
+  const toggleInterest = async (interest) => {
+    let newInterests;
+    if (value.some(v => v.toLowerCase() === interest.toLowerCase())) {
+      newInterests = value.filter(v => v.toLowerCase() !== interest.toLowerCase());
+    } else {
+      newInterests = [...value, interest];
     }
-    const newInterests = [...value, v];
+
     onChange(newInterests);
-    setInput("");
-    
-    // Auto-save if onSave callback is provided
     if (onSave) {
       try {
         await onSave(newInterests);
@@ -29,8 +63,6 @@ export default function InterestChips({ value = [], onChange, onSave }) {
   const removeInterest = async (idx) => {
     const newInterests = value.filter((_, i) => i !== idx);
     onChange(newInterests);
-    
-    // Auto-save if onSave callback is provided
     if (onSave) {
       try {
         await onSave(newInterests);
@@ -40,15 +72,22 @@ export default function InterestChips({ value = [], onChange, onSave }) {
     }
   };
 
+  const handleSearchCommit = () => {
+    if (suggestions.length > 0) {
+      toggleInterest(suggestions[0]);
+      setInput("");
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      addInterest();
+      handleSearchCommit();
     }
   };
 
   return (
-    <div className="interest-chips-container">
+    <div className="interest-chips-container" ref={containerRef}>
       <div className="interest-chips-header">
         <div className="interest-chips-title">
           <Heart size={20} className="interest-icon" />
@@ -64,7 +103,7 @@ export default function InterestChips({ value = [], onChange, onSave }) {
           <div className="chips-empty-state">
             <Heart size={32} className="empty-icon" />
             <p className="empty-text">Chưa có sở thích nào</p>
-            <p className="empty-subtext">Hãy thêm những điều bạn yêu thích!</p>
+            <p className="empty-subtext">Nhấn vào ô dưới để chọn những gì bạn thích!</p>
           </div>
         ) : (
           <div className="chips-list">
@@ -85,29 +124,46 @@ export default function InterestChips({ value = [], onChange, onSave }) {
         )}
 
         <div className="chip-input-container">
-          <div className="chip-input-wrapper">
+          <div className="chip-search-wrapper">
+            <button 
+              type="button"
+              className="search-icon-inside"
+              onClick={handleSearchCommit}
+              title="Chọn sở thích đầu tiên"
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              <Search size={18} />
+            </button>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onFocus={() => setIsFocused(true)}
               onKeyDown={handleKeyDown}
-              placeholder="Nhập sở thích mới (VD: Chơi game, Nấu ăn, Piano...)"
-              className="chip-input"
-              maxLength={30}
+              placeholder="Tìm kiếm sở thích phổ biến..."
+              className="chip-search-input"
             />
-            <button
-              type="button"
-              onClick={addInterest}
-              className="chip-add-btn"
-              disabled={!input.trim()}
-            >
-              <Plus size={18} />
-              <span>Thêm</span>
-            </button>
           </div>
-          {input.length > 0 && (
-            <div className="chip-input-hint">
-              {input.length}/30 ký tự
+
+          {(isFocused || input) && suggestions.length > 0 && (
+            <div className="suggestions-panel">
+              <div className="suggestions-label">Gợi ý sở thích:</div>
+              <div className="suggestions-list">
+                {suggestions.map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    className="suggestion-item"
+                    onClick={() => {
+                      toggleInterest(item);
+                      setInput("");
+                    }}
+                  >
+                    <Plus size={14} />
+                    <span>{item}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import InterestChips from "../../components/InterestChips/InterestChips";
 import Toast from "../../components/Toast/Toast";
+import LocationPicker from "../../components/common/LocationPicker";
 import { profileService } from "../../services/profileService";
 import "./ProfileEdit.css";
 
@@ -21,6 +22,7 @@ export default function ProfileEdit() {
 
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [msg, setMsg] = useState({ type: "", text: "" });
 
   // Map dữ liệu từ layout -> form
@@ -64,8 +66,8 @@ export default function ProfileEdit() {
     try {
       // 1. Upload to backend
       const res = await profileService.uploadAvatar(file);
-      // Sử dụng fullUrl nếu có, fallback về url
-      const newAvatarUrl = res.fullUrl || res.url;
+      // Backend trả về { success, data: { url, fullUrl, ... } }
+      const newAvatarUrl = res.data?.fullUrl || res.data?.url || res.url;
 
       // 2. Update profile with new avatar URL
       await profileService.updateProfile(USER_ID, { avatar_url: newAvatarUrl });
@@ -114,6 +116,8 @@ export default function ProfileEdit() {
 
     try {
       // 1) update user
+      const currentAvatar = profile?.avatar_url || profile?.avatar;
+      
       await profileService.updateProfile(USER_ID, {
         bio: form.bio.trim(),
         full_name: form.full_name.trim(),
@@ -121,6 +125,7 @@ export default function ProfileEdit() {
         dob: form.dob || null,
         location: form.location.trim(),
         email: form.email.trim(),
+        avatar_url: currentAvatar // Explicitly keep current avatar
       });
 
       // 2) update interests
@@ -131,11 +136,12 @@ export default function ProfileEdit() {
       setProfile(fresh);
 
       // --- THE REMEDY ---
-      // Update localStorage with the new full_name so Header can read it
+      // Update localStorage with the latest data so Header/Sidebar can read it
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);
-        userData.full_name = form.full_name.trim(); // Update name in storage
+        userData.full_name = form.full_name.trim();
+        userData.avatar_url = fresh.avatar_url || fresh.avatar || userData.avatar_url;
         localStorage.setItem("user", JSON.stringify(userData));
         // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
@@ -252,11 +258,21 @@ export default function ProfileEdit() {
                   <input
                     className="form-control pe-input"
                     value={form.location}
-                    onChange={(e) => onChange("location", e.target.value)}
-                    placeholder="Tp. Hồ Chí Minh, Việt Nam"
+                    onClick={() => setIsPickerOpen(true)}
+                    readOnly
+                    placeholder="Bấm để chọn địa điểm từ bản đồ..."
+                    style={{ cursor: 'pointer', background: '#f8fafc' }}
                   />
                 </div>
               </div>
+
+              {isPickerOpen && (
+                <LocationPicker
+                  onClose={() => setIsPickerOpen(false)}
+                  onConfirm={(addr) => onChange("location", addr)}
+                  initialLocation={form.location}
+                />
+              )}
 
               <div className="pe-form-row mb-0">
                 <label className="pe-label-h">Email</label>

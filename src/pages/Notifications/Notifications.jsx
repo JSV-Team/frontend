@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 function Notifications() {
@@ -9,6 +9,10 @@ function Notifications() {
     refreshNotifications,
     markAsRead
   } = useNotifications();
+
+  useEffect(() => {
+    refreshNotifications();
+  }, []);
 
   const getTimeAgo = (dateString) => {
     const date = new Date(dateString);
