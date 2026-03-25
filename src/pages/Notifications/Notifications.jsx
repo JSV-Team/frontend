@@ -1,29 +1,12 @@
 import React, { useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
-import { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
-// Mock user ID for testing (since there's no login yet)
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
+
 function Notifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { theme } = useTheme();
-function Notifications() {
   const { 
     notifications, 
     loading, 
