@@ -128,8 +128,8 @@ export default function InterestChips({ value = [], onChange, onSave }) {
             <button 
               type="button"
               className="search-icon-inside"
-              onClick={handleSearchCommit}
-              title="Chọn sở thích đầu tiên"
+              onClick={() => setIsFocused(!isFocused)}
+              title="Hiện danh sách sở thích"
               style={{ background: 'none', border: 'none', cursor: 'pointer' }}
             >
               <Search size={18} />
@@ -139,15 +139,16 @@ export default function InterestChips({ value = [], onChange, onSave }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onFocus={() => setIsFocused(true)}
-              onKeyDown={handleKeyDown}
-              placeholder="Tìm kiếm sở thích phổ biến..."
+              placeholder="Tìm kiếm sở thích có sẵn..."
               className="chip-search-input"
             />
           </div>
 
           {(isFocused || input) && suggestions.length > 0 && (
             <div className="suggestions-panel">
-              <div className="suggestions-label">Gợi ý sở thích:</div>
+              <div className="suggestions-label">
+                {input ? `Tìm thấy ${suggestions.length} sở thích:` : 'Chọn từ danh sách:'}
+              </div>
               <div className="suggestions-list">
                 {suggestions.map((item, idx) => (
                   <button
@@ -164,6 +165,17 @@ export default function InterestChips({ value = [], onChange, onSave }) {
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+          
+          {(isFocused || input) && suggestions.length === 0 && input && (
+            <div className="suggestions-panel">
+              <div className="suggestions-label" style={{ color: '#ef4444' }}>
+                Không tìm thấy "{input}" trong danh sách sở thích
+              </div>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', padding: '8px 12px', margin: 0 }}>
+                Vui lòng chọn từ danh sách có sẵn hoặc liên hệ admin để thêm sở thích mới.
+              </p>
             </div>
           )}
         </div>

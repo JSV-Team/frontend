@@ -258,9 +258,13 @@ export default function ProfileEdit() {
                     className="form-control pe-input"
                     value={form.location}
                     onClick={() => setIsPickerOpen(true)}
+                    onFocus={(e) => {
+                      e.target.blur(); // Ngăn focus để không hiện bàn phím
+                      setIsPickerOpen(true);
+                    }}
                     readOnly
                     placeholder="Bấm để chọn địa điểm từ bản đồ..."
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', backgroundColor: '#f8fafc' }}
                   />
                 </div>
               </div>
