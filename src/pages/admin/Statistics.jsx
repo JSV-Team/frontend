@@ -9,7 +9,6 @@ import {
   Calendar, ChevronRight, Hash, ArrowUpRight, ArrowDownRight,
   TrendingDown, PieChart, BarChart3
 } from 'lucide-react';
-import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
 
 const Statistics = () => {
