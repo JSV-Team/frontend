@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import { 
   AlertTriangle, CheckCircle, XCircle, Clock, 
   ArrowRight, Shield, User, MessageSquare, AlertCircle
@@ -42,7 +43,7 @@ const ReportManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/reports', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/reports`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -64,7 +65,7 @@ const ReportManagement = () => {
   const handleUpdateStatus = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/reports/${id}/status`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/reports/${id}/status`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

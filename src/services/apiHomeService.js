@@ -1,7 +1,21 @@
 // New Home Service - API calls related to home page
-// Backend: /api/activities, /api/pending-activities
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
-const API_BASE_URL = '/api';
+// Helper: lấy JWT token từ localStorage
+const getToken = () => {
+    return localStorage.getItem('token');
+};
+
+// Helper: tạo Authorization header
+const authHeaders = (extraHeaders = {}) => {
+    const token = getToken();
+    const headers = { ...extraHeaders };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+};
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -28,9 +42,10 @@ export const apiHomeService = {
 
   // Get pending activities (activities user has requested to join)
   getPendingActivities: async (userId) => {
-    const activeUserId = userId || getUserId();
     try {
-      const response = await fetch(`${API_BASE_URL}/activities/pending-activities?userId=${activeUserId}`);
+      const response = await fetch(`${API_BASE_URL}/activities/pending-activities`, {
+            headers: authHeaders()
+      });
       return await response.json();
     } catch (error) {
       console.error('Error fetching pending activities:', error);
@@ -51,15 +66,12 @@ export const apiHomeService = {
 
   // Join activity
   joinActivity: async (activityId, userId) => {
-    const activeUserId = userId || getUserId();
-    const token = localStorage.getItem('token');
     try {
       const response = await fetch(`${API_BASE_URL}/activities/join`, {
         method: 'POST',
-        headers: {
+        headers: authHeaders({
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
+        }),
         body: JSON.stringify({ activityId }),
       });
       return await response.json();
@@ -74,6 +86,7 @@ export const apiHomeService = {
     try {
       const response = await fetch(`${API_BASE_URL}/activities/pending-activities/${requestId}`, {
         method: 'DELETE',
+        headers: authHeaders()
       });
       return await response.json();
     } catch (error) {

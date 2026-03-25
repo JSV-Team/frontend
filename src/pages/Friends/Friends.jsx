@@ -9,6 +9,8 @@ import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
 import apiConfig from '../../config/apiConfig';
+import chatService from '../../services/chatService';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Friends.css';
 
 const getUserId = () => {
@@ -130,8 +132,9 @@ function Friends() {
   // Load danh sách nhóm chat
   useEffect(() => {
     const currentUserId = getUserId();
-    fetch(`/api/chat/conversations?userId=${currentUserId}`)
-      .then(res => res.json())
+    if (!currentUserId) return;
+
+    chatService.getConversations(currentUserId)
       .then(data => {
         if (Array.isArray(data)) {
           setConversations(data);
@@ -152,8 +155,8 @@ function Friends() {
     if (!activeConvId) return;
     setLoading(true);
     const currentUserId = getUserId();
-    fetch(`/api/chat/conversations/${activeConvId}/messages?userId=${currentUserId}&limit=50`)
-      .then(res => res.json())
+    
+    chatService.getMessages(activeConvId, currentUserId)
       .then(data => {
         if (Array.isArray(data)) {
           setMessages(data);
@@ -208,7 +211,8 @@ function Friends() {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file || !activeConvId || !socket) return;
+    const token = localStorage.getItem('token');
+    if (!file || !activeConvId || !socket || !token) return;
 
     // Hiển thị preview local
     const localPreview = URL.createObjectURL(file);
@@ -219,8 +223,11 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
+      const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
         body: formData,
       });
 
@@ -232,7 +239,7 @@ function Friends() {
         conversationId: activeConvId,
         content: '', // Có thể để trống nếu chỉ gửi ảnh
         msgType: 'image',
-        imageUrl: data.imageUrl
+        imageUrl: data.data?.url || data.imageUrl
       }, (response) => {
         if (response.status === 'error') {
           alert('Lỗi gửi ảnh: ' + response.error);
@@ -251,16 +258,12 @@ function Friends() {
   const handleLeaveGroup = () => {
     if (!window.confirm('Bạn có chắc muốn rời nhóm này chứ?')) return;
 
-    fetch(`/api/chat/conversations/${activeConvId}/leave`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: getUserId() })
-    })
-      .then(res => res.json())
+    chatService.leaveConversation(activeConvId)
       .then(() => {
         setConversations(prev => prev.filter(c => c.conversation_id !== activeConvId));
         setActiveConvId(null);
-      });
+      })
+      .catch(err => alert('Lỗi: ' + err.message));
   }
 
   // Hiện/ẩn panel thông tin nhóm và tải danh sách thành viên
@@ -271,8 +274,7 @@ function Friends() {
     }
     setShowInfo(true);
     setLoadingMembers(true);
-    fetch(`/api/chat/conversations/${activeConvId}/members`)
-      .then(res => res.json())
+    chatService.getMembers(activeConvId)
       .then(data => {
         if (Array.isArray(data)) {
           setGroupMembers(data);
@@ -357,7 +359,7 @@ function Friends() {
                 <div className="avatar-container">
                   <img
                     src={conv.conversation_type === 'private'
-                      ? (conv.other_avatar_url ? (conv.other_avatar_url.startsWith('http') ? conv.other_avatar_url : `${apiConfig.API_URL}${conv.other_avatar_url}`) : 'https://i.pravatar.cc/150')
+                      ? (buildAvatarUrl(conv.other_avatar_url) || 'https://i.pravatar.cc/150')
                       : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
                     }
                     alt="Avatar"
@@ -437,7 +439,7 @@ function Friends() {
                         {msg.msg_type === 'image' || msg.image_url ? (
                           <div className="message-image-container">
                             <img
-                              src={msg.image_url?.startsWith('http') ? msg.image_url : `${apiConfig.API_URL}${msg.image_url}`}
+                              src={buildAvatarUrl(msg.image_url)}
                               alt="Sent image"
                               className="message-image"
                             />
@@ -572,7 +574,7 @@ function Friends() {
                         <div key={m.user_id} className="member-item">
                           <div className="member-avatar">
                             {m.avatar_url
-                              ? <img src={m.avatar_url} alt={m.full_name} />
+                              ? <img src={buildAvatarUrl(m.avatar_url)} alt={m.full_name} />
                               : <span>{(m.full_name || '?').charAt(0).toUpperCase()}</span>
                             }
                           </div>

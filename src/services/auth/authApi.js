@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5000/api/auth"; // Adjusted to common backend port, will check env if needed
+import apiConfig from "../../../config/apiConfig";
+const BASE_URL = `${apiConfig.BASE_API}/auth`;
 
 export async function loginApi(payload) {
   const response = await fetch(`${BASE_URL}/login`, {

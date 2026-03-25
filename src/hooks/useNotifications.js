@@ -18,7 +18,7 @@ function useNotifications(initialUserId = null) {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const data = await notificationService.getNotifications(effectiveUserId);
+      const data = await notificationService.getNotifications();
       setNotifications(data);
     } catch (err) {
       setError('Lấy danh sách thông báo thất bại');
@@ -29,7 +29,7 @@ function useNotifications(initialUserId = null) {
 
   const fetchUnreadCount = async () => {
     try {
-      const data = await notificationService.getUnreadCount(effectiveUserId);
+      const data = await notificationService.getUnreadCount();
       setUnreadCount(data.count || 0);
     } catch (err) {
       console.error('Error fetching unread count:', err);
@@ -50,7 +50,7 @@ function useNotifications(initialUserId = null) {
 
   const markAllAsRead = async () => {
     try {
-      await notificationService.markAllAsRead(effectiveUserId);
+      await notificationService.markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
     } catch (err) {

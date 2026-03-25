@@ -1,5 +1,6 @@
 import axios from 'axios';
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 export const loginService = {
     login: async (identifier, password) => {

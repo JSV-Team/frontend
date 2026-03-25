@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
 import StatBar from "../../components/StatBar/StatBar";
+import LocationPicker from "../../components/common/LocationPicker";
 import { saveProfileToLocalStorage, getProfileFromLocalStorage } from "../../services/profileService";
 import { profileService } from "../../services/profileService";
 import "../profileLayout.css";
@@ -25,6 +26,7 @@ const getInitialProfile = () => {
     dobText: "01/02/2000",
     email: "hxoa@gmail.com",
     avatar: null,
+    location: "",
   };
 };
 
@@ -44,12 +46,13 @@ const getInitialInterests = () => {
 export default function EditProfilePage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  
+
   const [profile, setProfile] = useState(getInitialProfile);
   const [interests, setInterests] = useState(getInitialInterests);
   const [avatarPreview, setAvatarPreview] = useState(profile.avatar || "");
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
 
   const stats = useMemo(
     () => ({ reputation: 100, fer: 100, fing: 100, group: 100 }),
@@ -94,14 +97,14 @@ export default function EditProfilePage() {
     try {
       setIsSaving(true);
       console.log("SAVE:", profile, interests);
-      
+
       // Lưu vào localStorage
       localStorage.setItem("userProfile", JSON.stringify(profile));
       localStorage.setItem("userInterests", JSON.stringify(interests));
-      
+
       // Gửi sự kiện để Header cập nhật avatar
       window.dispatchEvent(new Event('profile-updated'));
-      
+
       console.log("Saved to localStorage:", { profile, interests });
       alert("Lưu thành công! ✅");
       // Chuyển hướng về trang hồ sơ cá nhân
@@ -122,6 +125,15 @@ export default function EditProfilePage() {
       />
 
       <main className="vm-main">
+        {showLocationPicker && (
+          <LocationPicker
+            onClose={() => setShowLocationPicker(false)}
+            onConfirm={(location) => {
+              setProfile((p) => ({ ...p, location }));
+            }}
+            initialLocation={profile.location}
+          />
+        )}
         <TopTabs active="edit" />
         <StatBar stats={stats} />
 
@@ -130,8 +142,8 @@ export default function EditProfilePage() {
 
           <div className="ep-grid">
             {/* Avatar with upload functionality */}
-            <div 
-              className="ep-bigAvatar" 
+            <div
+              className="ep-bigAvatar"
               onClick={handleAvatarClick}
               style={{ cursor: 'pointer', position: 'relative' }}
             >
@@ -171,7 +183,7 @@ export default function EditProfilePage() {
                 onChange={(e) => setProfile((p) => ({ ...p, fullName: e.target.value }))}
                 placeholder="Họ và tên"
               />
-              
+
               {/* Giới tính - Select option */}
               <select
                 className="ep-input"
@@ -191,12 +203,12 @@ export default function EditProfilePage() {
                   onChange={(e) => {
                     const dobISO = e.target.value;
                     // Chuyển đổi sang định dd/mm/yyyy
-                    if(dobISO) {
-                        const [year, month, day] = dobISO.split('-');
-                        const dobText = `${day}/${month}/${year}`;
-                        setProfile((p) => ({ ...p, dobISO, dobText }));
+                    if (dobISO) {
+                      const [year, month, day] = dobISO.split('-');
+                      const dobText = `${day}/${month}/${year}`;
+                      setProfile((p) => ({ ...p, dobISO, dobText }));
                     } else {
-                        setProfile((p) => ({ ...p, dobISO: "", dobText: "" }));
+                      setProfile((p) => ({ ...p, dobISO: "", dobText: "" }));
                     }
                   }}
                 />
@@ -210,6 +222,30 @@ export default function EditProfilePage() {
                 onChange={(e) => setProfile((p) => ({ ...p, email: e.target.value }))}
                 placeholder="Email"
               />
+
+              {/* Địa điểm */}
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="ep-input"
+                  value={profile.location || ""}
+                  readOnly
+                  placeholder="Chọn địa điểm"
+                  onClick={() => setShowLocationPicker(true)}
+                  style={{ cursor: 'pointer', paddingRight: '40px' }}
+                />
+                <span
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '18px',
+                    pointerEvents: 'none'
+                  }}
+                >
+                  📍
+                </span>
+              </div>
             </div>
           </div>
         </div>

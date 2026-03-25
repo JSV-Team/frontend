@@ -1,5 +1,6 @@
 // Friend Service - API calls related to friends
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 export const friendService = {
   // Get friends list

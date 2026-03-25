@@ -1,4 +1,5 @@
 import "./sidebarProfile.css";
+import { buildAvatarUrl } from "../../services/profileService";
 
 export default function SidebarProfile({ profile, onLogout }) {
   return (
@@ -7,7 +8,7 @@ export default function SidebarProfile({ profile, onLogout }) {
         <div className="sb-avatar">
           {(profile.avatar_url || profile.avatar) ? (
             <img 
-              src={(profile.avatar_url || profile.avatar).startsWith('http') ? (profile.avatar_url || profile.avatar) : `http://127.0.0.1:3001${profile.avatar_url || profile.avatar}`} 
+              src={buildAvatarUrl(profile.avatar_url || profile.avatar)}
               alt={profile.full_name || profile.fullName} 
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />

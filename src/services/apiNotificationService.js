@@ -1,7 +1,8 @@
 // New Notification Service - API calls related to notifications
 // Backend: /api/notifications
 
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 const getUserId = () => {
   const storedUser = localStorage.getItem('user');
@@ -16,11 +17,14 @@ const getUserId = () => {
 
 export const apiNotificationService = {
   // Get all notifications for current user
-  getNotifications: async (userId) => {
-    const activeUserId = userId || getUserId();
+  getNotifications: async () => {
     try {
-      if (!activeUserId) throw new Error('No user id');
-      const response = await fetch(`${API_BASE_URL}/notifications?userId=${activeUserId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/notifications`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       return await response.json();
     } catch (error) {
       console.error('Error fetching notifications:', error);
@@ -29,11 +33,14 @@ export const apiNotificationService = {
   },
 
   // Get unread notifications count
-  getUnreadCount: async (userId) => {
-    const activeUserId = userId || getUserId();
+  getUnreadCount: async () => {
     try {
-      if (!activeUserId) return 0;
-      const response = await fetch(`${API_BASE_URL}/notifications/unread/count?userId=${activeUserId}`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/notifications/unread/count`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       return await response.json();
     } catch (error) {
       console.error('Error fetching unread count:', error);
@@ -44,10 +51,12 @@ export const apiNotificationService = {
   // Mark notification as read
   markAsRead: async (notificationId) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
       });
       return await response.json();
@@ -58,16 +67,15 @@ export const apiNotificationService = {
   },
 
   // Mark all notifications as read
-  markAllAsRead: async (userId) => {
-    const activeUserId = userId || getUserId();
+  markAllAsRead: async () => {
     try {
-      if (!activeUserId) return;
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: activeUserId }),
+          'Authorization': `Bearer ${token}`
+        }
       });
       return await response.json();
     } catch (error) {
@@ -79,8 +87,12 @@ export const apiNotificationService = {
   // Delete notification
   deleteNotification: async (notificationId) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       return await response.json();
     } catch (error) {

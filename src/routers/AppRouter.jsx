@@ -30,8 +30,7 @@ import SystemSettings from '../pages/admin/SystemSettings';
 
 function AppRouter() {
   return (
-    <ThemeProvider>
-      <Router>
+    <Router>
       <Routes>
         {/* Trang công khai - không cần đăng nhập */}
         <Route path="/" element={<Landing />} />
@@ -94,7 +93,6 @@ function AppRouter() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
-    </ThemeProvider>
   );
 }
 

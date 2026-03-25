@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
 import InterestChips from "../../components/InterestChips/InterestChips";
 import Toast from "../../components/Toast/Toast";
-import { profileService } from "../../services/profileService";
+import LocationPicker from "../../components/common/LocationPicker";
+import { profileService, buildAvatarUrl } from "../../services/profileService";
+import { MapPin } from "lucide-react";
 import "./ProfileEdit.css";
 
 export default function ProfileEdit() {
@@ -21,6 +23,7 @@ export default function ProfileEdit() {
 
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [msg, setMsg] = useState({ type: "", text: "" });
 
   // Map dữ liệu từ layout -> form
@@ -55,38 +58,35 @@ export default function ProfileEdit() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("avatar", file);
-
     setUploading(true);
     setMsg({ type: "", text: "" });
 
     try {
-      // 1. Upload to backend
+      // 1. Upload to backend — backend tự UPDATE avatar_url trong DB rồi
       const res = await profileService.uploadAvatar(file);
-      // Sử dụng fullUrl nếu có, fallback về url
-      const newAvatarUrl = res.fullUrl || res.url;
+      console.log('📤 Upload response:', res);
 
-      // 2. Update profile with new avatar URL
-      await profileService.updateProfile(USER_ID, { avatar_url: newAvatarUrl });
-
-      // 3. Refresh local state
+      // 2. Refresh local state từ DB (lấy giá trị mới nhất)
       const fresh = await profileService.getProfile(USER_ID);
+      console.log('🔄 Fresh profile from DB:', fresh);
       setProfile(fresh);
 
-      // --- THE REMEDY ---
-      // Update localStorage with the new avatar_url so Header can read it
+      // 3. Cập nhật localStorage để Header/Sidebar hiển thị đúng
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);
-        userData.avatar_url = newAvatarUrl;
+        console.log('📦 Current localStorage user:', userData);
+        
+        // CRITICAL: Luôn cập nhật avatar_url từ fresh profile
+        userData.avatar_url = fresh.avatar_url;
+        
+        console.log('✅ Updated localStorage user:', userData);
         localStorage.setItem("user", JSON.stringify(userData));
-        // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
       }
 
       setMsg({ type: "success", text: "Cập nhật ảnh đại diện thành công! ✨" });
-      setTimeout(() => setMsg({ type: "", text: "" }), 3000); // Auto-hide after 3s
+      setTimeout(() => setMsg({ type: "", text: "" }), 3000);
     } catch (err) {
       console.error("Upload error:", err);
       setMsg({ type: "danger", text: "Không thể tải ảnh lên. Thử lại sau." });
@@ -114,6 +114,8 @@ export default function ProfileEdit() {
 
     try {
       // 1) update user
+      const currentAvatar = profile?.avatar_url || profile?.avatar;
+      
       await profileService.updateProfile(USER_ID, {
         bio: form.bio.trim(),
         full_name: form.full_name.trim(),
@@ -121,6 +123,7 @@ export default function ProfileEdit() {
         dob: form.dob || null,
         location: form.location.trim(),
         email: form.email.trim(),
+        avatar_url: (currentAvatar || "").replace(/https?:\/\/[^\/]+/, "").replace(/^[^\/]+:\d+/, "") 
       });
 
       // 2) update interests
@@ -131,11 +134,14 @@ export default function ProfileEdit() {
       setProfile(fresh);
 
       // --- THE REMEDY ---
-      // Update localStorage with the new full_name so Header can read it
+      // Update localStorage with the latest data so Header/Sidebar can read it
       const userString = localStorage.getItem("user");
       if (userString) {
         const userData = JSON.parse(userString);
-        userData.full_name = form.full_name.trim(); // Update name in storage
+        userData.full_name = form.full_name.trim();
+        // CRITICAL: Always update avatar_url from fresh profile
+        userData.avatar_url = fresh.avatar_url;
+        console.log('✅ Saving to localStorage:', userData);
         localStorage.setItem("user", JSON.stringify(userData));
         // Dispatch event for Header to listen
         window.dispatchEvent(new Event('userUpdated'));
@@ -172,7 +178,7 @@ export default function ProfileEdit() {
             <div className="pe-avatar-section">
               <div className="pe-avatar-box" onClick={handleAvatarClick}>
                 {currentAvatar ? (
-                  <img src={currentAvatar.startsWith('http') ? currentAvatar : `http://127.0.0.1:3001${currentAvatar}`} alt="Avatar" />
+                  <img src={buildAvatarUrl(currentAvatar)} alt="Avatar" />
                 ) : (
                   <div className="pe-avatar-placeholder">
                     {form.full_name?.charAt(0).toUpperCase() || "?"}
@@ -249,14 +255,32 @@ export default function ProfileEdit() {
               <div className="pe-form-row mb-3">
                 <label className="pe-label-h">Địa điểm</label>
                 <div className="pe-input-field">
-                  <input
-                    className="form-control pe-input"
-                    value={form.location}
-                    onChange={(e) => onChange("location", e.target.value)}
-                    placeholder="Tp. Hồ Chí Minh, Việt Nam"
-                  />
+                  <div className="pe-location-group">
+                    <input
+                      className="form-control pe-input pe-location-input"
+                      value={form.location}
+                      onChange={(e) => onChange("location", e.target.value)}
+                      placeholder="Nhập địa điểm hoặc chọn từ bản đồ..."
+                    />
+                    <button 
+                      type="button" 
+                      className="pe-map-icon-btn"
+                      onClick={() => setIsPickerOpen(true)}
+                      title="Chọn địa điểm từ bản đồ"
+                    >
+                      <MapPin size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              {isPickerOpen && (
+                <LocationPicker
+                  onClose={() => setIsPickerOpen(false)}
+                  onConfirm={(addr) => onChange("location", addr)}
+                  initialLocation={form.location}
+                />
+              )}
 
               <div className="pe-form-row mb-0">
                 <label className="pe-label-h">Email</label>

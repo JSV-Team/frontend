@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
+import { activityService } from '../../services/activityService';
 import './PendingApproval.css';
 
-// Lấy user ID từ localStorage giống như ListWaitingGroup
+// Lấy user ID từ localStorage
 const getUserId = () => {
     const userString = localStorage.getItem('user');
     if (userString && userString !== "undefined") {
@@ -26,13 +27,12 @@ function PendingApproval({ reload }) {
         if (!userId) return;
         try {
             setLoading(true);
-            const response = await fetch(`/api/activities/pending-approvals?userId=${userId}`);
-            if (!response.ok) throw new Error('Không thể tải các yêu cầu xin tham gia');
-            const data = await response.json();
+            const data = await activityService.getPendingApprovals(userId);
             setRequests(data);
+            setError(null);
         } catch (err) {
-            console.error(err);
-            setError(err.message);
+            console.error("Error fetching pending approvals:", err);
+            setError(err.message || 'Không thể tải các yêu cầu xin tham gia');
         } finally {
             setLoading(false);
         }
@@ -44,17 +44,7 @@ function PendingApproval({ reload }) {
 
     const handleAction = async (requestId, action) => {
         try {
-            const endpoint = `/api/activities/pending-activities/${requestId}/${action}`;
-            const response = await fetch(endpoint, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || 'Lỗi xử lý yêu cầu');
-            }
-
+            await activityService.processActivityRequest(requestId, action);
             // Xóa người dùng khỏi danh sách chờ sau khi duyệt/từ chối
             setRequests(prev => prev.filter(req => req.id !== requestId));
         } catch (err) {

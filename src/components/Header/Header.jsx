@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import useNotifications from '../../hooks/useNotifications';
+import { buildAvatarUrl } from '../../services/profileService';
 import './Header.css';
+
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('Home');
   const { theme, toggleTheme } = useTheme();
+  const { unreadCount } = useNotifications();
 
   // Lấy thông tin user từ localStorage (chỉ chứa dữ liệu login, không cache profile)
   const [currentUser, setCurrentUser] = useState(null);
@@ -105,8 +109,14 @@ function Header() {
             className={`notification-btn ${currentTab === 'Notifications' ? 'active' : ''}`}
             onClick={() => navigate('/notifications')}
             title="Thông báo"
+            style={{ position: 'relative' }}
           >
             <Bell size={24} />
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
           <div className="user-avatar" onClick={() => {
@@ -114,9 +124,7 @@ function Header() {
             navigate(`/profile/${userId}`);
           }} title="Trang cá nhân">
             <img
-              src={currentUser?.avatar_url
-                ? (currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : currentUser.avatar_url)
-                : (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
+              src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
               alt="User Avatar"
               referrerPolicy="no-referrer"
             />

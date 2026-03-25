@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import useMatchSocket from '../../hooks/useMatchSocket';
 import useMatchQueue from '../../hooks/useMatchQueue';
 import { useMatch } from '../../contexts/MatchContext';
+import apiConfig from "../../config/apiConfig";
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';
@@ -65,7 +66,7 @@ function MatchContainer() {
         const fetchUserInterests = async () => {
           try {
             console.log('🔍 Fetching user interests for user:', user.user_id);
-            const response = await fetch(`/api/profile/${user.user_id}`, {
+            const response = await fetch(`${apiConfig.BASE_API}/profile/${user.user_id}`, {
               headers: {
                 'Authorization': `Bearer ${storedToken}`
               }
