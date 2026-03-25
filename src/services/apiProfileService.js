@@ -258,6 +258,18 @@ export const profileService = {
 
 export default profileService;
 
+/**
+ * Build URL đầy đủ từ avatar_url (có thể là tương đối hoặc tuyệt đối).
+ * Dùng VITE_API_URL nếu có, fallback về window.location.origin.
+ */
+export const buildAvatarUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  // URL tương đối (vd: /uploads/img-xxx.jpg)
+  const base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '') || window.location.origin;
+  return `${base}${url}`;
+};
+
 // Hàm tiện ích để lưu vào localStorage
 export const saveProfileToLocalStorage = (profile) => {
   localStorage.setItem('userProfile', JSON.stringify(profile));
