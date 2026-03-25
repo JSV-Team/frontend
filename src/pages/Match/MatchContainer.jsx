@@ -60,7 +60,7 @@ function MatchContainer() {
         const fetchUserInterests = async () => {
           try {
             console.log('🔍 Fetching user interests for user:', user.user_id);
-            const response = await fetch(`/api/profile/${user.user_id}`, {
+            const response = await fetch(`${apiConfig.BASE_API}/profile/${user.user_id}`, {
               headers: {
                 'Authorization': `Bearer ${storedToken}`
               }

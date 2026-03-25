@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import {
   Shield,
   Bell,
@@ -33,7 +34,7 @@ const SystemSettings = () => {
   const fetchSettings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/settings', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/settings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -57,7 +58,7 @@ const SystemSettings = () => {
   const fetchKeywords = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/banned-keywords', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/banned-keywords`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -77,7 +78,7 @@ const SystemSettings = () => {
     setSaveLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/settings', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +105,7 @@ const SystemSettings = () => {
     setKeywordLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/banned-keywords', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/banned-keywords`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ const SystemSettings = () => {
   const handleDeleteKeyword = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/banned-keywords/${id}`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/banned-keywords/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

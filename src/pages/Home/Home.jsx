@@ -83,7 +83,7 @@ function Home() {
     // Kiểm tra quyền nhắn tin (chỉ khi có activityId)
     if (activityId) {
       try {
-        const checkRes = await fetch('/api/chat/check-can-message-host', {
+        const checkRes = await fetch(`${apiConfig.BASE_API}/chat/check-can-message-host`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
@@ -102,7 +102,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch('/api/chat/private', {
+      const response = await fetch(`${apiConfig.BASE_API}/chat/private`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),

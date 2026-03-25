@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import { useLocation } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
@@ -28,7 +29,7 @@ const UserManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/users', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/users`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -72,7 +73,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/users/${id}/status`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/users/${id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ const UserManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/admin/users/${id}/lock`, {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/users/${id}/lock`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

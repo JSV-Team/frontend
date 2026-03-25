@@ -1,4 +1,5 @@
-const API_BASE_URL = '/api/posts';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = `${apiConfig.BASE_API}/posts` || '/api/posts';
 
 export const postService = {
   // Tạo bài đăng mới
@@ -112,7 +113,7 @@ export const postService = {
         formData.append('media', file);
       });
 
-      const response = await fetch(`/api/upload/post-media`, {
+      const response = await fetch(`${apiConfig.BASE_API}/upload/post-media`, {
         method: 'POST',
         body: formData,
       });

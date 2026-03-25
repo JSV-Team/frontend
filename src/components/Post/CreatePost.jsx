@@ -22,10 +22,6 @@ function CreatePost({ onPostCreated, isProfilePost }) {
   const [showLocationPicker, setShowLocationPicker] = useState(false);
   const fileInputRef = useRef(null);
 
-  if (!currentUser) {
-    return null; // Don't render if no user
-  }
-
   const { createPost, loading, error } = useCreatePost(() => {
     setTitle('');
     setContent('');
@@ -36,6 +32,10 @@ function CreatePost({ onPostCreated, isProfilePost }) {
     setImagePreview('');
     onPostCreated();
   });
+
+  if (!currentUser) {
+    return null; // Don't render if no user (Moved AFTER all hooks to follow React rules)
+  }
 
   // Gọi khi người dùng chọn file từ máy
   const handleImageChange = async (e) => {
@@ -54,7 +54,7 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
+      const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
         body: formData,
       });
