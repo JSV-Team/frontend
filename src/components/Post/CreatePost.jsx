@@ -54,8 +54,12 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       const formData = new FormData();
       formData.append('image', file);
 
+      const token = localStorage.getItem('token');
       const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
 
