@@ -268,7 +268,6 @@ export const buildAvatarUrl = (url) => {
   let cleanUrl = String(url).trim();
   
   // Step 1: Aggressively strip any hardcoded local hosts/IPs
-  // This handles http://127.0.0.1:3001/uploads/..., 127.0.0.1:3001/uploads/..., etc.
   const localPatterns = [
     /https?:\/\/127\.0\.0\.1(:\d+)?/gi,
     /https?:\/\/localhost(:\d+)?/gi,
@@ -282,23 +281,27 @@ export const buildAvatarUrl = (url) => {
 
   // Step 2: If it's a social/external URL (google, facebook, pravatar), let it be
   if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
-    // Force HTTPS if on HTTPS page
     if (window.location.protocol === 'https:' && cleanUrl.startsWith('http:')) {
       return cleanUrl.replace('http:', 'https:');
     }
     return cleanUrl;
   }
 
-  // Step 3: At this point, it should be a relative path like /uploads/img.jpg
-  // We need to point it to the BACKEND server.
-  // We use VITE_API_URL if available, else fallback to current origin (not ideal but safe)
+  // Step 3: Build base URL from VITE_API_URL
   let base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '').trim();
   
-  // If VITE_API_URL is missing or also contaminated (misconfigured env), 
-  // we fallback to window.location.origin but warn in console
+  console.log('🔍 buildAvatarUrl debug:', {
+    inputUrl: url,
+    cleanUrl,
+    VITE_API_URL: import.meta.env?.VITE_API_URL,
+    base,
+    windowOrigin: window.location.origin
+  });
+  
+  // Fallback to window.location.origin if VITE_API_URL is missing or local
   if (!base || base.includes('127.0.0.1') || base.includes('localhost')) {
     base = window.location.origin;
-    console.warn('VibeMatch: VITE_API_URL is missing or local. Using window.origin as fallback for images.');
+    console.warn('⚠️ Using window.location.origin as fallback:', base);
   }
 
   const finalUrl = `${base.replace(/\/$/, '')}/${cleanUrl.replace(/^\//, '')}`;
@@ -308,6 +311,7 @@ export const buildAvatarUrl = (url) => {
     return finalUrl.replace('http:', 'https:');
   }
   
+  console.log('✅ Final avatar URL:', finalUrl);
   return finalUrl;
 };
 
