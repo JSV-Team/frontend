@@ -65,7 +65,9 @@ function CreatePost({ onPostCreated, isProfilePost }) {
       if (!res.ok) throw new Error(data.message || 'Upload thất bại');
 
       // Lưu URL server trả về (path tương đối)
-      setImageUrl(data.imageUrl);
+      // Backend trả về data: { url: '/uploads/...', ... } hoặc data: { imageUrl: '...' }
+      const finalUrl = data.data?.url || data.url || data.imageUrl || (data.data && data.data.imageUrl);
+      setImageUrl(finalUrl);
     } catch (err) {
       setUploadError('Lỗi upload: ' + err.message);
       setImagePreview('');

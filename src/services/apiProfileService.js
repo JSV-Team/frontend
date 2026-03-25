@@ -1,7 +1,17 @@
 // New Profile Service - API calls related to profile
 // Using correct backend routes: /api/profile
 
-import apiConfig from '../config/apiConfig';
+// Central API configuration
+const API_URL = import.meta.env.VITE_API_URL ||
+                (window.location.hostname.includes('vercel.app')
+                  ? 'https://backend-1wyh.onrender.com'
+                  : 'http://localhost:3001');
+
+const apiConfig = {
+  API_URL,
+  BASE_API: `${API_URL}/api`,
+  UPLOAD_URL: `${API_URL.replace(/\/$/, '')}/uploads`
+};
 
 const API_BASE_URL = apiConfig.BASE_API || '/api';
 
@@ -287,31 +297,25 @@ export const buildAvatarUrl = (url) => {
     return cleanUrl;
   }
 
-  // Step 3: Build base URL from VITE_API_URL
-  let base = (import.meta.env?.VITE_API_URL || '').replace(/\/api$/, '').trim();
+  // Step 3: Build base URL from centralized apiConfig
+  // We want the root backend URL (stripped of /api)
+  let base = (apiConfig.API_URL || '').replace(/\/api$/, '').trim();
   
-  console.log('🔍 buildAvatarUrl debug:', {
-    inputUrl: url,
-    cleanUrl,
-    VITE_API_URL: import.meta.env?.VITE_API_URL,
-    base,
-    windowOrigin: window.location.origin
-  });
-  
-  // Fallback to window.location.origin if VITE_API_URL is missing or local
+  // Final fallback to window origin if base is still relative or local
   if (!base || base.includes('127.0.0.1') || base.includes('localhost')) {
-    base = window.location.origin;
-    console.warn('⚠️ Using window.location.origin as fallback:', base);
+    // If we're on a production domain but base is local, fallback to current origin
+    if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+       base = window.location.origin;
+    }
   }
 
   const finalUrl = `${base.replace(/\/$/, '')}/${cleanUrl.replace(/^\//, '')}`;
   
-  // Final Force HTTPS check
+  // Final Force HTTPS check for production
   if (window.location.protocol === 'https:' && finalUrl.startsWith('http:')) {
     return finalUrl.replace('http:', 'https:');
   }
   
-  console.log('✅ Final avatar URL:', finalUrl);
   return finalUrl;
 };
 
