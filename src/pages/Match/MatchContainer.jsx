@@ -10,10 +10,14 @@ import apiConfig from "../../config/apiConfig";
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
 import './Match.css';
 
 function MatchContainer() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   // Get user info from localStorage
   const [userId, setUserId] = useState(null);
@@ -210,6 +214,35 @@ function MatchContainer() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
       <div className="match-main">
         <MatchHeader />
 

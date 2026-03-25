@@ -4,6 +4,9 @@ import { io } from 'socket.io-client';
 import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
 import { buildAvatarUrl } from '../../services/profileService';
@@ -27,6 +30,7 @@ function Friends() {
   const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
   const [conversations, setConversations] = useState([]);
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
   const [activeConvId, setActiveConvId] = useState(location.state?.openChatId || null);
   const [messages, setMessages] = useState([]);
@@ -285,6 +289,35 @@ function Friends() {
 
   return (
     <div className="friends-page">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
       {/* CỘT TRÁI: Danh sách */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">

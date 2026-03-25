@@ -4,6 +4,9 @@ import { profileService } from "../services/profileService";
 import SidebarProfile from "../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../components/TopTabs/TopTabs";
 import StatBar from "../components/StatBar/StatBar";
+import { useTheme } from "../contexts/ThemeContext";
+import Particles from "../components/Particles/Particles";
+import Aurora from "../components/Aurora/Aurora";
 import "../pages/profileLayout.css";
 
 // Lấy userId từ localStorage (đã được lưu khi login)
@@ -28,6 +31,7 @@ export default function ProfileLayout() {
   const [profile, setProfile] = useState(null);
   const [interests, setInterests] = useState([]);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
 
   // Lấy USER_ID từ params hoặc localStorage
   const USER_ID = userId || getStoredUserId();
@@ -111,6 +115,35 @@ export default function ProfileLayout() {
 
   return (
     <div className="vm-page">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
       <SidebarProfile
         profile={{
           ...profile,
