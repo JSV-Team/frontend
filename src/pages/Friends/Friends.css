@@ -2,7 +2,7 @@
   display: flex;
   height: calc(100vh - 80px);
   /* Bù trừ chính xác chiều cao 80px của Header */
-  background: white;
+  background: transparent;
   font-family: inherit;
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.02);

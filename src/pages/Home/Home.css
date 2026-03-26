@@ -32,6 +32,17 @@
   opacity: 0.6;
 }
 
+/* Grainient Background - Light Mode Only */
+.home-grainient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .home-main {
   position: relative;
   z-index: 2;

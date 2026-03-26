@@ -6,6 +6,7 @@ import TopTabs from "../components/TopTabs/TopTabs";
 import { useTheme } from "../contexts/ThemeContext";
 import Particles from "../components/Particles/Particles";
 import Aurora from "../components/Aurora/Aurora";
+import Grainient from "../components/Grainient/Grainient";
 import "../pages/profileLayout.css";
 
 // Lấy userId từ localStorage (đã được lưu khi login)
@@ -71,7 +72,8 @@ export default function ProfileLayout() {
         setError(null);
       } catch (err) {
         console.error("Error fetching profile:", err);
-        setError("Không thể tải thông tin profile");
+        const msg = err.message || (typeof err === 'string' ? err : "Không thể tải thông tin profile");
+        setError(msg);
       } finally {
         setLoading(false);
       }
@@ -95,16 +97,55 @@ export default function ProfileLayout() {
 
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f6f7fb' }}>
-        <p>Đang tải...</p>
+      <div className="pp-loading">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="loading-content">
+          <div className="spinner"></div>
+          <p>Đang tải profile...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
+    const isAuthError = error.includes("xác thực") || error.includes("hết hạn") || error.includes("403");
     return (
-      <div className="error-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f6f7fb' }}>
-        <p style={{ color: 'red' }}>{error}</p>
+      <div className="pp-error">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="error-content">
+          <p style={{ color: '#ef4444', fontWeight: 'bold' }}>{error}</p>
+          {isAuthError && (
+             <p style={{ fontSize: '0.9rem', marginTop: '10px' }}>
+               Vui lòng đăng xuất và đăng nhập lại để làm mới phiên làm việc.
+             </p>
+          )}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button className="pp-btn pp-btn-secondary" onClick={() => window.location.reload()}>Thử lại</button>
+            {isAuthError && (
+              <button className="pp-btn pp-btn-primary" onClick={() => {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}>Đăng nhập lại</button>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -145,6 +186,13 @@ export default function ProfileLayout() {
             />
           </div>
         </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
 
       <SidebarProfile

@@ -7,6 +7,7 @@ import LocationPicker from '../../components/common/LocationPicker';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
 import { buildAvatarUrl } from '../../services/profileService';
@@ -356,6 +357,13 @@ function Friends() {
             />
           </div>
         </>
+      )}
+      
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
 
       {/* CỘT TRÁI: Danh sách */}

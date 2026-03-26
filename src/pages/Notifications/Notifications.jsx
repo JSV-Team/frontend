@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -14,6 +14,7 @@ function Notifications() {
     refreshNotifications,
     markAsRead
   } = useNotifications();
+  const { theme } = useTheme();
 
   useEffect(() => {
     refreshNotifications();
@@ -98,6 +99,12 @@ function Notifications() {
             </div>
           </>
         )}
+        {/* Background effect - only visible in light mode */}
+        {theme === 'light' && (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        )}
         <div className="notifications-container">
           <h1 className="notifications-title">Thông báo</h1>
           <div className="notifications-loading">
@@ -122,6 +129,12 @@ function Notifications() {
               <Particles particleColors={['#c653b6', '#8b5cf6', '#6366f1']} particleCount={200} particleSpread={10} speed={0.1} particleBaseSize={400} moveParticlesOnHover={false} alphaParticles={true} disableRotation={false} sizeRandomness={1} cameraDistance={20} pixelRatio={1} />
             </div>
           </>
+        )}
+        {/* Background effect - only visible in light mode */}
+        {theme === 'light' && (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
         )}
         <div className="notifications-container">
           <h1 className="notifications-title">Thông báo</h1>
@@ -153,6 +166,12 @@ function Notifications() {
             <Particles particleColors={['#c653b6', '#8b5cf6', '#6366f1']} particleCount={200} particleSpread={10} speed={0.1} particleBaseSize={400} moveParticlesOnHover={false} alphaParticles={true} disableRotation={false} sizeRandomness={1} cameraDistance={20} pixelRatio={1} />
           </div>
         </>
+      )}
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
       )}
       <div className="notifications-container">
         <div className="notifications-header">

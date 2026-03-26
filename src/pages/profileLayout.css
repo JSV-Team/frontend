@@ -1,7 +1,7 @@
 .vm-page {
     min-height: 100vh;
     padding: 16px;
-    background: #f6f7fb;
+    background: transparent;
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 24px;
