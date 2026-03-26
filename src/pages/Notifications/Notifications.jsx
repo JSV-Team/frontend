@@ -4,6 +4,7 @@ import useNotifications from '../../hooks/useNotifications';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 
 function Notifications() {
   const { theme } = useTheme();
@@ -14,7 +15,6 @@ function Notifications() {
     refreshNotifications,
     markAsRead
   } = useNotifications();
-  const { theme } = useTheme();
 
   useEffect(() => {
     refreshNotifications();
