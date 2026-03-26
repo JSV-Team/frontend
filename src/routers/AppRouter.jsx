@@ -65,7 +65,7 @@ function AppRouter() {
         } />
 
         {/* Profile Routes - Sử dụng ProfileLayout */}
-        <Route path="/profile/:userId" element={
+        <Route path="/profile/:username" element={
           <ProtectedRoute>
             <MainLayout noContainer><ProfileViewSelector /></MainLayout>
           </ProtectedRoute>

@@ -38,12 +38,19 @@ export const profileService = {
     if (!activeUserId) throw new Error('No user id');
 
     try {
-      const loggedInUserId = getUserId();
+      const storedUser = localStorage.getItem('user');
+      const currentUser = storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : {};
+      const loggedInUserId = currentUser?.user_id || currentUser?.id;
+      const loggedInUsername = currentUser?.username;
+
       let url = `${API_BASE_URL}/profile/${activeUserId}`;
       let options = {};
 
-      // Nếu đang lấy profile của chính mình, phải dùng auth route để lấy email chi tiết
-      if (String(activeUserId) === String(loggedInUserId)) {
+      // Nếu đang lấy profile của chính mình (bằng ID hoặc Username), phải dùng auth route để lấy email chi tiết
+      if (
+        (loggedInUserId && String(activeUserId) === String(loggedInUserId)) ||
+        (loggedInUsername && activeUserId === loggedInUsername)
+      ) {
         url = `${API_BASE_URL}/profile`;
         options = { headers: authHeaders() };
       }

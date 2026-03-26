@@ -181,7 +181,7 @@ function Home() {
                   <div key={postId} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
-                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
+                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
                           <div className="avatar-inner">
                             <img
                               src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
@@ -193,7 +193,7 @@ function Home() {
                         <div className="user-info">
                           <div className="user-info-top">
                             <h2
-                              onClick={() => navigate(`/profile/${post.user_id}`)}
+                              onClick={() => navigate(`/profile/${post.username}`)}
                               style={{ cursor: 'pointer' }}
                               className="clickable-username"
                             >

@@ -23,7 +23,7 @@ const getStoredUserId = () => {
 };
 
 export default function ProfileLayout() {
-  const { userId } = useParams();
+  const { username } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -32,8 +32,11 @@ export default function ProfileLayout() {
   const [error, setError] = useState(null);
   const { theme } = useTheme();
 
-  // Lấy USER_ID từ params hoặc localStorage
-  const USER_ID = userId || getStoredUserId();
+  // Identifier can be username from URL or stored userId as fallback
+  const identifier = username || getStoredUserId();
+
+  // The definitive numeric ID will be resolved from the profile data
+  const [targetUserId, setTargetUserId] = useState(null);
 
   // Xác định tab đang active dựa trên URL
   const getActiveTab = () => {
@@ -45,8 +48,8 @@ export default function ProfileLayout() {
   };
 
   useEffect(() => {
-    if (!USER_ID) {
-      setError("Không tìm thấy user ID");
+    if (!identifier) {
+      setError("Không tìm thấy thông tin định danh");
       setLoading(false);
       return;
     }
@@ -55,12 +58,13 @@ export default function ProfileLayout() {
       try {
         setLoading(true);
 
-        // Lấy profile data
-        const profileData = await profileService.getProfile(USER_ID);
+        // Lấy profile data (backend now handles ID or Username)
+        const profileData = await profileService.getProfile(identifier);
         setProfile(profileData);
+        setTargetUserId(profileData.user_id);
 
-        // Lấy interests
-        const interestsData = await profileService.getInterests(USER_ID);
+        // Lấy interests using numeric ID
+        const interestsData = await profileService.getInterests(profileData.user_id);
         // interestsData là array của objects { interest_id, name }
         setInterests(interestsData.map(i => i.name));
 
@@ -87,7 +91,7 @@ export default function ProfileLayout() {
     return () => {
       window.removeEventListener('userUpdated', handleProfileUpdate);
     };
-  }, [USER_ID]);
+  }, [identifier]);
 
   if (loading) {
     return (
@@ -162,7 +166,7 @@ export default function ProfileLayout() {
 
         <Outlet
           context={{
-            USER_ID,
+            USER_ID: targetUserId,
             profile,
             setProfile,
             interests,

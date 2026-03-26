@@ -6,7 +6,7 @@ export default function EditPostPage() {
   const { id } = useParams(); // id từ URL
   const postId = Number(id);
   const navigate = useNavigate();
-  const { USER_ID, stats } = useOutletContext();
+  const { USER_ID, profile, stats } = useOutletContext();
 
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +25,7 @@ export default function EditPostPage() {
 
     if (!found) {
       alert("Không tìm thấy bài viết!");
-      navigate(`/profile/${USER_ID}/posts`);
+      navigate(`/profile/${profile?.username || USER_ID}/posts`);
       return;
     }
 
@@ -74,7 +74,7 @@ export default function EditPostPage() {
 
     localStorage.setItem("posts", JSON.stringify(next));
     alert("Cập nhật thành công ✅");
-    navigate(`/profile/${USER_ID}/posts`);
+    navigate(`/profile/${profile?.username || USER_ID}/posts`);
   };
 
   if (loading) return null;

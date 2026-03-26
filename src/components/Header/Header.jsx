@@ -128,8 +128,8 @@ function Header() {
           </button>
 
           <div className="user-avatar" onClick={() => {
-            const userId = currentUser?.user_id || currentUser?.id || currentUser?.USER_ID;
-            navigate(`/profile/${userId}`);
+            const username = currentUser?.username;
+            if (username) navigate(`/profile/${username}`);
           }} title="Trang cá nhân">
             <img
               src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}
