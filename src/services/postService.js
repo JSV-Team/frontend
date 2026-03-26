@@ -123,7 +123,8 @@ export const postService = {
       });
       const data = await response.json();
       if (!response.ok) throw data;
-      return data.urls; // Mảng các URLs
+      // Backend returns { success: true, data: { files: [{url: '...'}, ...], count: X } }
+      return data.data.files.map(f => f.url);
     } catch (error) {
       console.error('Lỗi khi upload ảnh bài đăng:', error);
       throw error;
