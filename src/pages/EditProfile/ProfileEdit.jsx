@@ -114,17 +114,31 @@ export default function ProfileEdit() {
 
     try {
       // 1) update user
-      const currentAvatar = profile?.avatar_url || profile?.avatar;
+      // Prepare profile data
+      const currentAvatar = profile?.avatar_url || profile?.avatar || "";
       
-      await profileService.updateProfile(USER_ID, {
+      // Extract relative path if it's an absolute URL pointing to our backend
+      let relativeAvatar = currentAvatar;
+      if (currentAvatar.includes('/uploads/')) {
+        const parts = currentAvatar.split('/uploads/');
+        relativeAvatar = '/uploads/' + parts[parts.length - 1];
+      }
+
+      const updateData = {
         bio: form.bio.trim(),
         full_name: form.full_name.trim(),
         gender: form.gender,
         dob: form.dob || null,
         location: form.location.trim(),
         email: form.email.trim(),
-        avatar_url: (currentAvatar || "").replace(/https?:\/\/[^\/]+/, "").replace(/^[^\/]+:\d+/, "") 
-      });
+      };
+
+      // Only include avatar_url if we have a valid relative path
+      if (relativeAvatar && relativeAvatar.startsWith('/uploads/')) {
+        updateData.avatar_url = relativeAvatar;
+      }
+
+      await profileService.updateProfile(USER_ID, updateData);
 
       // 2) update interests
       await profileService.updateInterests(USER_ID, interests);
