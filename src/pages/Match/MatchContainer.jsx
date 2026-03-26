@@ -53,6 +53,10 @@ function MatchContainer() {
 
   // Initialize user data from localStorage
   useEffect(() => {
+    // Reset match state to EMPTY when component mounts
+    console.log('🔄 MatchContainer mounted - resetting match state to EMPTY');
+    matchContext.clearMatch();
+    
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
 
@@ -108,7 +112,14 @@ function MatchContainer() {
 
   // Sync socket state with queue state
   useEffect(() => {
+    console.log('🔄 Socket state changed:', {
+      socketQueueStatus: socketQueueState.status,
+      hasSocketMatchData: !!socketMatchData,
+      currentMatchState: matchContext.matchState
+    });
+    
     if (socketQueueState.status === 'searching') {
+      console.log('✅ Setting match state to SEARCHING');
       matchContext.setMatchState('searching');
       matchContext.updateQueueInfo({
         queueSize: socketQueueState.queueSize,
@@ -116,36 +127,47 @@ function MatchContainer() {
         waitTime: socketQueueState.waitTime,
       });
     } else if (socketQueueState.status === 'matched' && socketMatchData) {
+      console.log('✅ Match found! Setting match state to FOUND', socketMatchData);
       matchContext.handleMatchFound(socketMatchData);
     } else if (socketQueueState.status === 'idle') {
+      console.log('✅ Socket idle, setting match state to EMPTY');
       matchContext.setMatchState('empty');
     }
   }, [socketQueueState, socketMatchData, matchContext]);
 
   // Handle join queue
   const handleJoinQueue = async () => {
-    console.log('🎯 handleJoinQueue called');
+    console.log('🎯 ========== HANDLE JOIN QUEUE CALLED ==========');
+    console.log('   userId:', userId);
+    console.log('   token:', token ? 'present' : 'missing');
     console.log('   isConnected:', isConnected);
+    console.log('   socket:', socket ? 'present' : 'missing');
+    console.log('   socket.connected:', socket?.connected);
     console.log('   userInterests:', userInterests);
     console.log('   userInterests.length:', userInterests?.length);
 
     if (!isConnected) {
+      console.log('❌ Cannot join - socket not connected');
       matchContext.setError('Socket not connected. Please try again.');
       return;
     }
 
     if (!userInterests || userInterests.length === 0) {
+      console.log('❌ Cannot join - no interests');
       matchContext.setError('Please add at least one interest before joining the queue.');
       return;
     }
 
+    console.log('✅ All checks passed, calling socketJoinQueue...');
     matchContext.setIsLoading(true);
     matchContext.setUserInterests(userInterests);
 
     try {
       // Join via socket (this will emit match:join event)
       socketJoinQueue();
+      console.log('✅ socketJoinQueue() called successfully');
     } catch (err) {
+      console.error('❌ Error calling socketJoinQueue:', err);
       matchContext.setError(err.message || 'Failed to join queue');
     } finally {
       matchContext.setIsLoading(false);

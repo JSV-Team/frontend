@@ -4,23 +4,25 @@ import PublicProfile from '../pages/PublicProfile/PublicProfile';
 import ProfileLayout from '../layouts/ProfileLayout';
 
 export default function ProfileViewSelector() {
-  const { userId } = useParams();
+  const { username } = useParams();
 
-  // Get current logged-in user ID
+  // Get current logged-in user profile info
   const userStr = localStorage.getItem('user');
   let myId = null;
+  let myUsername = null;
+  
   if (userStr && userStr !== 'undefined') {
     try {
       const user = JSON.parse(userStr);
       myId = (user.user_id || user.id || user.USER_ID)?.toString();
+      myUsername = user.username;
     } catch (e) {
       console.error("ProfileViewSelector: Error parsing user", e);
     }
   }
 
-  // If viewing own profile, use the owner's layout (with Sidebar and Edit/Rep/Posts tabs)
-  console.log("ProfileViewSelector: comparing", { userId, myId, isMatch: userId === myId });
-  if (userId === myId) {
+  // If viewing own profile (by username or ID), use the owner's layout
+  if (username === myUsername || username === myId) {
     return <ProfileLayout />;
   }
 

@@ -4,24 +4,9 @@ import useNotifications from '../../hooks/useNotifications';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
-import Grainient from '../../components/Grainient/Grainient';
-import apiConfig from '../../config/apiConfig';
-
-// Mock user ID for testing (since there's no login yet)
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
 
 function Notifications() {
+  const { theme } = useTheme();
   const { 
     notifications, 
     loading, 

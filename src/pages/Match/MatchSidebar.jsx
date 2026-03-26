@@ -1,11 +1,81 @@
 // MatchSidebar - Optional sidebar component for match history and statistics
 // Displays recent matches and match statistics
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
+import { matchService } from '../../services/matchService';
+import { buildAvatarUrl } from '../../services/profileService';
+
 
 function MatchSidebar({ matchData, queueInfo }) {
+  const [matchHistory, setMatchHistory] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [totalMatches, setTotalMatches] = useState(0);
+  const navigate = useNavigate();
+
+  console.log('🎨 [MatchSidebar] Component rendered');
+  console.log('   matchData:', matchData);
+  console.log('   queueInfo:', queueInfo);
+
+  // Fetch match history on component mount
+  useEffect(() => {
+    console.log('🔄 [MatchSidebar] useEffect triggered');
+    
+    const fetchMatchHistory = async () => {
+      try {
+        setIsLoadingHistory(true);
+        console.log('🔍 [MatchSidebar] Fetching match history...');
+        
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        console.log('   Token exists:', !!token);
+        console.log('   User exists:', !!user);
+        
+        if (!token) {
+          console.error('❌ [MatchSidebar] No token found!');
+          return;
+        }
+        
+        const response = await matchService.getMatchHistory();
+        
+        console.log('📦 [MatchSidebar] API Response:', response);
+        
+        if (response.success && response.data) {
+          console.log('✅ [MatchSidebar] Match history loaded:', response.data.length, 'matches');
+          console.log('   Data:', response.data);
+          setMatchHistory(response.data);
+          setTotalMatches(response.data.length);
+        } else {
+          console.log('⚠️ [MatchSidebar] No match history data');
+          console.log('   Response:', response);
+        }
+      } catch (error) {
+        console.error('❌ [MatchSidebar] Error fetching match history:', error);
+        console.error('   Error details:', error.message, error.stack);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    fetchMatchHistory();
+  }, []);
+
   // Calculate compatibility percentage from match data
   const getCompatibilityPercentage = () => {
+    // If we have match history with scores, calculate average
+    if (matchHistory && matchHistory.length > 0) {
+      const scoresWithValues = matchHistory
+        .map(m => m.match_score)
+        .filter(score => score != null && score > 0);
+      
+      if (scoresWithValues.length > 0) {
+        const average = scoresWithValues.reduce((sum, score) => sum + score, 0) / scoresWithValues.length;
+        return Math.round(average);
+      }
+    }
+    
+    // Fallback to current match data if available
     if (!matchData) return 0;
     
     // If interestScore is provided (0-100)
@@ -27,6 +97,33 @@ function MatchSidebar({ matchData, queueInfo }) {
 
   const compatibilityPercentage = getCompatibilityPercentage();
 
+  // Navigate to user profile
+  const handleViewProfile = (userId) => {
+    console.log('🔍 Navigating to profile:', userId);
+    navigate(`/profile/${userId}`);
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Vừa xong';
+    if (diffMins < 60) return `${diffMins} phút trước`;
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    if (diffDays < 7) return `${diffDays} ngày trước`;
+    
+    return date.toLocaleDateString('vi-VN', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  };
+
   return (
     <motion.div
       className="match-sidebar"
@@ -38,9 +135,49 @@ function MatchSidebar({ matchData, queueInfo }) {
       <div className="sidebar-section">
         <h3 className="sidebar-section-title">Lịch Sử Ghép Đôi</h3>
         <div className="recent-matches-list">
-          <p className="sidebar-empty-message">
-            Chưa có lịch sử ghép đôi
-          </p>
+          {isLoadingHistory ? (
+            <p className="sidebar-empty-message">Đang tải...</p>
+          ) : matchHistory.length === 0 ? (
+            <p className="sidebar-empty-message">
+              Chưa có lịch sử ghép đôi
+            </p>
+          ) : (
+            matchHistory.slice(0, 5).map((match) => (
+              <div 
+                key={match.match_id} 
+                className="recent-match-item"
+                onClick={() => handleViewProfile(match.matched_user_id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="match-avatar">
+                  {match.matched_avatar_url ? (
+                    <img 
+                      src={buildAvatarUrl(match.matched_avatar_url)} 
+                      alt={match.matched_username}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div 
+                    className="match-avatar-placeholder"
+                    style={{ display: match.matched_avatar_url ? 'none' : 'flex' }}
+                  >
+                    {match.matched_full_name?.charAt(0) || match.matched_username?.charAt(0) || '?'}
+                  </div>
+                </div>
+                <div className="match-info">
+                  <div className="match-name">
+                    {match.matched_full_name || match.matched_username}
+                  </div>
+                  <div className="match-time">
+                    {formatDate(match.created_at)}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -50,7 +187,7 @@ function MatchSidebar({ matchData, queueInfo }) {
         <div className="match-stats">
           <div className="stat-item">
             <span className="stat-label">Tổng Ghép Đôi</span>
-            <span className="stat-value">{queueInfo?.queueSize || 0}</span>
+            <span className="stat-value">{totalMatches}</span>
           </div>
           <div className="stat-item">
             <span className="stat-label">Tỷ Lệ Phù Hợp</span>

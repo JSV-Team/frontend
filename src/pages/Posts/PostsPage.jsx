@@ -40,11 +40,11 @@ export default function PostsPage() {
             className="ps-input"
             placeholder="Nhập nội dung..."
             value={content}
-            onFocus={() => navigate(`/profile/${USER_ID}/posts/new`)}
-            onClick={() => navigate(`/profile/${USER_ID}/posts/new`)}
+            onFocus={() => navigate(`/profile/${profile.username}/posts/new`)}
+            onClick={() => navigate(`/profile/${profile.username}/posts/new`)}
             onChange={(e) => setContent(e.target.value)}
           />
-          <button className="ps-btn" onClick={() => navigate(`/profile/${USER_ID}/posts/new`)}>
+          <button className="ps-btn" onClick={() => navigate(`/profile/${profile.username}/posts/new`)}>
             Đăng
           </button>
         </div>
@@ -62,7 +62,7 @@ export default function PostsPage() {
             <PostCard
               key={p.id}
               post={p}
-              onEdit={(id) => navigate(`/profile/${USER_ID}/posts/${id}/edit`)}
+              onEdit={(id) => navigate(`/profile/${profile.username}/posts/${id}/edit`)}
               onDelete={async (id) => {
                 if (window.confirm("Bạn có chắc muốn xóa bài đăng này?")) {
                   try {

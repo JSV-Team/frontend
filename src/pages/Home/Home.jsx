@@ -21,15 +21,7 @@ import './Home.css';
 function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const userString = localStorage.getItem('user');
-  let currentUser = null;
-  if (userString && userString !== "undefined") {
-    try {
-      currentUser = JSON.parse(userString);
-    } catch (e) {
-      console.error("Home.jsx: Lỗi parse user từ localStorage:", e);
-    }
-  }
+  const currentUser = useCurrentUser(); // Auto-updates when user changes
   const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
@@ -197,7 +189,7 @@ function Home() {
                   <div key={postId} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
-                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
+                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
                           <div className="avatar-inner">
                             <img
                               src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
@@ -209,7 +201,7 @@ function Home() {
                         <div className="user-info">
                           <div className="user-info-top">
                             <h2
-                              onClick={() => navigate(`/profile/${post.user_id}`)}
+                              onClick={() => navigate(`/profile/${post.username}`)}
                               style={{ cursor: 'pointer' }}
                               className="clickable-username"
                             >

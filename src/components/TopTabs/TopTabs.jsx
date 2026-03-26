@@ -3,10 +3,10 @@ import "./topTabs.css";
 
 export default function TopTabs({ active = "edit" }) {
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { username } = useParams();
   
-  // Use the actual userId from the URL param, or fallback to something if needed
-  const targetId = userId || "me";
+  // Use the username from the URL param
+  const targetId = username || "me";
 
   const tabs = [
     { id: "edit", label: "Chỉnh sửa", path: "edit" },

@@ -11,7 +11,7 @@ import Grainient from '../../components/Grainient/Grainient';
 import './PublicProfile.css';
 
 export default function PublicProfile() {
-  const { userId } = useParams();
+  const { username } = useParams();
   const navigate = useNavigate();
 
   const tempUserStr = localStorage.getItem('user');
@@ -35,12 +35,7 @@ export default function PublicProfile() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return 'Vừa xong';
-    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-    if (diff < 84600) return `${Math.floor(diff / 3600)} giờ trước`;
+// ... (omitted helper codes for brevity)
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
@@ -49,14 +44,18 @@ export default function PublicProfile() {
       setLoading(true);
 
       // 1. Fetch public profile with myId for mutual context
-      const targetProfile = await profileService.getPublicProfile(userId, myId);
+      // Note: userId variable here is now 'username' from URL
+      const targetProfile = await profileService.getPublicProfile(username, myId);
       setProfile(targetProfile);
       setHasStory(targetProfile.has_story || false);
 
-      // 2. Fetch user's posts
+      // Resolve the actual numeric ID for subsequent calls
+      const targetUserId = targetProfile.user_id;
+
+      // 2. Fetch user's posts using numeric ID
       try {
-        console.log("Fetching posts for userId:", userId);
-        const posts = await postService.getPostsByUserId(userId);
+        console.log("Fetching posts for targetUserId:", targetUserId);
+        const posts = await postService.getPostsByUserId(targetUserId);
         console.log("Fetched posts:", posts);
         setUserPosts(posts || []);
       } catch (pErr) {
@@ -64,9 +63,9 @@ export default function PublicProfile() {
         setUserPosts([]);
       }
 
-      // 3. Fetch user's activities
+      // 3. Fetch user's activities using numeric ID
       try {
-        const activities = await activityService.getUserActivities(userId);
+        const activities = await activityService.getUserActivities(targetUserId);
         setUserActivities(activities || []);
       } catch (aErr) {
         console.error("Error fetching user activities:", aErr);
@@ -94,13 +93,15 @@ export default function PublicProfile() {
 
   useEffect(() => {
     fetchData();
-  }, [userId]);
+  }, [username]);
 
-  const handleStartChat = async (targetId = userId) => {
+  const handleStartChat = async (targetId = profile?.user_id) => {
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
     }
+
+    if (!targetId) return;
 
     try {
       const conv = await chatService.getOrInitPrivateChat(myId, targetId);

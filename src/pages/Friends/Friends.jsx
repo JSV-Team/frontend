@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
+import { Send, MoreVertical, LogOut, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -111,7 +111,14 @@ function Friends() {
       setConversations(prev => {
         const index = prev.findIndex(c => c.conversation_id === msg.conversation_id);
         if (index > -1) {
-          const updatedConv = { ...prev[index], last_message: msg.content };
+          const updatedConv = { 
+            ...prev[index], 
+            last_message: msg.content,
+            // Chỉ tăng unread_count nếu không phải conversation đang active
+            unread_count: msg.conversation_id === activeConvIdRef.current 
+              ? 0 
+              : (prev[index].unread_count || 0) + 1
+          };
           const newConvs = [...prev];
           newConvs.splice(index, 1);
           newConvs.unshift(updatedConv); // Add to top
@@ -119,6 +126,9 @@ function Friends() {
         }
         return prev;
       });
+      
+      // Trigger event to refresh unread count in header
+      window.dispatchEvent(new Event('unreadMessagesUpdated'));
     });
 
     return () => newSocket.disconnect();
@@ -155,6 +165,36 @@ function Friends() {
     if (!activeConvId) return;
     setLoading(true);
     const currentUserId = getUserId();
+    
+    // Mark conversation as read
+    const markAsRead = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${apiConfig.BASE_API}/chat/conversations/${activeConvId}/read`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        // Update local conversation list to remove unread count
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.conversation_id === activeConvId 
+              ? { ...conv, unread_count: 0 }
+              : conv
+          )
+        );
+        
+        // Trigger event to refresh unread count in header
+        window.dispatchEvent(new Event('unreadMessagesUpdated'));
+      } catch (error) {
+        console.error('Error marking conversation as read:', error);
+      }
+    };
+
+    markAsRead();
     
     chatService.getMessages(activeConvId, currentUserId)
       .then(data => {
@@ -360,7 +400,7 @@ function Friends() {
                   <img
                     src={conv.conversation_type === 'private'
                       ? (buildAvatarUrl(conv.other_avatar_url) || 'https://i.pravatar.cc/150')
-                      : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
+                      : 'https://ui-avatars.com/api/?name=GRP&background=3b82f6&color=fff'
                     }
                     alt="Avatar"
                     className="conv-avatar"
@@ -376,6 +416,11 @@ function Friends() {
                   </div>
                   <div className="conv-last-msg">{conv.last_message || 'Chưa có tin nhắn...'}</div>
                 </div>
+                {conv.unread_count > 0 && (
+                  <div className="conv-unread-badge">
+                    {conv.unread_count > 9 ? '9+' : conv.unread_count}
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -404,8 +449,6 @@ function Friends() {
                   <h3>{activeConv?.activity_title || 'Chat Nhóm'}</h3>
                 </div>
                 <div className="chat-actions">
-                  <button className="icon-btn"><Phone size={18} /></button>
-                  <button className="icon-btn"><Video size={18} /></button>
                   <button
                     className={`icon-btn ${showInfo ? 'active' : ''}`}
                     title="Thông tin nhóm"
