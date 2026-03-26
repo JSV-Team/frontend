@@ -20,7 +20,6 @@ import ProtectedRoute from './ProtectedRoute';
 import ProfileViewSelector from './ProfileViewSelector';
 import AdminRoute from '../routes/AdminRoute';
 import AdminLayout from '../components/admin/AdminLayout';
-import AdminLogin from '../pages/AdminLogin/AdminLogin';
 import Dashboard from '../pages/admin/Dashboard';
 import UserManagement from '../pages/admin/UserManagement';
 import PostManagement from '../pages/admin/PostManagement';
@@ -37,7 +36,6 @@ function AppRouter() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
 
         {/* Các trang VIP: Phải qua Bảo Vệ -> Mặc Đồng Phục (MainLayout) -> Vào Phòng (Home/Match/...) */}
         <Route path="/home" element={

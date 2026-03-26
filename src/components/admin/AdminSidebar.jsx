@@ -23,7 +23,7 @@ function AdminSidebar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/admin-login", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
