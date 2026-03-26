@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiConfig from '../../config/apiConfig';
 import { 
   BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, Legend, Cell
@@ -8,7 +9,6 @@ import {
   Calendar, ChevronRight, Hash, ArrowUpRight, ArrowDownRight,
   TrendingDown, PieChart, BarChart3
 } from 'lucide-react';
-import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
 
 const Statistics = () => {
@@ -25,7 +25,7 @@ const Statistics = () => {
       setReportLoading(true);
       setReportModalOpen(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/user-interests-report', {
+      const response = await fetch(`${apiConfig.BASE_API}/admin/user-interests-report`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const result = await response.json();
@@ -45,7 +45,7 @@ const Statistics = () => {
         setLoading(true);
         setError(null);
         const token = localStorage.getItem('token');
-        const response = await fetch('/api/admin/detailed-stats', {
+        const response = await fetch(`${apiConfig.BASE_API}/admin/detailed-stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const result = await response.json();

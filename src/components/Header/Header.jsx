@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import useNotifications from '../../hooks/useNotifications';
+import useUnreadMessages from '../../hooks/useUnreadMessages';
 import { buildAvatarUrl } from '../../services/profileService';
 import './Header.css';
 
@@ -12,6 +13,7 @@ function Header() {
   const [activeTab, setActiveTab] = useState('Home');
   const { theme, toggleTheme } = useTheme();
   const { unreadCount } = useNotifications();
+  const { unreadCount: unreadMessagesCount } = useUnreadMessages();
 
   // Lấy thông tin user từ localStorage (chỉ chứa dữ liệu login, không cache profile)
   const [currentUser, setCurrentUser] = useState(null);
@@ -90,8 +92,14 @@ function Header() {
               key={tab.name}
               onClick={() => handleTabClick(tab)}
               className={`nav-tab ${currentTab === tab.name ? 'active' : ''}`}
+              style={{ position: 'relative' }}
             >
               {tab.label}
+              {tab.name === 'Friends' && unreadMessagesCount > 0 && (
+                <span className="nav-tab-badge">
+                  {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -120,8 +128,8 @@ function Header() {
           </button>
 
           <div className="user-avatar" onClick={() => {
-            const userId = currentUser?.user_id || currentUser?.id || currentUser?.USER_ID;
-            navigate(`/profile/${userId}`);
+            const username = currentUser?.username;
+            if (username) navigate(`/profile/${username}`);
           }} title="Trang cá nhân">
             <img
               src={buildAvatarUrl(currentUser?.avatar_url) || (currentUser ? `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.full_name || currentUser.username || 'User')}&background=random` : "https://i.pravatar.cc/150?img=11")}

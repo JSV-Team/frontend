@@ -6,9 +6,46 @@
   background: var(--color-bg-light);
   padding-top: 100px;
   padding-bottom: 2rem;
+  position: relative;
+}
+
+/* Particles Background - Dark Mode Only */
+.home-particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Aurora Background - Dark Mode Only */
+.home-aurora-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Grainient Background - Light Mode Only */
+.home-grainient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .home-main {
+  position: relative;
+  z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1.5rem;

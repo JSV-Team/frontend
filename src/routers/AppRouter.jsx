@@ -30,8 +30,7 @@ import SystemSettings from '../pages/admin/SystemSettings';
 
 function AppRouter() {
   return (
-    <ThemeProvider>
-      <Router>
+    <Router>
       <Routes>
         {/* Trang công khai - không cần đăng nhập */}
         <Route path="/" element={<Landing />} />
@@ -66,7 +65,7 @@ function AppRouter() {
         } />
 
         {/* Profile Routes - Sử dụng ProfileLayout */}
-        <Route path="/profile/:userId" element={
+        <Route path="/profile/:username" element={
           <ProtectedRoute>
             <MainLayout noContainer><ProfileViewSelector /></MainLayout>
           </ProtectedRoute>
@@ -94,7 +93,6 @@ function AppRouter() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
-    </ThemeProvider>
   );
 }
 

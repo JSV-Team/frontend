@@ -6,38 +6,23 @@ import PendingGroups from '../../components/ListWaitingGroup/PendingGroup';
 import NotificationsWidget from '../../components/NotificationsWidget/NotificationsWidget';
 import useListPost from '../../hooks/useListPost';
 import useNotifications from '../../hooks/useNotifications';
+import useCurrentUser, { useCurrentUserId } from '../../hooks/useCurrentUser';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
 import apiConfig from '../../config/apiConfig';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import { buildAvatarUrl } from '../../services/profileService';
 import './Home.css';
 
-const getUserId = () => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      const userObj = JSON.parse(storedUser);
-      return userObj?.user_id || userObj?.id || null;
-    } catch (e) {
-      console.error("Error parsing user from localStorage", e);
-    }
-  }
-  return null;
-};
-
 function Home() {
   const navigate = useNavigate();
-  const userString = localStorage.getItem('user');
-  let currentUser = null;
-  if (userString && userString !== "undefined") {
-    try {
-      currentUser = JSON.parse(userString);
-    } catch (e) {
-      console.error("Home.jsx: Lỗi parse user từ localStorage:", e);
-    }
-  }
-  const CURRENT_USER_ID = currentUser?.user_id;
+  const { theme } = useTheme();
+  const currentUser = useCurrentUser(); // Auto-updates when user changes
+  const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
   const [pendingReload, setPendingReload] = useState(0);
   const [joiningIds, setJoiningIds] = useState(new Set()); // track đang loading join
@@ -45,8 +30,7 @@ function Home() {
 
   // FIX: truyền reload vào hook để re-fetch sau khi tạo bài
   const { posts, loading, error } = useListPost(reload);
-  const currentUserId = getUserId();
-  const { notifications, unreadCount } = useNotifications(currentUserId);
+  const { notifications, unreadCount } = useNotifications(CURRENT_USER_ID);
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
@@ -54,7 +38,7 @@ function Home() {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
 
     try {
-      await activityService.deleteActivity(activityId, currentUserId);
+      await activityService.deleteActivity(activityId, CURRENT_USER_ID);
       alert('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {
@@ -68,7 +52,7 @@ function Home() {
 
     setJoiningIds(prev => new Set(prev).add(activityId));
     try {
-      const data = await activityService.joinActivity(activityId, currentUserId);
+      const data = await activityService.joinActivity(activityId, CURRENT_USER_ID);
 
       if (data.message && data.message.includes('thành công')) {
         alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
@@ -104,7 +88,7 @@ function Home() {
     // Kiểm tra quyền nhắn tin (chỉ khi có activityId)
     if (activityId) {
       try {
-        const checkRes = await fetch('/api/chat/check-can-message-host', {
+        const checkRes = await fetch(`${apiConfig.BASE_API}/chat/check-can-message-host`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
@@ -123,7 +107,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch('/api/chat/private', {
+      const response = await fetch(`${apiConfig.BASE_API}/chat/private`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),
@@ -140,6 +124,41 @@ function Home() {
 
   return (
     <div className="home-container">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
+      )}
       <div className="home-main">
         <div className="home-layout">
           {/* Left Sidebar - Pending Groups & Approvals */}
@@ -162,14 +181,15 @@ function Home() {
 
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
-                const isOwner = post.user_id === getUserId();
-                const isJoining = joiningIds.has(post.status_id);
+                const postId = post.post_id || post.status_id || post.activity_id;
+                const isOwner = post.user_id === CURRENT_USER_ID;
+                const isJoining = joiningIds.has(postId);
 
                 return (
-                  <div key={post.status_id} className="post-card">
+                  <div key={postId} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
-                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.user_id}`)} style={{ cursor: 'pointer' }}>
+                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
                           <div className="avatar-inner">
                             <img
                               src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
@@ -181,7 +201,7 @@ function Home() {
                         <div className="user-info">
                           <div className="user-info-top">
                             <h2
-                              onClick={() => navigate(`/profile/${post.user_id}`)}
+                              onClick={() => navigate(`/profile/${post.username}`)}
                               style={{ cursor: 'pointer' }}
                               className="clickable-username"
                             >
@@ -200,12 +220,12 @@ function Home() {
                       <div className="post-options-container" style={{ position: 'relative' }}>
                         <button
                           className="more-button"
-                          onClick={() => setActiveMenuId(activeMenuId === post.status_id ? null : post.status_id)}
+                          onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
                         >
                           <MoreHorizontal size={24} />
                         </button>
 
-                        {activeMenuId === post.status_id && isOwner && (
+                        {activeMenuId === postId && isOwner && (
                           <div className="post-options-menu" style={{
                             position: 'absolute',
                             right: 0,
@@ -232,7 +252,7 @@ function Home() {
                               }}
                               onClick={() => {
                                 setActiveMenuId(null);
-                                handleDeletePost(post.status_id);
+                                handleDeletePost(postId);
                               }}
                             >
                               Xóa bài viết
@@ -285,14 +305,14 @@ function Home() {
                         <>
                           <button
                             className="action-btn join-btn"
-                            onClick={() => handleJoinPost(post.status_id)}
+                            onClick={() => handleJoinPost(postId)}
                             disabled={isJoining}
                           >
                             {isJoining ? 'Đang gửi...' : 'Tham gia'}
                           </button>
                           <button
                             className="action-btn message-btn"
-                            onClick={() => handleMessageHost(post.user_id, post.status_id)}
+                            onClick={() => handleMessageHost(post.user_id, postId)}
                           >
                             Nhắn tin
                           </button>

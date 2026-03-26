@@ -4,10 +4,14 @@ import { profileService, buildAvatarUrl } from '../../services/profileService';
 import { postService } from '../../services/postService';
 import { activityService } from '../../services/activityService';
 import { chatService } from '../../services/chatService';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import './PublicProfile.css';
 
 export default function PublicProfile() {
-  const { userId } = useParams();
+  const { username } = useParams();
   const navigate = useNavigate();
 
   const tempUserStr = localStorage.getItem('user');
@@ -20,6 +24,7 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const { theme } = useTheme();
 
   // State for logged-in user interests to calculate commonalities
   const [myInterests, setMyInterests] = useState([]);
@@ -30,12 +35,7 @@ export default function PublicProfile() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return 'Vừa xong';
-    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-    if (diff < 84600) return `${Math.floor(diff / 3600)} giờ trước`;
+// ... (omitted helper codes for brevity)
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
@@ -44,14 +44,18 @@ export default function PublicProfile() {
       setLoading(true);
 
       // 1. Fetch public profile with myId for mutual context
-      const targetProfile = await profileService.getPublicProfile(userId, myId);
+      // Note: userId variable here is now 'username' from URL
+      const targetProfile = await profileService.getPublicProfile(username, myId);
       setProfile(targetProfile);
       setHasStory(targetProfile.has_story || false);
 
-      // 2. Fetch user's posts
+      // Resolve the actual numeric ID for subsequent calls
+      const targetUserId = targetProfile.user_id;
+
+      // 2. Fetch user's posts using numeric ID
       try {
-        console.log("Fetching posts for userId:", userId);
-        const posts = await postService.getPostsByUserId(userId);
+        console.log("Fetching posts for targetUserId:", targetUserId);
+        const posts = await postService.getPostsByUserId(targetUserId);
         console.log("Fetched posts:", posts);
         setUserPosts(posts || []);
       } catch (pErr) {
@@ -59,9 +63,9 @@ export default function PublicProfile() {
         setUserPosts([]);
       }
 
-      // 3. Fetch user's activities
+      // 3. Fetch user's activities using numeric ID
       try {
-        const activities = await activityService.getUserActivities(userId);
+        const activities = await activityService.getUserActivities(targetUserId);
         setUserActivities(activities || []);
       } catch (aErr) {
         console.error("Error fetching user activities:", aErr);
@@ -81,7 +85,7 @@ export default function PublicProfile() {
       setError(null);
     } catch (err) {
       console.error("Error loading public profile:", err);
-      setError("Không thể tải thông tin người dùng này.");
+      setError(err.message || "Không thể tải thông tin người dùng này.");
     } finally {
       setLoading(false);
     }
@@ -89,13 +93,15 @@ export default function PublicProfile() {
 
   useEffect(() => {
     fetchData();
-  }, [userId]);
+  }, [username]);
 
-  const handleStartChat = async (targetId = userId) => {
+  const handleStartChat = async (targetId = profile?.user_id) => {
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
     }
+
+    if (!targetId) return;
 
     try {
       const conv = await chatService.getOrInitPrivateChat(myId, targetId);
@@ -149,18 +155,90 @@ export default function PublicProfile() {
     return Math.round((2 * commonCount / totalPossible) * 100);
   }, [commonInterests, profile, myInterests]);
 
-  if (loading) return <div className="pp-loading">Đang tải hồ sơ...</div>;
-  if (error) return <div className="pp-error">{error}</div>;
-  if (!profile) return <div className="pp-error">Người dùng không tồn tại.</div>;
+  if (loading) {
+    return (
+      <div className="pp-loading">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="loading-content">
+          <div className="spinner"></div>
+          <p>Đang tải hồ sơ...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="pp-error">
+        {theme === 'light' ? (
+          <div className="home-grainient-bg">
+            <Grainient />
+          </div>
+        ) : (
+          <div className="home-aurora-bg">
+            <Aurora colorStops={['#d666ff', '#e15b83', '#5227FF']} blend={0.5} amplitude={1.0} speed={1.2} />
+          </div>
+        )}
+        <div className="error-content">
+          <p>{error || "Người dùng không tồn tại."}</p>
+          <button className="pp-btn pp-btn-secondary" onClick={() => window.location.reload()}>Thử lại</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pp-container">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
+      )}
+
       {/* 1. Header Section */}
       <div className="pp-header">
         <div className="pp-cover" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=2029&auto=format&fit=crop')` }}></div>
 
         <div className="pp-header-content">
-          <div className="pp-avatar-section">
+          <div className="pp-header-top-row">
             <div className={`pp-avatar-ring ${hasStory ? 'active-story' : ''}`}>
               <img
                 src={buildAvatarUrl(profile.avatar_url) || 'https://i.pravatar.cc/150'}
@@ -169,17 +247,14 @@ export default function PublicProfile() {
               />
               {hasStory && <div className="pp-story-indicator">Story</div>}
             </div>
-            <div className="pp-user-info">
-              <h1 className="pp-fullname">{profile.full_name}</h1>
-              <p className="pp-username">@{profile.username}</p>
-              <div className="pp-rep-badge">
-                <span className="pp-rep-icon">🏆</span> Uy tín: {profile.reputation_score || 0}
-              </div>
+            <div className="pp-actions">
+              <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
             </div>
           </div>
 
-          <div className="pp-actions">
-            <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
+          <div className="pp-user-info">
+            <h1 className="pp-fullname">{profile.full_name}</h1>
+            <p className="pp-username">@{profile.username}</p>
           </div>
         </div>
       </div>
@@ -221,6 +296,7 @@ export default function PublicProfile() {
                   <div className="pp-detail-item">📍 {profile.location || "Chưa cập nhật địa điểm"}</div>
                   <div className="pp-detail-item">🎂 {profile.dob ? new Date(profile.dob).toLocaleDateString('vi-VN') : "Chưa cập nhật ngày sinh"}</div>
                   <div className="pp-detail-item">📅 Đã tham gia: {new Date(profile.created_at).toLocaleDateString('vi-VN')}</div>
+                  <div className="pp-detail-item">🏆 Uy tín: {profile.reputation_score || 0}</div>
                 </div>
               </div>
 

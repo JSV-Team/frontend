@@ -6,13 +6,19 @@ import { motion } from 'motion/react';
 import useMatchSocket from '../../hooks/useMatchSocket';
 import useMatchQueue from '../../hooks/useMatchQueue';
 import { useMatch } from '../../contexts/MatchContext';
+import apiConfig from "../../config/apiConfig";
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import './Match.css';
 
 function MatchContainer() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   // Get user info from localStorage
   const [userId, setUserId] = useState(null);
@@ -47,6 +53,10 @@ function MatchContainer() {
 
   // Initialize user data from localStorage
   useEffect(() => {
+    // Reset match state to EMPTY when component mounts
+    console.log('🔄 MatchContainer mounted - resetting match state to EMPTY');
+    matchContext.clearMatch();
+    
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
 
@@ -60,7 +70,7 @@ function MatchContainer() {
         const fetchUserInterests = async () => {
           try {
             console.log('🔍 Fetching user interests for user:', user.user_id);
-            const response = await fetch(`/api/profile/${user.user_id}`, {
+            const response = await fetch(`${apiConfig.BASE_API}/profile/${user.user_id}`, {
               headers: {
                 'Authorization': `Bearer ${storedToken}`
               }
@@ -102,7 +112,14 @@ function MatchContainer() {
 
   // Sync socket state with queue state
   useEffect(() => {
+    console.log('🔄 Socket state changed:', {
+      socketQueueStatus: socketQueueState.status,
+      hasSocketMatchData: !!socketMatchData,
+      currentMatchState: matchContext.matchState
+    });
+    
     if (socketQueueState.status === 'searching') {
+      console.log('✅ Setting match state to SEARCHING');
       matchContext.setMatchState('searching');
       matchContext.updateQueueInfo({
         queueSize: socketQueueState.queueSize,
@@ -110,36 +127,47 @@ function MatchContainer() {
         waitTime: socketQueueState.waitTime,
       });
     } else if (socketQueueState.status === 'matched' && socketMatchData) {
+      console.log('✅ Match found! Setting match state to FOUND', socketMatchData);
       matchContext.handleMatchFound(socketMatchData);
     } else if (socketQueueState.status === 'idle') {
+      console.log('✅ Socket idle, setting match state to EMPTY');
       matchContext.setMatchState('empty');
     }
   }, [socketQueueState, socketMatchData, matchContext]);
 
   // Handle join queue
   const handleJoinQueue = async () => {
-    console.log('🎯 handleJoinQueue called');
+    console.log('🎯 ========== HANDLE JOIN QUEUE CALLED ==========');
+    console.log('   userId:', userId);
+    console.log('   token:', token ? 'present' : 'missing');
     console.log('   isConnected:', isConnected);
+    console.log('   socket:', socket ? 'present' : 'missing');
+    console.log('   socket.connected:', socket?.connected);
     console.log('   userInterests:', userInterests);
     console.log('   userInterests.length:', userInterests?.length);
 
     if (!isConnected) {
+      console.log('❌ Cannot join - socket not connected');
       matchContext.setError('Socket not connected. Please try again.');
       return;
     }
 
     if (!userInterests || userInterests.length === 0) {
+      console.log('❌ Cannot join - no interests');
       matchContext.setError('Please add at least one interest before joining the queue.');
       return;
     }
 
+    console.log('✅ All checks passed, calling socketJoinQueue...');
     matchContext.setIsLoading(true);
     matchContext.setUserInterests(userInterests);
 
     try {
       // Join via socket (this will emit match:join event)
       socketJoinQueue();
+      console.log('✅ socketJoinQueue() called successfully');
     } catch (err) {
+      console.error('❌ Error calling socketJoinQueue:', err);
       matchContext.setError(err.message || 'Failed to join queue');
     } finally {
       matchContext.setIsLoading(false);
@@ -209,6 +237,42 @@ function MatchContainer() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
+      )}
+
       <div className="match-main">
         <MatchHeader />
 

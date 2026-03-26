@@ -1,26 +1,25 @@
-const API_BASE_URL = '/api/posts';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = `${apiConfig.BASE_API}/posts`;
 
 export const postService = {
   // Tạo bài đăng mới
   createPost: async (userIdOrData, maybeData) => {
-    let userId, postData;
+    let postData;
     
-    // Handle flexible arguments to fix NULL creator_id issue
+    // Handle flexible arguments
     if (maybeData === undefined) {
-      // If called with 1 arg: createPost(postDataWithUserId)
-      userId = userIdOrData?.userId || 2;
       postData = userIdOrData;
     } else {
-      // If called with 2 args: createPost(userId, postData) 
-      userId = userIdOrData;
       postData = maybeData;
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/${userId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
@@ -34,12 +33,14 @@ export const postService = {
   },
 
   // Tạo trạng thái mới (cho trang Profile) - lưu vào DailyStatus
-  createStatus: async (userId, postData) => {
+  createStatus: async (postData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/status/${userId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
@@ -59,6 +60,17 @@ export const postService = {
       const response = await fetch(`${API_BASE_URL}/${userId}`);
       const data = await response.json();
       if (!response.ok) throw data;
+
+      // Helper to build full image URL
+      const buildImageUrl = (url) => {
+        if (!url) return null;
+        if (url.startsWith('http')) return url;
+        const baseUrl = apiConfig.API_URL || 'https://backend-1wyh.onrender.com';
+        const cleanBase = baseUrl.replace(/\/$/, '');
+        const cleanPath = url.startsWith('/') ? url : `/${url}`;
+        return `${cleanBase}${cleanPath}`;
+      };
+
       // Map backend fields to frontend fields
       return data.map(p => ({
         id: p.post_id || p.activity_id || p.status_id,
@@ -69,14 +81,12 @@ export const postService = {
         duration: p.duration_minutes || null,
         maxParticipants: p.max_participants || null,
         time: new Date(p.created_at).toLocaleString(),
-        image: p.image_url || null,
+        image: buildImageUrl(p.image_url),
         reactions: { like: p.reactions_count || 0 }, // Simplified for now
         comments: Array(p.comments_count || 0).fill({}), // Just to show the count
         shares: p.shares_count || 0,
         type: p.post_type || 'activity'
       }));
-
-
     } catch (error) {
       console.error('Lỗi khi lấy danh sách bài đăng:', error);
       throw error;
@@ -112,13 +122,18 @@ export const postService = {
         formData.append('media', file);
       });
 
-      const response = await fetch(`/api/upload/post-media`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${apiConfig.BASE_API}/upload/post-media`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       const data = await response.json();
       if (!response.ok) throw data;
-      return data.urls; // Mảng các URLs
+      // Backend returns { success: true, data: { files: [{url: '...'}, ...], count: X } }
+      return data.data.files.map(f => f.url);
     } catch (error) {
       console.error('Lỗi khi upload ảnh bài đăng:', error);
       throw error;

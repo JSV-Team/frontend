@@ -1,5 +1,6 @@
 // Chat Service - API calls related to conversations
-const API_BASE_URL = '/api';
+import apiConfig from '../config/apiConfig';
+const API_BASE_URL = apiConfig.BASE_API || '/api';
 
 // Helper: lấy JWT token từ localStorage
 const getToken = () => {

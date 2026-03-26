@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { Send, MoreVertical, LogOut, Phone, Video, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
+import { Send, MoreVertical, LogOut, Info, Edit, Search, Image as ImageIcon, PlusCircle, Smile, MapPin } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
+import { useTheme } from '../../contexts/ThemeContext';
+import Particles from '../../components/Particles/Particles';
+import Aurora from '../../components/Aurora/Aurora';
+import Grainient from '../../components/Grainient/Grainient';
 import apiConfig from '../../config/apiConfig';
 import chatService from '../../services/chatService';
 import { buildAvatarUrl } from '../../services/profileService';
@@ -27,6 +31,7 @@ function Friends() {
   const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
   const [conversations, setConversations] = useState([]);
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
   const [activeConvId, setActiveConvId] = useState(location.state?.openChatId || null);
   const [messages, setMessages] = useState([]);
@@ -106,7 +111,14 @@ function Friends() {
       setConversations(prev => {
         const index = prev.findIndex(c => c.conversation_id === msg.conversation_id);
         if (index > -1) {
-          const updatedConv = { ...prev[index], last_message: msg.content };
+          const updatedConv = { 
+            ...prev[index], 
+            last_message: msg.content,
+            // Chỉ tăng unread_count nếu không phải conversation đang active
+            unread_count: msg.conversation_id === activeConvIdRef.current 
+              ? 0 
+              : (prev[index].unread_count || 0) + 1
+          };
           const newConvs = [...prev];
           newConvs.splice(index, 1);
           newConvs.unshift(updatedConv); // Add to top
@@ -114,6 +126,9 @@ function Friends() {
         }
         return prev;
       });
+      
+      // Trigger event to refresh unread count in header
+      window.dispatchEvent(new Event('unreadMessagesUpdated'));
     });
 
     return () => newSocket.disconnect();
@@ -150,6 +165,36 @@ function Friends() {
     if (!activeConvId) return;
     setLoading(true);
     const currentUserId = getUserId();
+    
+    // Mark conversation as read
+    const markAsRead = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`${apiConfig.BASE_API}/chat/conversations/${activeConvId}/read`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        // Update local conversation list to remove unread count
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.conversation_id === activeConvId 
+              ? { ...conv, unread_count: 0 }
+              : conv
+          )
+        );
+        
+        // Trigger event to refresh unread count in header
+        window.dispatchEvent(new Event('unreadMessagesUpdated'));
+      } catch (error) {
+        console.error('Error marking conversation as read:', error);
+      }
+    };
+
+    markAsRead();
     
     chatService.getMessages(activeConvId, currentUserId)
       .then(data => {
@@ -218,7 +263,7 @@ function Friends() {
       const formData = new FormData();
       formData.append('image', file);
 
-      const res = await fetch(`${apiConfig.API_URL}/api/upload/image`, {
+      const res = await fetch(`${apiConfig.BASE_API}/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`
@@ -285,6 +330,42 @@ function Friends() {
 
   return (
     <div className="friends-page">
+      {/* Background effects - only visible in dark mode */}
+      {theme === 'dark' && (
+        <>
+          <div className="home-aurora-bg">
+            <Aurora
+              colorStops={['#d666ff', '#e15b83', '#5227FF']}
+              blend={0.5}
+              amplitude={1.0}
+              speed={1.2}
+            />
+          </div>
+          <div className="home-particles-bg">
+            <Particles
+              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={400}
+              moveParticlesOnHover={false}
+              alphaParticles={true}
+              disableRotation={false}
+              sizeRandomness={1}
+              cameraDistance={20}
+              pixelRatio={1}
+            />
+          </div>
+        </>
+      )}
+      
+      {/* Background effect - only visible in light mode */}
+      {theme === 'light' && (
+        <div className="home-grainient-bg">
+          <Grainient />
+        </div>
+      )}
+
       {/* CỘT TRÁI: Danh sách */}
       <div className="chat-sidebar">
         <div className="chat-sidebar-header">
@@ -319,7 +400,7 @@ function Friends() {
                   <img
                     src={conv.conversation_type === 'private'
                       ? (buildAvatarUrl(conv.other_avatar_url) || 'https://i.pravatar.cc/150')
-                      : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
+                      : 'https://ui-avatars.com/api/?name=GRP&background=3b82f6&color=fff'
                     }
                     alt="Avatar"
                     className="conv-avatar"
@@ -335,6 +416,11 @@ function Friends() {
                   </div>
                   <div className="conv-last-msg">{conv.last_message || 'Chưa có tin nhắn...'}</div>
                 </div>
+                {conv.unread_count > 0 && (
+                  <div className="conv-unread-badge">
+                    {conv.unread_count > 9 ? '9+' : conv.unread_count}
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -363,8 +449,6 @@ function Friends() {
                   <h3>{activeConv?.activity_title || 'Chat Nhóm'}</h3>
                 </div>
                 <div className="chat-actions">
-                  <button className="icon-btn"><Phone size={18} /></button>
-                  <button className="icon-btn"><Video size={18} /></button>
                   <button
                     className={`icon-btn ${showInfo ? 'active' : ''}`}
                     title="Thông tin nhóm"

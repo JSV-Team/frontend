@@ -2,7 +2,6 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarProfile from "../../components/SidebarProfile/SidebarProfile";
 import TopTabs from "../../components/TopTabs/TopTabs";
-import StatBar from "../../components/StatBar/StatBar";
 import LocationPicker from "../../components/common/LocationPicker";
 import { saveProfileToLocalStorage, getProfileFromLocalStorage } from "../../services/profileService";
 import { profileService } from "../../services/profileService";
@@ -135,7 +134,6 @@ export default function EditProfilePage() {
           />
         )}
         <TopTabs active="edit" />
-        <StatBar stats={stats} />
 
         <div className="ep-card">
           <div className="ep-title">Thông tin chung</div>

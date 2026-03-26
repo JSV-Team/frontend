@@ -206,6 +206,40 @@
     background: rgba(239, 68, 68, 0.2);
 }
 
-[data-theme="dark"] .pe-cancel:hover {
-    background: rgba(239, 68, 68, 0.3);
+/* Location Input Group */
+.pe-location-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.pe-location-input {
+    padding-right: 50px !important; /* Space for the icon button */
+}
+
+.pe-map-icon-btn {
+    position: absolute;
+    right: 8px;
+    height: 38px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--color-primary);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pe-map-icon-btn:hover {
+    background: var(--color-bg-light);
+    color: var(--color-primary-hover);
+    transform: scale(1.1);
+}
+
+.pe-map-icon-btn:active {
+    transform: scale(0.95);
 }

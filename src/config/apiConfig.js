@@ -1,8 +1,6 @@
 // Central API configuration
-const API_URL = import.meta.env.VITE_API_URL || 
-                (window.location.protocol === 'https:' 
-                  ? 'https://backend-1wyh.onrender.com' 
-                  : 'http://localhost:3001');
+// PRODUCTION: Always use backend URL
+const API_URL = import.meta.env.VITE_API_URL || 'https://backend-1wyh.onrender.com';
 
 export default {
   API_URL,

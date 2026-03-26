@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import apiConfig from "../../config/apiConfig";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Bell, Search, User, FileText, X } from "lucide-react";
 import AdminSidebar from "./AdminSidebar";
@@ -43,7 +44,7 @@ function AdminLayout() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `/api/admin/search?q=${encodeURIComponent(searchQuery)}`,
+        `${apiConfig.BASE_API}/admin/search?q=${encodeURIComponent(searchQuery)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const result = await response.json();
@@ -90,7 +91,7 @@ function AdminLayout() {
     setBellLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("/api/admin/stats", {
+      const res = await fetch(`${apiConfig.BASE_API}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
