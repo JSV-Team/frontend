@@ -33,12 +33,14 @@ export const postService = {
   },
 
   // Tạo trạng thái mới (cho trang Profile) - lưu vào DailyStatus
-  createStatus: async (userId, postData) => {
+  createStatus: async (postData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/status/${userId}`, {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE_URL}/status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(postData),
       });
