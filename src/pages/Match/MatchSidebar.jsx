@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { matchService } from '../../services/matchService';
+import { buildAvatarUrl } from '../../services/profileService';
+
 
 function MatchSidebar({ matchData, queueInfo }) {
   const [matchHistory, setMatchHistory] = useState([]);
@@ -150,7 +152,7 @@ function MatchSidebar({ matchData, queueInfo }) {
                 <div className="match-avatar">
                   {match.matched_avatar_url ? (
                     <img 
-                      src={match.matched_avatar_url} 
+                      src={buildAvatarUrl(match.matched_avatar_url)} 
                       alt={match.matched_username}
                       onError={(e) => {
                         e.target.style.display = 'none';

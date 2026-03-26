@@ -392,7 +392,7 @@ function Friends() {
                   <img
                     src={conv.conversation_type === 'private'
                       ? (buildAvatarUrl(conv.other_avatar_url) || 'https://i.pravatar.cc/150')
-                      : 'https://via.placeholder.com/52/3b82f6/ffffff?text=GRP'
+                      : 'https://ui-avatars.com/api/?name=GRP&background=3b82f6&color=fff'
                     }
                     alt="Avatar"
                     className="conv-avatar"
