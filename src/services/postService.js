@@ -113,8 +113,12 @@ export const postService = {
         formData.append('media', file);
       });
 
+      const token = localStorage.getItem('token');
       const response = await fetch(`${apiConfig.BASE_API}/upload/post-media`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
       const data = await response.json();
