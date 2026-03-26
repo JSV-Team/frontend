@@ -81,7 +81,7 @@ function AppRouter() {
 
         {/* Admin Routes - Chỉ dành cho sếp */}
         <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/vibe-admin-panel" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="posts" element={<PostManagement />} />

@@ -121,6 +121,9 @@ const PostManagement = () => {
   };
 
   const handleStatusChange = async (id, newStatus) => {
+    const confirmMsg = newStatus === 'removed' ? 'Bạn có chắc chắn muốn gỡ bài viết này?' : 'Bạn có chắc chắn muốn khôi phục bài viết này?';
+    if (!window.confirm(confirmMsg)) return;
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiConfig.API_URL}/api/admin/activities/${id}/status`, {
@@ -166,7 +169,7 @@ const PostManagement = () => {
   return (
     <div className="post-management">
       <div className="dashboard-header">
-        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px' }}>Quản lý Bài viết</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '850', marginBottom: '4px', color: '#1e293b' }}>Quản lý Bài viết</h2>
         <p style={{ color: 'var(--admin-text-muted)', margin: 0 }}>Duyệt và quản lý các hoạt động trong hệ thống 👋</p>
       </div>
 

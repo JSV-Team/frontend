@@ -114,7 +114,7 @@ const Dashboard = () => {
     <div className="admin-dashboard-wrapper animate-fade-in">
       {/* Page Title & Welcome */}
       <div className="dashboard-header-simple">
-        <h2 className="main-page-title">Dashboard</h2>
+        <h2 className="main-page-title" style={{ color: '#1e293b', fontWeight: '850' }}>Dashboard</h2>
         <p className="welcome-msg">Chào mừng trở lại, Admin 👋</p>
       </div>
 
@@ -203,133 +203,7 @@ const Dashboard = () => {
 
 
 
-      {/* Row 3: Matching Management */}
-      <div className="bottom-content-grid" style={{ gridTemplateColumns: '1fr' }}>
-        <div className="glass-card" style={{ padding: '28px' }}>
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '12px',
-                background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
-              }}>
-                <Users size={20} />
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>Quản lý Ghép đôi</h3>
-                <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>Tổng quan hoạt động ghép đôi</p>
-              </div>
-            </div>
-          </div>
 
-          {/* Stat Cards Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '32px' }}>
-            {[
-              { label: 'Đang chờ', value: data.matchData?.stats?.pending || 0, icon: <Clock size={18} />, grad: 'linear-gradient(135deg, #f59e0b, #f97316)', light: '#fff7ed', text: '#d97706' },
-              { label: 'Hoạt động', value: data.matchData?.stats?.active || 0, icon: <Users size={18} />, grad: 'linear-gradient(135deg, #10b981, #06b6d4)', light: '#f0fdf4', text: '#059669' },
-              { label: 'Từ chối', value: data.matchData?.stats?.rejected || 0, icon: <User size={18} />, grad: 'linear-gradient(135deg, #ef4444, #f43f5e)', light: '#fff1f2', text: '#e11d48' },
-              { label: 'Kết thúc', value: data.matchData?.stats?.ended || 0, icon: <Users size={18} />, grad: 'linear-gradient(135deg, #64748b, #94a3b8)', light: '#f8fafc', text: '#64748b' },
-            ].map((item, idx) => (
-              <div key={idx} style={{
-                background: '#fff', borderRadius: '16px', padding: '20px',
-                border: '1px solid #e2e8f0',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                display: 'flex', alignItems: 'center', gap: '16px',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.09)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)'; }}
-              >
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '12px',
-                  background: item.grad, color: '#fff', flexShrink: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 4px 12px ${item.text}40`
-                }}>
-                  {item.icon}
-                </div>
-                <div>
-                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{item.label}</div>
-                  <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{item.value}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom: Classification + Recent Matches */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-
-            {/* Ghép đôi gần đây - table style */}
-            <div>
-              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Ghép đôi gần đây</h4>
-              <div style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                {/* Table header */}
-                <div style={{
-                  display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
-                  padding: '11px 20px', background: '#f8fafc',
-                  borderBottom: '1px solid #e2e8f0'
-                }}>
-                  {['Cặp ghép đôi', 'Thời gian', 'Trạng thái'].map(h => (
-                    <span key={h} style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{h}</span>
-                  ))}
-                </div>
-
-                {/* Rows */}
-                {(data.matchData?.recent || []).length > 0 ? (
-                  (data.matchData?.recent || []).map((match, idx) => {
-                    const statusMap = {
-                      'Đang hoạt động': { bg: '#dcfce7', color: '#16a34a', dot: '#22c55e' },
-                      'Đang chờ':       { bg: '#fff7ed', color: '#d97706', dot: '#f59e0b' },
-                      'Từ chối':        { bg: '#fee2e2', color: '#dc2626', dot: '#ef4444' },
-                      'Kết thúc':       { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8' },
-                    };
-                    const s = statusMap[match.status] || statusMap['Kết thúc'];
-                    return (
-                      <div key={match.id} style={{
-                        display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
-                        padding: '14px 20px', alignItems: 'center',
-                        borderBottom: idx < (data.matchData?.recent || []).length - 1 ? '1px solid #f1f5f9' : 'none',
-                        transition: 'background 0.15s',
-                      }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#fafbff'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                      >
-                        {/* Pair */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <div style={{ position: 'relative', width: '44px', height: '28px', flexShrink: 0 }}>
-                            <img src={match.avatars?.[0] || `https://i.pravatar.cc/150?u=${match.id}a`}
-                              alt="" style={{ width: '28px', height: '28px', borderRadius: '8px', border: '2px solid #fff', position: 'absolute', left: 0, top: 0, objectFit: 'cover' }} />
-                            <img src={match.avatars?.[1] || `https://i.pravatar.cc/150?u=${match.id}b`}
-                              alt="" style={{ width: '28px', height: '28px', borderRadius: '8px', border: '2px solid #fff', position: 'absolute', left: '14px', top: 0, objectFit: 'cover' }} />
-                          </div>
-                          <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>{match.pair}</span>
-                        </div>
-                        {/* Time */}
-                        <span style={{ fontSize: '12px', color: '#94a3b8', fontWeight: 500 }}>{match.time}</span>
-                        {/* Status */}
-                        <div style={{
-                          display: 'inline-flex', alignItems: 'center', gap: '6px',
-                          padding: '4px 12px', borderRadius: '99px',
-                          background: s.bg, width: 'fit-content'
-                        }}>
-                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: s.dot }} />
-                          <span style={{ fontSize: '11px', fontWeight: 700, color: s.color }}>{match.status}</span>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div style={{ padding: '32px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
-                    Chưa có dữ liệu ghép đôi
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
 
 
       <style>{`

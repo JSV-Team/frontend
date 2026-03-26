@@ -150,7 +150,7 @@ const SystemSettings = () => {
     <div className="settings-page animate-fade-in">
       <div className="settings-header">
         <div className="header-content">
-          <h2 className="premium-title">Cài đặt</h2>
+          <h2 className="premium-title" style={{ color: '#1e293b', fontWeight: '850' }}>Cài đặt</h2>
           <p className="premium-subtitle">Quản lý cài đặt hệ thống</p>
         </div>
       </div>
