@@ -3,8 +3,8 @@
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 12% 40%, rgba(0, 255, 170, 0.08), transparent 16%),
-    radial-gradient(circle at 92% 45%, rgba(0, 255, 255, 0.08), transparent 18%),
+    radial-gradient(circle at 12% 40%, rgba(108, 127, 255, 0.1), transparent 22%),
+    radial-gradient(circle at 92% 45%, rgba(255, 107, 107, 0.08), transparent 25%),
     linear-gradient(135deg, #031723 0%, #020816 38%, #01040d 100%);
   color: white;
 }
@@ -1082,19 +1082,19 @@
 }
 
 .glow-left {
-  width: 280px;
-  height: 280px;
-  left: -100px;
-  top: 180px;
-  background: rgba(0, 255, 180, 0.16);
+  width: 320px;
+  height: 320px;
+  left: -120px;
+  top: 15%;
+  background: rgba(108, 127, 255, 0.18);
 }
 
 .glow-right {
-  width: 360px;
-  height: 360px;
-  right: -120px;
-  top: 140px;
-  background: rgba(0, 255, 255, 0.14);
+  width: 420px;
+  height: 420px;
+  right: -140px;
+  top: 10%;
+  background: rgba(255, 107, 107, 0.15);
 }
 
 .page-content {
@@ -1112,6 +1112,18 @@
   max-width: 500px;
   margin-top: 40px;
   margin-left: 10px;
+}
+
+.left-content h1 {
+  font-size: 5.5rem;
+  font-weight: 850;
+  background: linear-gradient(135deg, #6c7fff 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(108, 127, 255, 0.4);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
 }
 
 .brand {
@@ -1152,13 +1164,15 @@
 
 .login-card h2 {
   font-size: 3rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 6px;
-  color: rgb(72, 225, 223);
+  background: linear-gradient(135deg, #6c7fff 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: flex;
   justify-content: center;
   align-items: center;
-
 }
 
 .welcome-text {
@@ -1207,7 +1221,7 @@
 }
 
 .login-page .form-group input:focus {
-  box-shadow: inset 0 0 0 1.5px rgba(78, 205, 196, 0.8);
+  box-shadow: inset 0 0 0 1.5px rgba(108, 127, 255, 0.8), 0 0 20px rgba(108, 127, 255, 0.15);
   background: rgba(0, 0, 0, 0.98) !important;
 }
 
@@ -1244,7 +1258,8 @@
   font-weight: 700;
   color: white;
   cursor: pointer;
-  background: linear-gradient(90deg, #4ecdc4, #2b948c);
+  background: linear-gradient(90deg, #6c7fff, #ff6b6b);
+  box-shadow: 0 4px 15px rgba(108, 127, 255, 0.3);
   transition: transform 0.2s ease, opacity 0.2s ease;
   margin-top: 10px;
 }
@@ -1260,14 +1275,15 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.signup-link {
-  color: #4ecdc4;
+.signup-link, .forgot-password {
+  color: #6c7fff;
   text-decoration: none;
   font-weight: 600;
-  margin-left: 5px;
+  transition: all 0.2s ease;
 }
 
-.signup-link:hover {
+.signup-link:hover, .forgot-password:hover {
+  color: #ff6b6b;
   text-decoration: underline;
 }
 
