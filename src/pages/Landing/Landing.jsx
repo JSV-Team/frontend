@@ -1,6 +1,6 @@
 import "./style.css";
-import heroImage from "./hero-hugging.jpg";
-import heronewImg from "./hero-new.jpg";
+import heroImage from "./hero-new.jpg";
+import huggingImg from "./hero-hugging.jpg";
 import thangminhImg from "./thangminh.png";
 import giangImg from "./giang.jpg";
 
@@ -459,7 +459,7 @@ function Testimonials() {
   const list = [
     { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
     { names: "Giang vs ai đó", image: giangImg, rating: 5, quote: "Sau jven tôi đã gặp đc trân ái của đời mình,dùng vibematch rất vui" },
-    { names: "hoàng thảo và tú bà", image: heronewImg, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau" },
+    { names: "hoàng thảo và tú bà", image: heroImage, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau" },
   ];
 
   const prev = () => setCurrent((c) => (c === 0 ? list.length - 1 : c - 1));
