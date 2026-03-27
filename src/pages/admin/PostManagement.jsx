@@ -384,7 +384,7 @@ const PostManagement = () => {
                   width: '56px',
                   height: '56px',
                   borderRadius: '50%',
-                  background: selectedPost.avatar_url ? `url(${selectedPost.avatar_url.startsWith('http') ? selectedPost.avatar_url : apiConfig.API_URL + selectedPost.avatar_url}) center/cover` : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  background: selectedPost.avatar_url ? `url(${buildAvatarUrl(selectedPost.avatar_url)}) center/cover` : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                   color: 'white',
                   display: 'flex',
                   justifyContent: 'center',

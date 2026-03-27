@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
+
 import { useLocation } from 'react-router-dom';
 import { Search } from 'lucide-react';
 
@@ -154,7 +156,7 @@ const UserManagement = () => {
                 <td>
                   <div className="user-profile-cell">
                     <div className="avatar" style={{
-                      backgroundImage: user.avatar_url ? `url(${user.avatar_url.startsWith('http') ? user.avatar_url : apiConfig.API_URL + user.avatar_url})` : 'none',
+                      backgroundImage: user.avatar_url ? `url(${buildAvatarUrl(user.avatar_url)})` : 'none',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center'
                     }}>

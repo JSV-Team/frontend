@@ -24,6 +24,7 @@ function MatchContainer() {
   const [userId, setUserId] = useState(null);
   const [token, setToken] = useState(null);
   const [userInterests, setUserInterests] = useState([]);
+  const [loadingInterests, setLoadingInterests] = useState(true);
 
   // Get global match context
   const matchContext = useMatch();
@@ -69,7 +70,7 @@ function MatchContainer() {
         // Fetch user interests from API to get latest data
         const fetchUserInterests = async () => {
           try {
-            console.log('🔍 Fetching user interests for user:', user.user_id);
+            setLoadingInterests(true);
             const response = await fetch(`${apiConfig.BASE_API}/profile/${user.user_id}`, {
               headers: {
                 'Authorization': `Bearer ${storedToken}`
@@ -77,29 +78,18 @@ function MatchContainer() {
             });
             if (response.ok) {
               const result = await response.json();
-              console.log('📦 API result received:', result);
-
-              // API returns { success: true, data: { user_id, interests, ... } }
               const userData = result.data || result;
-              console.log('📦 User data:', userData);
-              console.log('📦 Interests from API:', userData.interests);
-
               if (userData.interests && Array.isArray(userData.interests)) {
-                console.log('✅ Setting user interests:', userData.interests);
                 setUserInterests(userData.interests);
-              } else {
-                console.log('⚠️ No interests array in API response');
               }
-            } else {
-              console.log('❌ API response not OK:', response.status);
             }
           } catch (err) {
             console.error('Failed to fetch user interests:', err);
-            // Fallback to localStorage interests
             if (user.interests && Array.isArray(user.interests)) {
-              console.log('📦 Using localStorage interests:', user.interests);
               setUserInterests(user.interests);
             }
+          } finally {
+            setLoadingInterests(false);
           }
         };
 
@@ -152,9 +142,14 @@ function MatchContainer() {
       return;
     }
 
+    if (loadingInterests) {
+      matchContext.setError('Đang tải thông tin sở thích, vui lòng đợi trong giây lát...');
+      return;
+    }
+
     if (!userInterests || userInterests.length === 0) {
       console.log('❌ Cannot join - no interests');
-      matchContext.setError('Please add at least one interest before joining the queue.');
+      matchContext.setError('Bạn cần thêm ít nhất một sở thích để tham gia ghép đôi.');
       return;
     }
 
@@ -291,6 +286,7 @@ function MatchContainer() {
             onViewProfile={handleViewProfile}
             onClearMatch={handleClearMatch}
             onClearError={matchContext.clearError}
+            loadingInterests={loadingInterests}
           />
 
           <MatchSidebar
