@@ -132,6 +132,25 @@ export const chatService = {
             console.error('Lỗi khi lấy số tin nhắn chưa đọc:', error);
             return 0;
         }
+    },
+
+    // Kiểm tra quyền nhắn tin cho host của activity
+    checkCanMessageHost: async (activityId) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/chat/check-can-message-host`, {
+                method: 'POST',
+                headers: authHeaders({
+                    'Content-Type': 'application/json',
+                }),
+                body: JSON.stringify({ activityId }),
+            });
+            const data = await response.json();
+            if (!response.ok) return { canMessage: false, message: data.message };
+            return data;
+        } catch (error) {
+            console.error('Lỗi khi kiểm tra quyền nhắn tin:', error);
+            return { canMessage: false, message: error.message };
+        }
     }
 };
 

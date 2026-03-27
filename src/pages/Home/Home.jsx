@@ -10,6 +10,7 @@ import useCurrentUser, { useCurrentUserId } from '../../hooks/useCurrentUser';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
+import chatService from '../../services/chatService';
 import apiConfig from '../../config/apiConfig';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
@@ -88,14 +89,9 @@ function Home() {
     // Kiểm tra quyền nhắn tin (chỉ khi có activityId)
     if (activityId) {
       try {
-        const checkRes = await fetch(`${apiConfig.BASE_API}/chat/check-can-message-host`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
-        });
-        const checkData = await checkRes.json();
+        const checkData = await chatService.checkCanMessageHost(activityId);
 
-        if (!checkRes.ok || !checkData.canMessage) {
+        if (!checkData.canMessage) {
           alert(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
           return;
         }
@@ -107,18 +103,11 @@ function Home() {
     }
 
     try {
-      const response = await fetch(`${apiConfig.BASE_API}/chat/private`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
+      const data = await chatService.getOrInitPrivateChat(null, hostId, activityId);
       navigate('/friends', { state: { openChatId: data.conversation_id } });
     } catch (err) {
       console.error('Lỗi tạo chat riêng:', err);
-      alert('Lỗi: ' + err.message);
+      alert('Lỗi: ' + (err.message || 'Đã có lỗi xảy ra khi tạo cuộc hội thoại.'));
     }
   };
 
