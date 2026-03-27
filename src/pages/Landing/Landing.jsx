@@ -1,6 +1,8 @@
 import "./style.css";
 import heroImage from "./hero-couple.jpg";
 import thangminhImg from "./thangminh.png";
+import giangImg from "./giang.jpg";
+
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -456,7 +458,7 @@ function Testimonials() {
 
   const list = [
     { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
-    { names: "Linh & Tuấn", initials: "LT", rating: 5, quote: "Từ một buổi cà phê lần đầu gặp mặt đến hàng chục chuyến du lịch cùng nhau. VibeMatch đã giúp mình tìm được người bạn đồng hành tuyệt vời." },
+    { names: "Giang vs ai đó", image: giangImg, rating: 5, quote: "Sau jven tôi đã gặp đc trân ái của đời mình,dùng vibematch rất vui" },
     { names: "Mai & Đức", initials: "MD", rating: 5, quote: "Cùng đam mê nấu ăn và nhiếp ảnh, chúng mình đã kết nối trên VibeMatch và bây giờ cùng nhau tổ chức workshop mỗi tháng!" },
   ];
 
