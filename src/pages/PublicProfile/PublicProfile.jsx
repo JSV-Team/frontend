@@ -35,7 +35,7 @@ export default function PublicProfile() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
-// ... (omitted helper codes for brevity)
+    // ... (omitted helper codes for brevity)
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
@@ -383,10 +383,10 @@ export default function PublicProfile() {
                             {post.desc && <p className="post-description">{post.desc}</p>}
                           </div>
 
-                          {post.image && (
+                          {(post.image_url || post.image || (post.images && post.images[0])) && (
                             <div className="post-media-container">
                               <img
-                                src={buildAvatarUrl(post.image)}
+                                src={buildAvatarUrl(post.image_url || post.image || post.images[0])}
                                 alt="Post content"
                                 className="post-media-img"
                               />

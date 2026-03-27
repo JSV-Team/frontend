@@ -47,6 +47,7 @@ const UserManagement = () => {
             id: u.user_id || u.id,
             name: u.full_name || u.username || u.name,
             email: u.email,
+            avatar_url: u.avatar_url,
             status: u.status || 'active',
             joined: dateStr,
             posts: u.posts || 0
@@ -152,8 +153,12 @@ const UserManagement = () => {
               <tr key={user.id}>
                 <td>
                   <div className="user-profile-cell">
-                    <div className="avatar">
-                      {user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                    <div className="avatar" style={{
+                      backgroundImage: user.avatar_url ? `url(${user.avatar_url.startsWith('http') ? user.avatar_url : apiConfig.API_URL + user.avatar_url})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}>
+                      {!user.avatar_url && user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
                     <div className="info">
                       <h4>{user.name}</h4>

@@ -272,12 +272,12 @@ function Home() {
                         )}
                       </div>
 
-                      {post.image_url && (
+                      {(post.image_url || (post.images && post.images[0])) && (
                         <div className="post-media-container">
                           {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
-                          {console.log('Rendering image:', post.image_url)}
+                          {console.log('Rendering image:', post.image_url || post.images[0])}
                           <img
-                            src={buildAvatarUrl(post.image_url)}
+                            src={buildAvatarUrl(post.image_url || post.images[0])}
                             alt="Post"
                             className="post-media-img"
                           />

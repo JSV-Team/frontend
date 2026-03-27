@@ -5,6 +5,8 @@ import {
   AlertTriangle, Clock, MapPin, Tag, User, Star, X, AlignLeft, Users
 } from 'lucide-react';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
+
 
 const PostManagement = () => {
   const location = useLocation();
@@ -228,12 +230,12 @@ const PostManagement = () => {
           return (
             <div key={act.id} className="post-card">
               <div className="post-card__image" style={{
-                backgroundImage: act.image_url ? `url(${act.image_url.startsWith('http') ? act.image_url : apiConfig.API_URL + act.image_url})` : 'none',
+                backgroundImage: (act.image_url || (act.images && act.images[0])) ? `url(${buildAvatarUrl(act.image_url || act.images[0])})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 position: 'relative'
               }}>
-                {!act.image_url && <ImageIcon size={40} />}
+                {!(act.image_url || (act.images && act.images[0])) && <ImageIcon size={40} />}
                 <div className={`post-card__status ${isPublished ? 'published' : (isPending ? 'pending' : 'removed')}`}>
                   {isPublished ? 'Đã đăng' : (isPending ? 'Chờ duyệt' : 'Đã gỡ')}
                 </div>
@@ -241,8 +243,12 @@ const PostManagement = () => {
 
               <div className="post-card__content">
                 <div className="post-card__author">
-                  <div className="avatar">
-                    {(act.user || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                  <div className="avatar" style={{
+                    backgroundImage: act.avatar_url ? `url(${buildAvatarUrl(act.avatar_url)})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}>
+                    {!act.avatar_url && (act.user || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                   </div>
                   <div className="meta">
                     <h5>{act.user || 'Ẩn danh'}</h5>
@@ -268,7 +274,7 @@ const PostManagement = () => {
               </div>
 
               <div className="post-card__actions">
-                <button 
+                <button
                   className="action-btn-full btn-view"
                   onClick={() => setSelectedPost(act)}
                 >
@@ -335,19 +341,22 @@ const PostManagement = () => {
             position: 'relative',
             animation: 'modalSlideUp 0.3s ease-out'
           }} onClick={e => e.stopPropagation()}>
-            
+
             {/* Header image (if any) */}
-            <div style={{
-              width: '100%',
-              height: (selectedPost.image || selectedPost.image_url) ? '250px' : '100px',
-              background: (selectedPost.image || selectedPost.image_url) 
-                ? `url(${(selectedPost.image || selectedPost.image_url).startsWith('http') ? (selectedPost.image || selectedPost.image_url) : apiConfig.API_URL + (selectedPost.image || selectedPost.image_url)}) center/cover`
-                : 'linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%)',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
-              position: 'relative'
-            }}>
-              <button 
+              <div className="post-detail-modal__image" style={{
+                height: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0])) ? '250px' : '100px',
+                background: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0]))
+                  ? `url(${buildAvatarUrl(selectedPost.image_url || selectedPost.images[0])})` : '#f1f5f9',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                borderTopLeftRadius: '24px',
+                borderTopRightRadius: '24px'
+              }}>
+              <button
                 onClick={() => setSelectedPost(null)}
                 style={{
                   position: 'absolute',
@@ -375,7 +384,7 @@ const PostManagement = () => {
                   width: '56px',
                   height: '56px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  background: selectedPost.avatar_url ? `url(${selectedPost.avatar_url.startsWith('http') ? selectedPost.avatar_url : apiConfig.API_URL + selectedPost.avatar_url}) center/cover` : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                   color: 'white',
                   display: 'flex',
                   justifyContent: 'center',
@@ -385,7 +394,7 @@ const PostManagement = () => {
                   marginRight: '16px',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                 }}>
-                  {(selectedPost.user || selectedPost.full_name || 'U').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
+                  {!selectedPost.avatar_url && (selectedPost.user || selectedPost.full_name || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
@@ -413,27 +422,27 @@ const PostManagement = () => {
               {selectedPost.content && (
                 <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <AlignLeft size={18} color="#64748b" style={{ marginTop: '3px' }}/>
+                    <AlignLeft size={18} color="#64748b" style={{ marginTop: '3px' }} />
                     <p style={{ margin: 0, color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{selectedPost.content}</p>
                   </div>
                 </div>
               )}
 
               {selectedPost.images && selectedPost.images.length > 1 && (
-                <div style={{ display: 'grid', gridTemplateColumns: selectedPost.images.length === 2 ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: selectedPost.images.length === 2 ? '1fr 1fr' : '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
                   {selectedPost.images.slice(1).map((img, idx) => (
-                    <img 
-                      key={idx} 
-                      src={img.startsWith('http') ? img : `${apiConfig.API_URL}${img}`} 
-                      alt={`Post image ${idx + 1}`} 
-                      style={{ 
-                        width: '100%', 
-                        borderRadius: '12px', 
-                        objectFit: 'cover', 
-                        height: selectedPost.images.length === 2 ? 'auto' : '200px', 
-                        maxHeight: '400px', 
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
-                      }} 
+                    <img
+                      key={idx}
+                      src={img.startsWith('http') ? img : `${apiConfig.API_URL}${img}`}
+                      alt={`Post image ${idx + 2}`}
+                      style={{
+                        width: '100%',
+                        borderRadius: '12px',
+                        objectFit: 'cover',
+                        height: selectedPost.images.length === 2 ? 'auto' : '200px',
+                        maxHeight: '400px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
                     />
                   ))}
                 </div>
@@ -449,14 +458,14 @@ const PostManagement = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {(selectedPost.max_participants || selectedPost.duration_minutes) && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '12px', borderRadius: '10px' }}>
                     <Users size={20} color="#10b981" />
                     <div>
                       <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Tham gia / Thời lượng</div>
                       <div style={{ fontSize: '14px', color: '#1e293b', fontWeight: '600' }}>
-                        {selectedPost.max_participants ? `${selectedPost.max_participants} người` : ''} 
+                        {selectedPost.max_participants ? `${selectedPost.max_participants} người` : ''}
                         {selectedPost.max_participants && selectedPost.duration_minutes ? ' • ' : ''}
                         {selectedPost.duration_minutes ? `${selectedPost.duration_minutes} phút` : ''}
                       </div>
@@ -481,7 +490,8 @@ const PostManagement = () => {
               )}
             </div>
           </div>
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             @keyframes modalSlideUp {
               from { opacity: 0; transform: translateY(40px) scale(0.95); }
               to { opacity: 1; transform: translateY(0) scale(1); }
