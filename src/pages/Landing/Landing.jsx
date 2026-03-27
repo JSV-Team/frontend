@@ -1,9 +1,5 @@
 import "./style.css";
-import heroImage from "./hero-couple.jpg";
-import thangminhImg from "./thangminh.png";
-import giangImg from "./giang.jpg";
-
-
+import heroImage from "./hero-hugging.jpg";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -321,7 +317,7 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
         {/* Right */}
         <div className="hero__visual">
           <div className="hero__img-wrap">
-            <img src={heroImage} alt="Hero Couple" className="hero__img" />
+            <img src={heroImage} alt="Hero Friends" className="hero__img" />
 
             <div className="hero__float hero__float--left">
               <div className="hero__float-avatar hero__float-avatar--gold">H</div>
@@ -332,9 +328,9 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
             </div>
 
             <div className="hero__float hero__float--right">
-              <div className="hero__float-avatar hero__float-avatar--blue">K</div>
+              <div className="hero__float-avatar hero__float-avatar--blue">M</div>
               <div>
-                <p className="hero__float-name">Khoa Nguyễn</p>
+                <p className="hero__float-name">Ngọc Mai</p>
                 <p className="hero__float-match">95% phù hợp 🎯</p>
               </div>
             </div>
