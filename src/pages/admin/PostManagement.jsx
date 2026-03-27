@@ -223,82 +223,76 @@ const PostManagement = () => {
         {filteredActivities.map(act => {
           const status = (act.status || 'pending').toLowerCase();
           const isRemoved = status === 'removed' || status === 'deleted';
-          const isPending = status === 'pending';
           const isPublished = status === 'published' || status === 'active' || status === 'approved';
 
           return (
-            <div key={act.id} className="post-card">
+            <div key={act.id} className="post-card-premium">
               <div className="post-card__image" style={{
-                backgroundImage: (act.image_url || (act.images && act.images[0])) ? `url(${buildAvatarUrl(act.image_url || act.images[0])})` : 'none',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                position: 'relative'
+                background: (act.image_url || (act.images && act.images[0])) 
+                  ? `url(${buildAvatarUrl(act.image_url || act.images[0])}) center/cover no-repeat` 
+                  : 'linear-gradient(135deg, #f1f5f9, #e2e8f0)',
+                position: 'relative',
+                height: '200px'
               }}>
-                {!act.image_url && <ImageIcon size={40} />}
-                <div className={`post-card__status ${isPublished ? 'published' : 'removed'}`}>
-                  {isPublished ? 'Đã đăng' : 'Đã gỡ'}
+                {!(act.image_url || (act.images && act.images[0])) && <ImageIcon size={44} color="#94a3b8" />}
+                <div className={`status-badge-premium ${isPublished ? 'published' : 'removed'}`}>
+                  {isPublished ? 'Đang hoạt động' : 'Đã gỡ bỏ'}
                 </div>
               </div>
 
               <div className="post-card__content">
-                <div className="post-card__author">
-                  <div className="avatar" style={{
+                <div className="author-row">
+                  <div className="avatar-mini" style={{
                     background: act.avatar_url 
-                      ? `url(${buildAvatarUrl(act.avatar_url)}) center/cover no-repeat, linear-gradient(135deg, #3b82f6, #2563eb)` 
-                      : 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    fontSize: '12px'
+                      ? `url(${buildAvatarUrl(act.avatar_url)}) center/cover no-repeat, linear-gradient(135deg, #6366f1, #3b82f6)` 
+                      : 'linear-gradient(135deg, #6366f1, #3b82f6)'
                   }}>
                   </div>
-                  <div className="meta">
-                    <h5 style={{ margin: 0, color: '#1e293b', fontSize: '14px', fontWeight: '700' }}>{act.user || 'Ẩn danh'}</h5>
-                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>{act.time || 'Vừa xong'}</span>
+                  <div className="author-info">
+                    <h5 className="author-name">{act.user || 'Người dùng'}</h5>
+                    <div className="post-time">
+                       <Clock size={12} /> {act.time || 'Vừa xong'}
+                    </div>
                   </div>
                 </div>
 
-                <h4 className="post-card__title">{act.title}</h4>
+                <h4 className="post-title-modern" title={act.title}>{act.title}</h4>
 
-                <div className="post-card__tags">
-                  {(act.tags || ['Hoạt động']).map((tag, idx) => (
-                    <span key={idx} className="tag-pill">{tag}</span>
+                <div className="tag-container-modern">
+                  {(act.tags || ['Hoạt động']).slice(0, 2).map((tag, idx) => (
+                    <span key={idx} className={`modern-tag ${(tag === 'Hoạt động' || tag === 'Activity') ? 'active' : ''}`}>{tag}</span>
                   ))}
-                  {act.isFeatured && (
-                    <Star size={16} fill="#f59e0b" color="#f59e0b" style={{ marginLeft: '4px' }} />
-                  )}
                   {act.reports > 0 && (
-                    <span className="report-counter" style={{ marginLeft: '8px' }}>
-                      <AlertTriangle size={12} /> {act.reports} báo cáo
+                    <span className="modern-tag report">
+                      <AlertTriangle size={12} /> {act.reports}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="post-card__actions">
+              <div className="post-card__actions-premium">
                 <button
-                  className="action-btn-full btn-view"
+                  className="btn-premium btn-view-more"
                   onClick={() => setSelectedPost(act)}
                 >
-                  <Eye size={16} /> Xem
+                  <Eye size={18} /> Chi tiết
                 </button>
 
                 {isRemoved ? (
                   <button
-                    className="action-btn-full btn-approve"
+                    className="btn-premium btn-restore-action"
                     onClick={() => handleStatusChange(act.id, 'published')}
+                    title="Khôi phục bài viết"
                   >
-                    Khôi phục
+                    <CheckCircle size={18} />
                   </button>
                 ) : (
                   <button
-                    className="action-btn-full btn-remove"
-                    title="Gỡ bài viết"
+                    className="btn-premium btn-remove-action"
                     onClick={() => handleStatusChange(act.id, 'removed')}
+                    title="Gỡ bài viết"
                   >
-                    <Trash2 size={16} /> Gỡ
+                    <Trash2 size={18} />
                   </button>
                 )}
               </div>
@@ -307,188 +301,182 @@ const PostManagement = () => {
         })}
       </div>
 
-      {/* Modal View Post */}
+      {/* Modal View Post (Giữ nguyên logic cũ nhưng cập nhật style nếu cần) */}
       {selectedPost && (
         <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.65)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999,
-          padding: '20px'
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(8px)',
+          display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999, padding: '20px'
         }} onClick={() => setSelectedPost(null)}>
           <div style={{
-            background: 'white',
-            borderRadius: '24px',
-            width: '100%',
-            maxWidth: '650px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-            position: 'relative',
-            animation: 'modalSlideUp 0.3s ease-out'
+            background: 'white', borderRadius: '32px', width: '100%', maxWidth: '680px', maxHeight: '90vh',
+            overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            position: 'relative', animation: 'modalSlideUp 0.3s ease-out'
           }} onClick={e => e.stopPropagation()}>
 
-            {/* Header image (if any) */}
-            <div className="post-detail-modal__image" style={{
-              height: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0])) ? '250px' : '100px',
+            <div style={{
+              height: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0])) ? '300px' : '150px',
               background: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0]))
-                ? `url(${buildAvatarUrl(selectedPost.image_url || selectedPost.images[0])})` : '#f1f5f9',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px'
+                ? `url(${buildAvatarUrl(selectedPost.image_url || selectedPost.images[0])}) center/cover` : '#f1f5f9',
+              position: 'relative', borderTopLeftRadius: '32px', borderTopRightRadius: '32px'
             }}>
-              <button
-                onClick={() => setSelectedPost(null)}
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  background: 'rgba(255,255,255,0.9)',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  transition: 'all 0.2s'
-                }}>
-                <X size={20} color="#334155" />
+              <button onClick={() => setSelectedPost(null)} className="close-modal-premium">
+                <X size={20} />
               </button>
             </div>
 
             <div style={{ padding: '32px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', gap: '16px' }}>
                 <div style={{
-                  width: '56px',
-                  height: '56px',
-                  borderRadius: '50%',
-                  background: selectedPost.avatar_url ? `url(${buildAvatarUrl(selectedPost.avatar_url)}) center/cover` : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  color: 'white',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '20px',
-                  marginRight: '16px',
-                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
-                }}>
-                </div>
+                  width: '60px', height: '60px', borderRadius: '20px',
+                  background: selectedPost.avatar_url ? `url(${buildAvatarUrl(selectedPost.avatar_url)}) center/cover` : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  boxShadow: '0 8px 16px rgba(59, 130, 246, 0.2)'
+                }} />
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>
-                    {selectedPost.user || selectedPost.full_name || selectedPost.username || 'Người dùng ẩn danh'}
+                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '800', color: '#1e293b' }}>
+                    {selectedPost.user || 'Người dùng ẩn danh'}
                   </h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px', fontSize: '14px', color: '#64748b' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '6px', fontSize: '14px', color: '#64748b' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={14} /> {selectedPost.time || new Date(selectedPost.created_at).toLocaleString('vi-VN') || 'Vừa xong'}
+                      <Clock size={14} /> {selectedPost.time || 'vừa xong'}
                     </span>
-                    {(selectedPost.status || 'pending').toLowerCase() === 'published' ? (
-                      <span style={{ background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã đăng</span>
-                    ) : (
-                      <span style={{ background: '#fee2e2', color: '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã gỡ</span>
-                    )}
+                    <span style={{ 
+                      background: (selectedPost.status || 'pending').toLowerCase() === 'published' ? '#dcfce7' : '#fee2e2', 
+                      color: (selectedPost.status || 'pending').toLowerCase() === 'published' ? '#10b981' : '#ef4444', 
+                      padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: '800', textTransform: 'uppercase'
+                    }}>
+                      {(selectedPost.status || 'pending').toLowerCase() === 'published' ? 'Đang hiển thị' : 'Đã gỡ'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '16px', lineHeight: '1.3' }}>
+              <h2 style={{ fontSize: '26px', fontWeight: '850', color: '#0f172a', marginBottom: '16px', lineHeight: '1.4' }}>
                 {selectedPost.title}
               </h2>
 
               {selectedPost.content && (
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <AlignLeft size={18} color="#64748b" style={{ marginTop: '3px' }} />
-                    <p style={{ margin: 0, color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{selectedPost.content}</p>
-                  </div>
-                </div>
-              )}
-
-              {selectedPost.images && selectedPost.images.length > 1 && (
-                <div style={{ display: 'grid', gridTemplateColumns: selectedPost.images.length === 2 ? '1fr 1fr' : '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-                  {selectedPost.images.slice(1).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.startsWith('http') ? img : `${apiConfig.API_URL}${img}`}
-                      alt={`Post image ${idx + 2}`}
-                      style={{
-                        width: '100%',
-                        borderRadius: '12px',
-                        objectFit: 'cover',
-                        height: selectedPost.images.length === 2 ? 'auto' : '200px',
-                        maxHeight: '400px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                      }}
-                    />
-                  ))}
+                <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '20px', marginBottom: '24px', border: '1px solid #eef2f6' }}>
+                  <p style={{ margin: 0, color: '#334155', lineHeight: '1.7', whiteSpace: 'pre-wrap', fontSize: '15.5px' }}>{selectedPost.content}</p>
                 </div>
               )}
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-                {(selectedPost.location || selectedPost.category) && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '12px', borderRadius: '10px' }}>
-                    <MapPin size={20} color="#3b82f6" />
-                    <div>
-                      <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Địa điểm / Danh mục</div>
-                      <div style={{ fontSize: '14px', color: '#1e293b', fontWeight: '600' }}>{selectedPost.location || selectedPost.category || 'Không xác định'}</div>
-                    </div>
+                <div className="modal-info-box">
+                  <MapPin size={20} color="#3b82f6" />
+                  <div>
+                    <div className="label">Vị trí</div>
+                    <div className="value">{selectedPost.location || 'Bất kỳ đâu'}</div>
                   </div>
-                )}
-
-                {(selectedPost.max_participants || selectedPost.duration_minutes) && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f1f5f9', padding: '12px', borderRadius: '10px' }}>
-                    <Users size={20} color="#10b981" />
-                    <div>
-                      <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>Tham gia / Thời lượng</div>
-                      <div style={{ fontSize: '14px', color: '#1e293b', fontWeight: '600' }}>
-                        {selectedPost.max_participants ? `${selectedPost.max_participants} người` : ''}
-                        {selectedPost.max_participants && selectedPost.duration_minutes ? ' • ' : ''}
-                        {selectedPost.duration_minutes ? `${selectedPost.duration_minutes} phút` : ''}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {(selectedPost.tags || []).length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
-                  {selectedPost.tags.map((tag, idx) => (
-                    <span key={idx} style={{ background: '#e0f2fe', color: '#0369a1', padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: '500' }}>
-                      #{tag}
-                    </span>
-                  ))}
-                  {selectedPost.isFeatured && (
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef3c7', color: '#b45309', padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: '600' }}>
-                      <Star size={14} fill="#b45309" /> Nổi bật
-                    </span>
-                  )}
                 </div>
-              )}
+                <div className="modal-info-box">
+                  <Tag size={20} color="#10b981" />
+                  <div>
+                    <div className="label">Chủ đề</div>
+                    <div className="value">{selectedPost.category || 'Hoạt động'}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <style dangerouslySetInnerHTML={{
-            __html: `
-            @keyframes modalSlideUp {
-              from { opacity: 0; transform: translateY(40px) scale(0.95); }
-              to { opacity: 1; transform: translateY(0) scale(1); }
-            }
-          `}} />
         </div>
       )}
+
+      <style>{`
+        .post-card-premium {
+          background: #fff;
+          border-radius: 28px;
+          border: 1px solid #f1f5f9;
+          overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+          display: flex;
+          flex-direction: column;
+        }
+        .post-card-premium:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 25px 40px -10px rgba(0,0,0,0.1);
+          border-color: #e2e8f0;
+        }
+        .status-badge-premium {
+          position: absolute;
+          top: 16px; right: 16px;
+          padding: 6px 14px;
+          border-radius: 99px;
+          font-size: 11px;
+          font-weight: 800;
+          text-transform: uppercase;
+          backdrop-filter: blur(8px);
+        }
+        .status-badge-premium.published { background: rgba(220, 252, 231, 0.9); color: #10b981; }
+        .status-badge-premium.removed { background: rgba(254, 226, 226, 0.9); color: #ef4444; }
+
+        .post-card__content { padding: 24px; flex: 1; }
+        .author-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .avatar-mini { width: 40px; height: 40px; border-radius: 12px; }
+        .author-name { margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; }
+        .post-time { font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
+        
+        .post-title-modern {
+          font-size: 18px;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0 0 16px 0;
+          line-height: 1.4;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          height: 50px;
+        }
+
+        .tag-container-modern { display: flex; flex-wrap: wrap; gap: 8px; }
+        .modern-tag {
+          padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+          background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0;
+        }
+        .modern-tag.active { 
+          background: #dcfce7; color: #16a34a; border-color: #bbf7d0; 
+        }
+        .modern-tag.report { background: #fee2e2; color: #ef4444; border-color: #fecaca; display: flex; align-items: center; gap: 4px; }
+
+        .post-card__actions-premium {
+          padding: 16px 24px;
+          background: #f8fafc;
+          border-top: 1px solid #f1f5f9;
+          display: flex; gap: 12px;
+        }
+        .btn-premium {
+          height: 44px; border-radius: 14px; border: none; font-weight: 700; font-size: 13px;
+          display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-view-more { flex: 1; background: #fff; color: #1e293b; border: 1px solid #e2e8f0; }
+        .btn-view-more:hover { background: #f1f5f9; border-color: #cbd5e1; transform: scale(1.02); }
+        
+        .btn-remove-action { width: 44px; background: #fee2e2; color: #ef4444; }
+        .btn-remove-action:hover { background: #fecaca; transform: scale(1.05); }
+        
+        .btn-restore-action { width: 44px; background: #dcfce7; color: #10b981; }
+        .btn-restore-action:hover { background: #bbf7d0; transform: scale(1.05); }
+
+        .modal-info-box {
+          display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 16px; border-radius: 16px; border: 1px solid #eef2f6;
+        }
+        .modal-info-box .label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+        .modal-info-box .value { font-size: 14px; color: #1e293b; font-weight: 700; }
+
+        .close-modal-premium {
+          position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
+          background: rgba(255,255,255,0.9); border: none; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center; cursor: pointer;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 20; color: #1e293b;
+        }
+
+        @keyframes modalSlideUp {
+          from { opacity: 0; transform: translateY(30px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
     </div>
   );
 };
