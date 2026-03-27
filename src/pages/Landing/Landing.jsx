@@ -456,9 +456,9 @@ function Testimonials() {
   const [current, setCurrent] = useState(0);
 
   const list = [
-    { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
-    { names: "Giang vs ai đó", image: giangImg, rating: 5, quote: "Sau jven tôi đã gặp đc trân ái của đời mình,dùng vibematch rất vui" },
-    { names: "hoàng thảo và tú bà", image: heroImage, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau" },
+    { names: "Thắng và Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc chạy đua với deadline mà mentor team tôi dí." },
+    { names: "Giang và ai đó", image: giangImg, rating: 5, quote: "Sau khi dùng Vibematch tôi đã gặp được chân ái của đời mình,dùng Vibematch mình đã được gặp gỡ rất nhiều người,nhất là anh Minh đẹp trai(Sau mỗi anh techlead lại là 1 anh đẹp trai khác đẹp hơn anh Minh) đã bị em lừa vào đời." },
+    { names: "Hoàng Thảo và Tú Bà", image: heroImage, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau và sau cuộc hẹn đó thì không biết còn cuộc hẹn nào không nhưng mọi người hãy dùng vibematch nhé!" },
   ];
 
   const prev = () => setCurrent((c) => (c === 0 ? list.length - 1 : c - 1));
