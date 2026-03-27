@@ -48,7 +48,6 @@ const UserManagement = () => {
             name: u.full_name || u.username || u.name,
             email: u.email,
             status: u.status || 'active',
-            isLocked: u.is_locked || u.Is_locked || false,
             joined: dateStr,
             posts: u.posts || 0
           };
@@ -90,28 +89,6 @@ const UserManagement = () => {
     }
   };
 
-  const handleToggleLock = async (id, currentLocked) => {
-    const newLocked = !currentLocked;
-    if (!window.confirm(`Bạn có chắc chắn muốn ${newLocked ? 'khóa' : 'mở khóa'} tài khoản này?`)) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${apiConfig.BASE_API}/admin/users/${id}/lock`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ isLocked: newLocked })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: newLocked } : u));
-      }
-    } catch (error) {
-      console.error("Error toggling user lock:", error);
-    }
-  };
 
   const filteredUsers = users.filter(user => {
     const matchesTab = activeTab === 'All' || user.status.toLowerCase() === activeTab.toLowerCase();
@@ -200,15 +177,6 @@ const UserManagement = () => {
                     >
                       {user.status === 'banned' ? 'Mở cấm' : 'Cấm'}
                     </button>
-                    <button
-                      className={`action-btn-text ${user.isLocked ? 'danger' : ''}`}
-                      title={user.isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
-                      onClick={() => handleToggleLock(user.id, user.isLocked)}
-                    >
-                      {user.isLocked ? 'Mở khóa' : 'Khóa'}
-                    </button>
-
-
                   </div>
                 </td>
               </tr>

@@ -121,6 +121,12 @@ const PostManagement = () => {
   };
 
   const handleStatusChange = async (id, newStatus) => {
+    // Confirm action before proceeding
+    const actionText = newStatus === 'published' ? 'khôi phục' : (newStatus === 'removed' ? 'gỡ' : 'duyệt');
+    if (!window.confirm(`Bạn có chắc chắn muốn ${actionText} bài viết này không?`)) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiConfig.BASE_API}/admin/activities/${id}/status`, {
@@ -173,13 +179,13 @@ const PostManagement = () => {
 
       <div className="admin-filters" style={{ marginTop: '24px' }}>
         <div className="filter-tabs">
-          {['All', 'Published', 'Pending', 'Removed'].map(tab => (
+          {['All', 'Published', 'Removed'].map(tab => (
             <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === 'All' ? 'Tất cả' : (tab === 'Published' ? 'Đã đăng' : (tab === 'Pending' ? 'Chờ duyệt' : 'Đã gỡ'))}
+              {tab === 'All' ? 'Tất cả' : (tab === 'Published' ? 'Đã đăng' : 'Đã gỡ')}
             </button>
           ))}
         </div>
