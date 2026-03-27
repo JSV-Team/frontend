@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
 import { useLocation } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import {
+  Search, Eye, Shield, ShieldOff, MoreVertical,
+  UserCheck, UserX, Mail, Calendar, Hash
+} from 'lucide-react';
 
 const UserManagement = () => {
   const location = useLocation();
@@ -48,7 +51,6 @@ const UserManagement = () => {
             name: u.full_name || u.username || u.name,
             email: u.email,
             status: u.status || 'active',
-            isLocked: u.is_locked || u.Is_locked || false,
             joined: dateStr,
             posts: u.posts || 0
           };
@@ -90,28 +92,7 @@ const UserManagement = () => {
     }
   };
 
-  const handleToggleLock = async (id, currentLocked) => {
-    const newLocked = !currentLocked;
-    if (!window.confirm(`Bạn có chắc chắn muốn ${newLocked ? 'khóa' : 'mở khóa'} tài khoản này?`)) return;
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${apiConfig.BASE_API}/admin/users/${id}/lock`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ isLocked: newLocked })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, isLocked: newLocked } : u));
-      }
-    } catch (error) {
-      console.error("Error toggling user lock:", error);
-    }
-  };
 
   const filteredUsers = users.filter(user => {
     const matchesTab = activeTab === 'All' || user.status.toLowerCase() === activeTab.toLowerCase();
@@ -131,7 +112,7 @@ const UserManagement = () => {
   return (
     <div className="user-management">
       <div className="dashboard-header">
-        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px' }}>Quản lý User</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '850', marginBottom: '4px', color: '#1e293b' }}>Quản lý User</h2>
         <p style={{ color: 'var(--admin-text-muted)', margin: 0 }}>Quản lý tất cả người dùng trong hệ thống 👋</p>
       </div>
 
@@ -200,13 +181,7 @@ const UserManagement = () => {
                     >
                       {user.status === 'banned' ? 'Mở cấm' : 'Cấm'}
                     </button>
-                    <button
-                      className={`action-btn-text ${user.isLocked ? 'danger' : ''}`}
-                      title={user.isLocked ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}
-                      onClick={() => handleToggleLock(user.id, user.isLocked)}
-                    >
-                      {user.isLocked ? 'Mở khóa' : 'Khóa'}
-                    </button>
+
 
 
                   </div>

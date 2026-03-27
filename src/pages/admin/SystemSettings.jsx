@@ -18,12 +18,7 @@ const SystemSettings = () => {
   const [keywordLoading, setKeywordLoading] = useState(false);
 
   const [settings, setSettings] = useState({
-    autoApprove: true,
     sensitiveFilter: true,
-    autoBan: false,
-    notifyReports: true,
-    notifyNewUsers: false,
-    notifySuspicious: true,
   });
 
   useEffect(() => {
@@ -42,12 +37,7 @@ const SystemSettings = () => {
         const dbData = result.data;
         setSettings(prev => ({
           ...prev,
-          autoApprove: dbData.autoApprove !== undefined ? dbData.autoApprove === 'true' : prev.autoApprove,
           sensitiveFilter: dbData.sensitiveFilter !== undefined ? dbData.sensitiveFilter === 'true' : prev.sensitiveFilter,
-          autoBan: dbData.autoBan !== undefined ? dbData.autoBan === 'true' : prev.autoBan,
-          notifyReports: dbData.notifyReports !== undefined ? dbData.notifyReports === 'true' : prev.notifyReports,
-          notifyNewUsers: dbData.notifyNewUsers !== undefined ? dbData.notifyNewUsers === 'true' : prev.notifyNewUsers,
-          notifySuspicious: dbData.notifySuspicious !== undefined ? dbData.notifySuspicious === 'true' : prev.notifySuspicious,
         }));
       }
     } catch (error) {
@@ -161,7 +151,7 @@ const SystemSettings = () => {
     <div className="settings-page animate-fade-in">
       <div className="settings-header">
         <div className="header-content">
-          <h2 className="premium-title">Cài đặt</h2>
+          <h2 className="premium-title" style={{ color: '#1e293b', fontWeight: '850' }}>Cài đặt</h2>
           <p className="premium-subtitle">Quản lý cài đặt hệ thống</p>
         </div>
       </div>
@@ -178,52 +168,14 @@ const SystemSettings = () => {
             </div>
             <div className="section-body">
               <Toggle
-                active={settings.autoApprove}
-                onClick={() => handleToggle('autoApprove')}
-                label="Tự động duyệt bài viết"
-                subtext="Bài viết sẽ được đăng ngay mà không cần admin duyệt"
-              />
-              <Toggle
                 active={settings.sensitiveFilter}
                 onClick={() => handleToggle('sensitiveFilter')}
                 label="Bộ lọc từ ngữ nhạy cảm"
                 subtext="Tự động phát hiện và ẩn nội dung có từ ngữ vi phạm"
               />
-              <Toggle
-                active={settings.autoBan}
-                onClick={() => handleToggle('autoBan')}
-                label="Giới hạn báo cáo tự động cấm"
-                subtext="Tự động cấm user khi nhận quá 10 báo cáo"
-              />
             </div>
           </div>
 
-          {/* Section 3: Thông báo */}
-          <div className="premium-glass-card settings-section">
-            <div className="section-header">
-              <div className="icon-circle bg-purple">
-                <Bell size={20} />
-              </div>
-              <h3 className="section-title">Thông báo</h3>
-            </div>
-            <div className="section-body">
-              <Toggle
-                active={settings.notifyReports}
-                onClick={() => handleToggle('notifyReports')}
-                label="Báo cáo vi phạm mới"
-              />
-              <Toggle
-                active={settings.notifyNewUsers}
-                onClick={() => handleToggle('notifyNewUsers')}
-                label="User đăng ký mới"
-              />
-              <Toggle
-                active={settings.notifySuspicious}
-                onClick={() => handleToggle('notifySuspicious')}
-                label="Hoạt động đáng ngờ"
-              />
-            </div>
-          </div>
 
           <div className="button-row">
             <button

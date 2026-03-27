@@ -63,6 +63,9 @@ const ReportManagement = () => {
   };
 
   const handleUpdateStatus = async (id, newStatus) => {
+    const confirmMsg = newStatus === 'resolved' ? 'Bạn có chắc chắn muốn xác nhận xử lý báo cáo này?' : 'Bạn có chắc chắn muốn bỏ qua báo cáo này?';
+    if (!window.confirm(confirmMsg)) return;
+
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${apiConfig.BASE_API}/admin/reports/${id}/status`, {
@@ -95,7 +98,7 @@ const ReportManagement = () => {
   return (
     <div className="report-management">
       <div className="dashboard-header">
-        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px' }}>Báo cáo vi phạm</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '850', marginBottom: '4px', color: '#1e293b' }}>Báo cáo vi phạm</h2>
         <p style={{ color: 'var(--admin-text-muted)', margin: 0 }}>Xử lý các báo cáo vi phạm từ người dùng 🛡️</p>
       </div>
 

@@ -11,11 +11,11 @@ import { logout } from "../../utils/auth";
 import "./Admin.css";
 
 const navItems = [
-  { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
-  { to: "/admin/users", icon: Users, label: "Quản lý User" },
-  { to: "/admin/posts", icon: FileText, label: "Quản lý Bài viết" },
-  { to: "/admin/statistics", icon: BarChart3, label: "Thống kê" },
-  { to: "/admin/settings", icon: Settings, label: "Cài đặt" },
+  { to: "/vibe-admin-panel", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { to: "/vibe-admin-panel/users", icon: Users, label: "Quản lý User" },
+  { to: "/vibe-admin-panel/posts", icon: FileText, label: "Quản lý Bài viết" },
+  { to: "/vibe-admin-panel/statistics", icon: BarChart3, label: "Thống kê" },
+  { to: "/vibe-admin-panel/settings", icon: Settings, label: "Cài đặt" },
 ];
 
 function AdminSidebar() {

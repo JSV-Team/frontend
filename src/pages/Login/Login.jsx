@@ -33,7 +33,7 @@ export default function Login() {
         localStorage.setItem("role", user.role);
 
         if (user.role === "admin") {
-          navigate("/admin", { replace: true });
+          navigate("/vibe-admin-panel", { replace: true });
         } else {
           navigate("/home", { replace: true });
         }
