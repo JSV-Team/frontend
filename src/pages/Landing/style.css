@@ -453,13 +453,14 @@
 .landing-page .hero__img-wrap {
   position: relative;
   width: 22rem;
-  aspect-ratio: 4/5;
+  aspect-ratio: 1/1;
 }
 
 .landing-page .hero__img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   border-radius: var(--r-xl);
   border: 1px solid var(--clr-border);
 }
