@@ -14,7 +14,7 @@ function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const from = location.state?.from?.pathname || "/admin";
+  const from = location.state?.from?.pathname || "/vibe-admin-panel";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +40,7 @@ function AdminLogin() {
         localStorage.setItem("user", JSON.stringify(result.data));
 
         if (result.data.role === "admin") {
-          navigate("/admin", { replace: true });
+          navigate("/vibe-admin-panel", { replace: true });
         } else {
           setError("Bạn không có quyền truy cập vào khu vực admin.");
         }

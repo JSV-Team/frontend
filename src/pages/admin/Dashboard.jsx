@@ -16,8 +16,7 @@ const Dashboard = () => {
     stats: [
       { title: 'Tổng người dùng', value: '1,280', trend: '+ 2%', trendType: 'up' },
       { title: 'Tổng bài viết', value: '3,500', trend: '+ 5%', trendType: 'up' },
-      { title: 'Hoạt động nhóm', value: '85', trend: '+ 12%', trendType: 'up' },
-      { title: 'Báo cáo chờ xử lý', value: '12', trend: 'Cần xử lý', trendType: 'up' }
+      { title: 'Hoạt động nhóm', value: '85', trend: '+ 12%', trendType: 'up' }
     ],
     activityData: {
       Week: [],
@@ -82,15 +81,15 @@ const Dashboard = () => {
     <div className="admin-dashboard-wrapper animate-fade-in">
       {/* Page Title & Welcome */}
       <div className="dashboard-header-simple">
-        <h2 className="main-page-title">Dashboard</h2>
+        <h2 className="main-page-title" style={{ color: '#1e293b', fontWeight: '850' }}>Dashboard</h2>
         <p className="welcome-msg">Chào mừng trở lại, Admin 👋</p>
       </div>
 
       {/* Row 1: 4 Cards (Dàn ngang 4 ô) */}
-        <div className="stats-row">
-          {data.stats.slice(0, 3).map((stat, idx) => {
-            const icons = [<Users size={24} />, <FileText size={24} />, <Activity size={24} />];
-            const colors = ['#6366f1', '#3b82f6', '#10b981'];
+      <div className="stats-row">
+        {data.stats.slice(0, 3).map((stat, idx) => {
+          const icons = [<Users size={24} />, <FileText size={24} />, <Activity size={24} />];
+          const colors = ['#6366f1', '#3b82f6', '#10b981'];
           return (
             <div key={idx} className="stat-card-new">
               <div className="stat-card-header">
@@ -227,9 +226,9 @@ const Dashboard = () => {
                   data.matchData.recent.map((match, idx) => {
                     const statusMap = {
                       'Đang hoạt động': { bg: '#dcfce7', color: '#16a34a', dot: '#22c55e' },
-                      'Đang chờ':       { bg: '#fff7ed', color: '#d97706', dot: '#f59e0b' },
-                      'Từ chối':        { bg: '#fee2e2', color: '#dc2626', dot: '#ef4444' },
-                      'Kết thúc':       { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8' },
+                      'Đang chờ': { bg: '#fff7ed', color: '#d97706', dot: '#f59e0b' },
+                      'Từ chối': { bg: '#fee2e2', color: '#dc2626', dot: '#ef4444' },
+                      'Kết thúc': { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8' },
                     };
                     const s = statusMap[match.status] || statusMap['Kết thúc'];
                     return (

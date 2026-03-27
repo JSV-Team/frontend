@@ -63,9 +63,9 @@ function AdminLayout() {
     setShowSuggestions(false);
     setSearchQuery("");
     if (suggestion.type === "user") {
-      navigate(`/admin/users?search=${suggestion.title}`);
+      navigate(`/vibe-admin-panel/users?search=${suggestion.title}`);
     } else {
-      navigate(`/admin/posts?search=${suggestion.title}`);
+      navigate(`/vibe-admin-panel/posts?search=${suggestion.title}`);
     }
   };
 

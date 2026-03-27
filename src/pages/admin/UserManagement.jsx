@@ -3,7 +3,10 @@ import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
 
 import { useLocation } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import {
+  Search, Eye, Shield, ShieldOff, MoreVertical,
+  UserCheck, UserX, Mail, Calendar, Hash
+} from 'lucide-react';
 
 const UserManagement = () => {
   const location = useLocation();
@@ -111,7 +114,7 @@ const UserManagement = () => {
   return (
     <div className="user-management">
       <div className="dashboard-header">
-        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px' }}>Quản lý User</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '850', marginBottom: '4px', color: '#1e293b' }}>Quản lý User</h2>
         <p style={{ color: 'var(--admin-text-muted)', margin: 0 }}>Quản lý tất cả người dùng trong hệ thống 👋</p>
       </div>
 

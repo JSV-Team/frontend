@@ -121,9 +121,9 @@ const Statistics = () => {
 
       {/* Row 1: Growth Cards */}
       <div className="premium-stats-row">
-        {data.growthStats.map((stat, idx) => {
-          const icons = [<Users size={24} />, <FileText size={24} />, <Heart size={24} />];
-          const colors = ['#6366f1', '#10b981', '#f43f5e'];
+        {data.growthStats.filter(stat => stat.type !== 'match').map((stat, idx) => {
+          const icons = [<Users size={24} />, <FileText size={24} />];
+          const colors = ['#6366f1', '#10b981'];
           const isUp = stat.value.startsWith('+');
           
           return (
@@ -188,39 +188,7 @@ const Statistics = () => {
           </div>
         </div>
 
-        <div className="premium-glass-card matches-chart">
-          <div className="card-header-flex">
-            <div>
-              <h3 className="card-title-modern">Ghép đôi thành công</h3>
-              <p className="card-subtitle-modern">Tỷ lệ tương tác thực tế</p>
-            </div>
-          </div>
-          <div className="chart-box" style={{ height: '320px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.matchTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="premiumMatch" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.2}/>
-                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#f43f5e" 
-                  fillOpacity={1} 
-                  fill="url(#premiumMatch)" 
-                  strokeWidth={3}
-                  animationDuration={1500}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+
 
         {/* Row 3: Interests */}
         <div className="premium-glass-card full-span">

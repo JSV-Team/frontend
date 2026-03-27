@@ -163,7 +163,6 @@ const PostManagement = () => {
     let matchesTab = false;
     if (tab === 'all') matchesTab = true;
     else if (tab === 'published') matchesTab = (status === 'published' || status === 'active' || status === 'approved');
-    else if (tab === 'pending') matchesTab = (status === 'pending');
     else if (tab === 'removed') matchesTab = (status === 'removed' || status === 'deleted');
 
     const searchText = searchQuery.toLowerCase();
@@ -175,7 +174,7 @@ const PostManagement = () => {
   return (
     <div className="post-management">
       <div className="dashboard-header">
-        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '4px' }}>Quản lý Bài viết</h2>
+        <h2 style={{ fontSize: '24px', fontWeight: '850', marginBottom: '4px', color: '#1e293b' }}>Quản lý Bài viết</h2>
         <p style={{ color: 'var(--admin-text-muted)', margin: 0 }}>Duyệt và quản lý các hoạt động trong hệ thống 👋</p>
       </div>
 
@@ -235,9 +234,9 @@ const PostManagement = () => {
                 backgroundPosition: 'center',
                 position: 'relative'
               }}>
-                {!(act.image_url || (act.images && act.images[0])) && <ImageIcon size={40} />}
-                <div className={`post-card__status ${isPublished ? 'published' : (isPending ? 'pending' : 'removed')}`}>
-                  {isPublished ? 'Đã đăng' : (isPending ? 'Chờ duyệt' : 'Đã gỡ')}
+                {!act.image_url && <ImageIcon size={40} />}
+                <div className={`post-card__status ${isPublished ? 'published' : 'removed'}`}>
+                  {isPublished ? 'Đã đăng' : 'Đã gỡ'}
                 </div>
               </div>
 
@@ -289,17 +288,6 @@ const PostManagement = () => {
                     Khôi phục
                   </button>
                 ) : (
-                  isPending && (
-                    <button
-                      className="action-btn-full btn-approve"
-                      onClick={() => handleStatusChange(act.id, 'published')}
-                    >
-                      Duyệt
-                    </button>
-                  )
-                )}
-
-                {!isRemoved && (
                   <button
                     className="action-btn-full btn-remove"
                     title="Gỡ bài viết"
@@ -343,19 +331,19 @@ const PostManagement = () => {
           }} onClick={e => e.stopPropagation()}>
 
             {/* Header image (if any) */}
-              <div className="post-detail-modal__image" style={{
-                height: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0])) ? '250px' : '100px',
-                background: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0]))
-                  ? `url(${buildAvatarUrl(selectedPost.image_url || selectedPost.images[0])})` : '#f1f5f9',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                borderTopLeftRadius: '24px',
-                borderTopRightRadius: '24px'
-              }}>
+            <div className="post-detail-modal__image" style={{
+              height: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0])) ? '250px' : '100px',
+              background: (selectedPost.image_url || (selectedPost.images && selectedPost.images[0]))
+                ? `url(${buildAvatarUrl(selectedPost.image_url || selectedPost.images[0])})` : '#f1f5f9',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px'
+            }}>
               <button
                 onClick={() => setSelectedPost(null)}
                 style={{
@@ -406,8 +394,6 @@ const PostManagement = () => {
                     </span>
                     {(selectedPost.status || 'pending').toLowerCase() === 'published' ? (
                       <span style={{ background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã đăng</span>
-                    ) : (selectedPost.status || 'pending').toLowerCase() === 'pending' ? (
-                      <span style={{ background: '#fef3c7', color: '#d97706', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Chờ duyệt</span>
                     ) : (
                       <span style={{ background: '#fee2e2', color: '#dc2626', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: '600' }}>Đã gỡ</span>
                     )}
