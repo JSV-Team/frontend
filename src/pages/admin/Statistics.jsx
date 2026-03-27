@@ -252,9 +252,10 @@ const Statistics = () => {
                     <div key={user.user_id} className="table-row">
                       <div className="col-user">
                         <img 
-                          src={buildAvatarUrl(user.avatar_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=random`} 
+                          src={buildAvatarUrl(user.avatar_url) || '/assets/default-avatar.png'} 
                           alt="" 
                           className="mini-avatar" 
+                          onError={(e) => { e.target.src = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'; }}
                         />
                         <div className="user-meta-mini">
                            <span className="p-name">{user.full_name}</span>

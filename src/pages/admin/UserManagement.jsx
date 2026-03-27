@@ -159,24 +159,22 @@ const UserManagement = () => {
                 <td>
                   <div className="user-profile-cell">
                     <div className="avatar" style={{
-                      backgroundImage: user.avatar_url ? `url(${buildAvatarUrl(user.avatar_url)})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
+                      background: user.avatar_url 
+                        ? `url(${buildAvatarUrl(user.avatar_url)}) center/cover no-repeat, linear-gradient(135deg, #6366f1, #3b82f6)` 
+                        : 'linear-gradient(135deg, #6366f1, #3b82f6)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       color: '#fff',
                       fontWeight: 'bold',
-                      fontSize: '14px',
-                      background: !user.avatar_url ? 'linear-gradient(135deg, #6366f1, #3b82f6)' : 'transparent'
+                      fontSize: '14px'
                     }}>
-                      {!user.avatar_url && user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <div className="info">
-                      <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {user.name}
-                        {user.id === 1 && <Shield size={12} color="#3b82f6" fill="#3b82f6" />}
-                      </h4>
+                      <div className="info">
+                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e293b', margin: 0 }}>
+                          {user.name}
+                          {user.id === 1 && <Shield size={12} color="#3b82f6" fill="#3b82f6" />}
+                        </h4>
                       <p style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Mail size={12} /> {user.email}
                       </p>

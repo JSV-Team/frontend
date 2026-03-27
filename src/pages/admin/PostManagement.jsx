@@ -243,15 +243,20 @@ const PostManagement = () => {
               <div className="post-card__content">
                 <div className="post-card__author">
                   <div className="avatar" style={{
-                    backgroundImage: act.avatar_url ? `url(${buildAvatarUrl(act.avatar_url)})` : 'none',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    background: act.avatar_url 
+                      ? `url(${buildAvatarUrl(act.avatar_url)}) center/cover no-repeat, linear-gradient(135deg, #3b82f6, #2563eb)` 
+                      : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '12px'
                   }}>
-                    {!act.avatar_url && (act.user || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                   </div>
                   <div className="meta">
-                    <h5>{act.user || 'Ẩn danh'}</h5>
-                    <span>{act.time || 'Vừa xong'}</span>
+                    <h5 style={{ margin: 0, color: '#1e293b', fontSize: '14px', fontWeight: '700' }}>{act.user || 'Ẩn danh'}</h5>
+                    <span style={{ fontSize: '12px', color: '#94a3b8' }}>{act.time || 'Vừa xong'}</span>
                   </div>
                 </div>
 
@@ -382,7 +387,6 @@ const PostManagement = () => {
                   marginRight: '16px',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
                 }}>
-                  {!selectedPost.avatar_url && (selectedPost.user || selectedPost.full_name || 'U').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                 </div>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>

@@ -238,7 +238,6 @@ function AdminLayout() {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
               }}>
-                {!currentUser?.avatar_url && (currentUser?.username?.charAt(0)?.toUpperCase() || "A")}
               </div>
               <div className="admin-profile__meta">
                 <h4>{currentUser?.username || "Admin"}</h4>
