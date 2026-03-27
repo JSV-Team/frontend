@@ -35,7 +35,7 @@ export const chatService = {
     },
 
     // Lấy hoặc tạo cuộc hội thoại 1-1
-    getOrInitPrivateChat: async (userId, partnerId) => {
+    getOrInitPrivateChat: async (userId, partnerId, activityId = null) => {
         try {
             // Lưu ý: userId thực tế sẽ được backend lấy từ Token (req.user.user_id)
             const response = await fetch(`${API_BASE_URL}/chat/private`, {
@@ -44,7 +44,8 @@ export const chatService = {
                     'Content-Type': 'application/json',
                 }),
                 body: JSON.stringify({
-                    partnerId: Number(partnerId)
+                    partnerId: Number(partnerId),
+                    activityId: activityId
                 }),
             });
             const data = await response.json();

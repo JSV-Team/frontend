@@ -101,7 +101,7 @@ export default function PublicProfile() {
     fetchData();
   }, [username]);
 
-  const handleStartChat = async (targetId = profile?.user_id) => {
+  const handleStartChat = async (targetId = profile?.user_id, activityId = null) => {
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
@@ -110,13 +110,14 @@ export default function PublicProfile() {
     if (!targetId) return;
 
     try {
-      const conv = await chatService.getOrInitPrivateChat(myId, targetId);
+      // Pass activityId if provided to satisfy backend authorization checks
+      const conv = await chatService.getOrInitPrivateChat(myId, targetId, activityId);
       if (conv && conv.conversation_id) {
         navigate('/friends', { state: { openChatId: conv.conversation_id } });
       }
     } catch (err) {
       console.error("Lỗi khi mở cuộc trò chuyện:", err);
-      alert("Đã có lỗi xảy ra khi tạo cuộc hội thoại.");
+      alert(err.message || "Đã có lỗi xảy ra khi tạo cuộc hội thoại.");
     }
   };
 
@@ -423,7 +424,7 @@ export default function PublicProfile() {
                                   {isJoining ? 'Đang gửi...' : 'Tham gia'}
                                 </button>
                               )}
-                              <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id)}>Nhắn tin</button>
+                              <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id, post.id)}>Nhắn tin</button>
                             </div>
                           </>
                         )}
