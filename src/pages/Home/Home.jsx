@@ -171,11 +171,13 @@ function Home() {
               {console.log('Posts in Home:', posts)}
               {posts.map((post) => {
                 const postId = post.post_id || post.status_id || post.activity_id;
+                const postType = post.post_type || 'activity'; // default to activity for safety
                 const isOwner = post.user_id === CURRENT_USER_ID;
                 const isJoining = joiningIds.has(postId);
+                const isActivity = postType === 'activity';
 
                 return (
-                  <div key={postId} className="post-card">
+                  <div key={`${postType}_${postId}`} className="post-card">
                     <div className="post-header">
                       <div className="post-user">
                         <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
@@ -200,7 +202,7 @@ function Home() {
                             <span className="post-time">{getTimeAgo(post.created_at)}</span>
                           </div>
                           <div className="user-info-bottom">
-                            <span className="user-badge">{post.category || 'HOẠT ĐỘNG'}</span>
+                            <span className="user-badge">{isActivity ? 'HOẠT ĐỘNG' : 'TRẠNG THÁI'}</span>
                             <span className="dot-separator">•</span>
                             <span className="online-dot" />
                           </div>
@@ -292,16 +294,18 @@ function Home() {
                         <span className="post-creator-label">✓ Bài viết của bạn</span>
                       ) : (
                         <>
-                          <button
-                            className="action-btn join-btn"
-                            onClick={() => handleJoinPost(postId)}
-                            disabled={isJoining}
-                          >
-                            {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                          </button>
+                          {isActivity && (
+                            <button
+                              className="action-btn join-btn"
+                              onClick={() => handleJoinPost(postId)}
+                              disabled={isJoining}
+                            >
+                              {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                            </button>
+                          )}
                           <button
                             className="action-btn message-btn"
-                            onClick={() => handleMessageHost(post.user_id, postId)}
+                            onClick={() => handleMessageHost(post.user_id, isActivity ? postId : null)}
                           >
                             Nhắn tin
                           </button>
