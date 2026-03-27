@@ -296,7 +296,6 @@ export default function PublicProfile() {
                   <div className="pp-detail-item">📍 {profile.location || "Chưa cập nhật địa điểm"}</div>
                   <div className="pp-detail-item">🎂 {profile.dob ? new Date(profile.dob).toLocaleDateString('vi-VN') : "Chưa cập nhật ngày sinh"}</div>
                   <div className="pp-detail-item">📅 Đã tham gia: {new Date(profile.created_at).toLocaleDateString('vi-VN')}</div>
-                  <div className="pp-detail-item">🏆 Uy tín: {profile.reputation_score || 0}</div>
                 </div>
               </div>
 

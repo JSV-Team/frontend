@@ -72,7 +72,6 @@ function AppRouter() {
         }>
           <Route index element={<Navigate to="edit" replace />} />
           <Route path="edit" element={<ProfileEdit />} />
-          <Route path="reputation" element={<ReputationPage />} />
           <Route path="posts" element={<PostsPage />} />
           <Route path="posts/new" element={<CreatePostPage />} />
           <Route path="posts/:id/edit" element={<EditPostPage />} />
