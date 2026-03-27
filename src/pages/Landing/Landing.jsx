@@ -324,17 +324,17 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
             <img src={heroImage} alt="Hero Couple" className="hero__img" />
 
             <div className="hero__float hero__float--left">
-              <div className="hero__float-avatar hero__float-avatar--gold">H</div>
+              <div className="hero__float-avatar hero__float-avatar--gold">T</div>
               <div>
-                <p className="hero__float-name">Hoàng Thảo</p>
+                <p className="hero__float-name">Tú Bà</p>
                 <p className="hero__float-match">98% phù hợp ⚡</p>
               </div>
             </div>
 
             <div className="hero__float hero__float--right">
-              <div className="hero__float-avatar hero__float-avatar--blue">T</div>
+              <div className="hero__float-avatar hero__float-avatar--blue">H</div>
               <div>
-                <p className="hero__float-name">Tú Bà</p>
+                <p className="hero__float-name">Hoàng Thảo</p>
                 <p className="hero__float-match">95% phù hợp 🎯</p>
               </div>
             </div>
