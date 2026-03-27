@@ -1,6 +1,5 @@
 import "./style.css";
 import heroImage from "./hero-new.jpg";
-import huggingImg from "./hero-hugging.jpg";
 import thangminhImg from "./thangminh.png";
 import giangImg from "./giang.jpg";
 
