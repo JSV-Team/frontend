@@ -1,5 +1,7 @@
 import "./style.css";
 import heroImage from "./hero-couple.jpg";
+import thangminhImg from "./thangminh.png";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -453,7 +455,7 @@ function Testimonials() {
   const [current, setCurrent] = useState(0);
 
   const list = [
-    { names: "Hà & Minh", initials: "HM", rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
+    { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
     { names: "Linh & Tuấn", initials: "LT", rating: 5, quote: "Từ một buổi cà phê lần đầu gặp mặt đến hàng chục chuyến du lịch cùng nhau. VibeMatch đã giúp mình tìm được người bạn đồng hành tuyệt vời." },
     { names: "Mai & Đức", initials: "MD", rating: 5, quote: "Cùng đam mê nấu ăn và nhiếp ảnh, chúng mình đã kết nối trên VibeMatch và bây giờ cùng nhau tổ chức workshop mỗi tháng!" },
   ];
@@ -475,7 +477,14 @@ function Testimonials() {
         <div className="testimonial-card">
           <svg className="testimonial-card__quote" width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zm12 0c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" /></svg>
 
-          <div className="testimonial-card__avatar">{t.initials}</div>
+          <div className="testimonial-card__avatar">
+            {t.image ? (
+              <img src={t.image} alt={t.names} className="testimonial-card__img" />
+            ) : (
+              t.initials
+            )}
+          </div>
+
 
           <div className="testimonial-card__stars">
             {Array.from({ length: t.rating }).map((_, i) => (
