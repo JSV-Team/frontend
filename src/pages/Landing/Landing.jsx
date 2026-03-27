@@ -459,7 +459,7 @@ function Testimonials() {
   const list = [
     { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
     { names: "Giang vs ai đó", image: giangImg, rating: 5, quote: "Sau jven tôi đã gặp đc trân ái của đời mình,dùng vibematch rất vui" },
-    { names: "Mai & Đức", initials: "MD", rating: 5, quote: "Cùng đam mê nấu ăn và nhiếp ảnh, chúng mình đã kết nối trên VibeMatch và bây giờ cùng nhau tổ chức workshop mỗi tháng!" },
+    { names: "hoàng thảo và tú bà", image: heroImage, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau" },
   ];
 
   const prev = () => setCurrent((c) => (c === 0 ? list.length - 1 : c - 1));
