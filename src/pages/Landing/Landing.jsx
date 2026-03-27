@@ -1,5 +1,5 @@
 import "./style.css";
-import heroImage from "./hero-couple.jpg";
+import heroImage from "./hero-new.jpg";
 import thangminhImg from "./thangminh.png";
 import giangImg from "./giang.jpg";
 
@@ -326,15 +326,15 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
             <div className="hero__float hero__float--left">
               <div className="hero__float-avatar hero__float-avatar--gold">H</div>
               <div>
-                <p className="hero__float-name">Hà Linh</p>
+                <p className="hero__float-name">Hoàng Thảo</p>
                 <p className="hero__float-match">98% phù hợp ⚡</p>
               </div>
             </div>
 
             <div className="hero__float hero__float--right">
-              <div className="hero__float-avatar hero__float-avatar--blue">K</div>
+              <div className="hero__float-avatar hero__float-avatar--blue">T</div>
               <div>
-                <p className="hero__float-name">Khoa Nguyễn</p>
+                <p className="hero__float-name">Tú Bà</p>
                 <p className="hero__float-match">95% phù hợp 🎯</p>
               </div>
             </div>
