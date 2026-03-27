@@ -35,7 +35,13 @@ export default function PublicProfile() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
-// ... (omitted helper codes for brevity)
+    if (!dateString) return 'Vừa xong';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return `${diff} giây trước`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
     return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
