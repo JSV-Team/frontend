@@ -878,6 +878,33 @@
   border-color: #374151;
 }
 
+/* More explicit text colors for dark mode post cards */
+[data-theme="dark"] .post-card h2.clickable-username,
+[data-theme="dark"] .post-card .user-info-top h2 {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .post-card .post-time {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .post-optional-meta,
+[data-theme="dark"] .post-optional-meta span {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .post-card .post-title {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .post-card .post-description {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .dot-separator {
+  color: var(--color-text-muted) !important;
+}
+
 [data-theme="dark"] .post-card .avatar-inner {
   background: var(--color-surface);
 }
