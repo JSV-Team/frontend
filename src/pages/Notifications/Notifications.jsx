@@ -16,6 +16,7 @@ function Notifications() {
     markAsRead
   } = useNotifications();
 
+
   useEffect(() => {
     refreshNotifications();
   }, []);

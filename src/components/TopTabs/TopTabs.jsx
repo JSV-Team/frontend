@@ -10,7 +10,6 @@ export default function TopTabs({ active = "edit" }) {
 
   const tabs = [
     { id: "edit", label: "Chỉnh sửa", path: "edit" },
-    { id: "reputation", label: "Uy tín", path: "reputation" },
     { id: "posts", label: "Đăng bài", path: "posts" },
   ];
 
