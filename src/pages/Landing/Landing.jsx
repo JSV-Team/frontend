@@ -1,5 +1,8 @@
 import "./style.css";
 import heroImage from "./hero-hugging.jpg";
+import thangminhImg from "./thangminh.png";
+import giangImg from "./giang.jpg";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
