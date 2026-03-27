@@ -1,8 +1,8 @@
 import "./style.css";
+import heroImage from "./hero-hugging.jpg";
 import heroImage from "./hero-new.jpg";
 import thangminhImg from "./thangminh.png";
 import giangImg from "./giang.jpg";
-
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -321,7 +321,7 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
         {/* Right */}
         <div className="hero__visual">
           <div className="hero__img-wrap">
-            <img src={heroImage} alt="Hero Couple" className="hero__img" />
+            <img src={heroImage} alt="Hero Friends" className="hero__img" />
 
             <div className="hero__float hero__float--left">
               <div className="hero__float-avatar hero__float-avatar--gold">T</div>
