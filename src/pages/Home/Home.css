@@ -508,59 +508,7 @@
   border: 2px solid white;
 }
 
-/* ==================== FLOATING CHAT BUTTON ==================== */
-.floating-chat-btn {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-}
 
-.floating-chat-btn .chat-button {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  position: relative;
-  color: var(--color-text-muted);
-}
-
-.floating-chat-btn .chat-button:hover {
-  background: var(--color-bg-light);
-  transform: scale(1.05);
-}
-
-.floating-chat-btn .chat-button:hover svg {
-  color: var(--color-primary);
-}
-
-.floating-chat-btn-tooltip {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: var(--color-text-primary);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius-md);
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-fast);
-}
-
-.floating-chat-btn .chat-button:hover .floating-chat-btn-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
 
 /* ==================== RESPONSIVE ==================== */
 /* Removed .home-sidebar media query specific to 1024px since sidebar is removed */
@@ -967,14 +915,4 @@
 [data-theme="dark"] .see-all-notifications:hover {
   background: rgba(205, 140, 140, 0.2);
 }
-
-[data-theme="dark"] .floating-chat-btn .chat-button {
-  background: #1f2937;
-  border-color: #374151;
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .floating-chat-btn .chat-button:hover {
-  background: #374151;
-  color: var(--color-primary);
-}
+

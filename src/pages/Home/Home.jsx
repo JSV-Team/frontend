@@ -320,17 +320,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Floating Chat Button */}
-      <div className="floating-chat-btn">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="chat-button"
-        >
-          <MessageSquare size={28} />
-          <span className="floating-chat-btn-tooltip">Khung chat</span>
-        </motion.button>
-      </div>
+
     </div>
   );
 }
