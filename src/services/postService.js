@@ -87,6 +87,46 @@ export const postService = {
     }
   },
 
+  // Lấy chi tiết bài đăng để sửa
+  getPostById: async (postId, type) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/detail/${postId}/${type}`);
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi lấy chi tiết bài đăng:', error);
+      throw error;
+    }
+  },
+
+  // Cập nhật bài đăng (activity hoặc status)
+  updatePost: async (postId, postData, type = 'activity') => {
+    try {
+      const token = localStorage.getItem('token');
+      // Nếu là activity, dùng /api/activities/:id. Nếu là status, dùng /api/posts/status/:id
+      const url = type === 'status' 
+        ? `${API_BASE_URL}/status/${postId}` 
+        : `${apiConfig.BASE_API}/activities/${postId}`;
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(postData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw data;
+      return data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật bài đăng:', error);
+      throw error;
+    }
+  },
+
   // Xóa bài đăng (nếu backend hỗ trợ)
   deletePost: async (postId, userId, type = 'activity') => {
     try {

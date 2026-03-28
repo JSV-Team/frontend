@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useOutletContext } from "react-router-dom";
+import { postService } from "../../services/postService";
+import { buildAvatarUrl } from "../../services/apiProfileService";
 import "./createPostPage.css"; // dùng lại css
 
 export default function EditPostPage() {
@@ -18,25 +20,40 @@ export default function EditPostPage() {
   const [tagText, setTagText] = useState("");
   const [image, setImage] = useState(null); // giữ ảnh cũ
 
+  const { type } = useParams();
+
   useEffect(() => {
-    const saved = localStorage.getItem("posts");
-    const list = saved ? JSON.parse(saved) : [];
-    const found = list.find((p) => p.id === postId);
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        const found = await postService.getPostById(postId, type);
+        
+        if (!found) {
+          alert("Không tìm thấy bài viết!");
+          navigate(`/profile/${profile?.username || USER_ID}/posts`);
+          return;
+        }
 
-    if (!found) {
-      alert("Không tìm thấy bài viết!");
-      navigate(`/profile/${profile?.username || USER_ID}/posts`);
-      return;
+        // Map backend fields
+        setTitle(found.title || found.content || "");
+        setDesc(found.desc || found.description || found.content || "");
+        setPrivacy(found.privacy || "public");
+        setTags(found.tags || []);
+        // Sử dụng buildAvatarUrl để hiển thị ảnh
+        setImage(found.image_url || found.image || null);
+      } catch (err) {
+        console.error("Lỗi khi tải bài viết:", err);
+        alert("Lỗi khi tải bài viết.");
+        navigate(-1);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (postId && type) {
+      fetchPost();
     }
-
-    setTitle(found.title || "");
-    setDesc(found.desc || "");
-    setPrivacy(found.privacy || "public");
-    setTags(found.tags || []);
-    setImage(found.image || null);
-
-    setLoading(false);
-  }, [postId, navigate]);
+  }, [postId, type, navigate]);
 
   const addTag = () => {
     const t = tagText.trim();
@@ -48,33 +65,32 @@ export default function EditPostPage() {
 
   const removeTag = (t) => setTags((prev) => prev.filter((x) => x !== t));
 
-  const onSave = () => {
-    const saved = localStorage.getItem("posts");
-    const list = saved ? JSON.parse(saved) : [];
+  const onSave = async () => {
+    try {
+      let payload = {};
+      if (type === 'status') {
+        payload = {
+          content: desc.trim() || title.trim(),
+          image_url: image // giữ nguyên URL ảnh
+        };
+      } else {
+        payload = {
+          title: title.trim() || "(Không tiêu đề)",
+          description: desc.trim(),
+          privacy,
+          location: "", // placeholder
+          max_participants: 10,
+          duration_minutes: 60
+        };
+      }
 
-    const idx = list.findIndex((p) => p.id === postId);
-    if (idx === -1) {
-      alert("Không tìm thấy bài viết để lưu!");
-      return;
+      await postService.updatePost(postId, payload, type);
+      alert("Cập nhật thành công ✅");
+      navigate(`/profile/${profile?.username || USER_ID}/posts`);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật:", err);
+      alert("Cập nhật thất bại.");
     }
-
-    const updated = {
-      ...list[idx],
-      title: title.trim() || "(Không tiêu đề)",
-      desc: desc.trim(),
-      privacy,
-      tags,
-      updatedAt: new Date().toLocaleString(),
-      // image giữ nguyên (hoặc bạn có thể cho đổi ảnh sau)
-      image,
-    };
-
-    const next = [...list];
-    next[idx] = updated;
-
-    localStorage.setItem("posts", JSON.stringify(next));
-    alert("Cập nhật thành công ✅");
-    navigate(`/profile/${profile?.username || USER_ID}/posts`);
   };
 
   if (loading) return null;
@@ -113,7 +129,11 @@ export default function EditPostPage() {
         {image && (
           <div style={{ marginTop: 10 }}>
             <div style={{ fontWeight: 700, marginBottom: 6 }}>Ảnh hiện tại</div>
-            <img src={image} alt="current" style={{ width: "100%", borderRadius: 14 }} />
+            <img 
+              src={buildAvatarUrl(image)} 
+              alt="current" 
+              style={{ width: "100%", borderRadius: 14 }} 
+            />
           </div>
         )}
 

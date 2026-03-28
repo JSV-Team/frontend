@@ -76,7 +76,7 @@ function AppRouter() {
           <Route path="edit" element={<ProfileEdit />} />
           <Route path="posts" element={<PostsPage />} />
           <Route path="posts/new" element={<CreatePostPage />} />
-          <Route path="posts/:id/edit" element={<EditPostPage />} />
+          <Route path="posts/:id/:type/edit" element={<EditPostPage />} />
         </Route>
 
         {/* Admin Routes - Chỉ dành cho sếp */}

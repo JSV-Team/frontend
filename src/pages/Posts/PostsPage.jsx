@@ -54,7 +54,7 @@ export default function PostsPage() {
             <PostCard
               key={p.id}
               post={p}
-              onEdit={(id) => navigate(`/profile/${profile.username}/posts/${id}/edit`)}
+              onEdit={(id) => navigate(`/profile/${profile.username}/posts/${id}/${p.type}/edit`)}
               onDelete={async (id) => {
                 if (window.confirm("Bạn có chắc muốn xóa bài đăng này?")) {
                   try {
