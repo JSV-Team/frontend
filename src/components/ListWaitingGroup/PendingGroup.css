@@ -86,12 +86,43 @@
 
 /* Responsive */
 @media (max-width: 480px) {
+  .pending_container {
+    padding: 1rem;
+  }
+
   .pending_item {
     flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0.75rem;
+    background-color: var(--color-bg-light, #f8f9fa);
+  }
+
+  [data-theme="dark"] .pending_item {
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .pending_avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pending_name_wrapper {
+    flex: 1;
+    order: 2;
+  }
+
+  .pending_actions {
+    order: 3;
+    width: 100%;
   }
 
   .pending_btn_cancel {
     width: 100%;
-    text-align: center;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
   }
 }
