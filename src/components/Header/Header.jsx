@@ -46,7 +46,7 @@ function Header() {
   const tabs = [
     { name: 'Home', label: 'Home', path: '/home' },
     { name: 'Match', label: 'Ghép đôi', path: '/match' },
-    { name: 'Friends', label: 'Bạn bè', path: '/friends' }
+    { name: 'Friends', label: 'Trò chuyện', path: '/friends' }
   ];
 
   const handleTabClick = (tab) => {

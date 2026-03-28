@@ -15,7 +15,9 @@ export default function Navbar() {
           Home
         </Link>
         <a href="#">Ghép đôi</a>
-        <a href="#">Bạn bè</a>
+        <Link to="/friends" className={pathname === "/friends" ? "active" : ""}>
+          Trò chuyện
+        </Link>
       </nav>
 
       <div className="navbar-right">
