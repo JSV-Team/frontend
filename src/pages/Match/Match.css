@@ -697,7 +697,10 @@
   }
 
   .match-sidebar {
-    display: none; /* Hide sidebar on mobile */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
   }
 
   .match-header-title {

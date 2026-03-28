@@ -147,8 +147,8 @@ function MatchSidebar({ matchData, queueInfo }) {
   return (
     <motion.div
       className="match-sidebar"
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     >
       {/* Recent Matches Section */}
