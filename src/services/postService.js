@@ -90,11 +90,17 @@ export const postService = {
   // Xóa bài đăng (nếu backend hỗ trợ)
   deletePost: async (postId, userId, type = 'activity') => {
     try {
-      const baseUrl = type === 'status' ? `${API_BASE_URL}/status/${postId}` : `${API_BASE_URL}/${postId}`;
-      const url = `${baseUrl}?userId=${userId}`;
+      const token = localStorage.getItem('token');
+      const url = type === 'status' ? `${API_BASE_URL}/status/${postId}` : `${API_BASE_URL}/${postId}`;
+      
       const response = await fetch(url, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
+
       if (!response.ok) {
         const data = await response.json();
         throw data;

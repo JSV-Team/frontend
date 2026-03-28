@@ -10,6 +10,7 @@ import useCurrentUser, { useCurrentUserId } from '../../hooks/useCurrentUser';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
+import { postService } from '../../services/postService';
 import chatService from '../../services/chatService';
 import apiConfig from '../../config/apiConfig';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -37,11 +38,15 @@ function Home() {
 
   const reloadPosts = () => setReload(prev => prev + 1);
 
-  const handleDeletePost = async (activityId) => {
+  const handleDeletePost = async (postId, type) => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;
 
     try {
-      await activityService.deleteActivity(activityId, CURRENT_USER_ID);
+      if (type === 'status') {
+        await postService.deletePost(postId, CURRENT_USER_ID, 'status');
+      } else {
+        await activityService.deleteActivity(postId, CURRENT_USER_ID);
+      }
       success('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {
@@ -245,7 +250,7 @@ function Home() {
                             }}
                             onClick={() => {
                               setActiveMenuId(null);
-                              handleDeletePost(postId);
+                              handleDeletePost(postId, postType);
                             }}
                           >
                             Xóa bài viết
