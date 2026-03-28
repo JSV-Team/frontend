@@ -243,3 +243,69 @@
 .pe-map-icon-btn:active {
     transform: scale(0.95);
 }
+
+@media (max-width: 768px) {
+    .pe-card {
+        border-radius: 20px;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+    }
+    
+    .pe-title {
+        font-size: 18px;
+        padding: 20px 20px 0 20px;
+    }
+    
+    .pe-flex-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 16px 20px 24px 20px;
+        align-items: center;
+    }
+    
+    .pe-avatar-box {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .pe-inputs-section {
+        width: 100%;
+    }
+    
+    .pe-form-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .pe-label-h {
+        width: 100%;
+        font-size: 14px;
+        padding-left: 2px;
+        color: var(--color-text-primary);
+        opacity: 0.8;
+    }
+    
+    .pe-input {
+        padding: 10px 16px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .pe-actions {
+        padding: 0 16px 24px 16px;
+        margin-top: 10px;
+        gap: 12px;
+    }
+    
+    .pe-btn {
+        padding: 14px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .pe-interests-content {
+        padding: 0 16px 20px 16px;
+    }
+}
