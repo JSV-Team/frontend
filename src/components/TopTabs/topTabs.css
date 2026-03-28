@@ -29,3 +29,20 @@
     background: var(--color-primary);
     box-shadow: var(--shadow-primary);
 }
+
+@media (max-width: 768px) {
+    .tt-wrap {
+        gap: 8px;
+        margin-bottom: 16px;
+        width: 100%;
+        padding: 0 4px;
+    }
+    .tt-tab {
+        padding: 10px 12px;
+        font-size: 13px;
+        flex: 1;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 12px;
+    }
+}

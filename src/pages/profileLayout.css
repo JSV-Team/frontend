@@ -31,11 +31,11 @@
     z-index: 2;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 768px) {
     .vm-main {
         width: 100%;
-        max-width: 420px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
     }
 }
 
