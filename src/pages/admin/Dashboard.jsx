@@ -284,7 +284,7 @@ const Dashboard = () => {
 
         .main-page-title {
           font-size: 26px;
-          font-weight: 800;
+          font-weight: 850;
           color: #1e293b;
           margin: 0 0 4px 0;
         }
@@ -500,5 +500,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
