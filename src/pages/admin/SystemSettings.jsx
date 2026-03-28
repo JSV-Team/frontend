@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
 import {
   Shield,
-  Bell,
   Save,
   Check,
   ShieldAlert,
@@ -175,7 +174,6 @@ const SystemSettings = () => {
               />
             </div>
           </div>
-
 
           <div className="button-row">
             <button

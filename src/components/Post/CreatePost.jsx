@@ -90,8 +90,12 @@ function CreatePost({ onPostCreated, isProfilePost }) {
   };
 
   const handleSubmit = () => {
-    if (!title.trim()) {
-      warning('Vui lòng nhập tiêu đề hoạt động');
+    if (!isProfilePost && !title.trim()) {
+      alert('Vui lòng nhập tiêu đề hoạt động');
+      return;
+    }
+    if (isProfilePost && !content.trim()) {
+      alert('Vui lòng nhập nội dung trạng thái');
       return;
     }
     if (uploading) {
@@ -122,28 +126,32 @@ function CreatePost({ onPostCreated, isProfilePost }) {
             referrerPolicy="no-referrer"
           />
         </div>
-        <h3 className="create-activity-title">Tạo hoạt động mới</h3>
+        <h3 className="create-activity-title">
+          {isProfilePost ? 'Cập nhật trạng thái mới' : 'Tạo hoạt động mới'}
+        </h3>
       </div>
 
       <div className="create-activity-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>Tiêu đề *</label>
-            <input
-              type="text"
-              placeholder="Nhập tiêu đề hoạt động"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="form-input"
-            />
+        {!isProfilePost && (
+          <div className="form-row">
+            <div className="form-group">
+              <label>Tiêu đề *</label>
+              <input
+                type="text"
+                placeholder="Nhập tiêu đề hoạt động"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="form-input"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="form-row">
           <div className="form-group">
-            <label>Mô tả chi tiết</label>
+            <label>{isProfilePost ? 'Bạn đang nghĩ gì?' : 'Mô tả chi tiết'}</label>
             <textarea
-              placeholder="Mô tả chi tiết về hoạt động của bạn..."
+              placeholder={isProfilePost ? "Hôm nay của bạn thế nào?" : "Mô tả chi tiết về hoạt động của bạn..."}
               rows={3}
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -152,48 +160,50 @@ function CreatePost({ onPostCreated, isProfilePost }) {
           </div>
         </div>
 
-        <div className="form-row-3">
-          <div className="form-group full-width">
-            <label>Địa điểm</label>
-            <div
-              className="input-with-icon"
-              onClick={() => setShowLocationPicker(true)}
-              style={{ cursor: 'pointer' }}
-            >
-              <MapPin size={16} className="input-icon" />
+        {!isProfilePost && (
+          <div className="form-row-3">
+            <div className="form-group full-width">
+              <label>Địa điểm</label>
+              <div
+                className="input-with-icon"
+                onClick={() => setShowLocationPicker(true)}
+                style={{ cursor: 'pointer' }}
+              >
+                <MapPin size={16} className="input-icon" />
+                <input
+                  type="text"
+                  placeholder="Chọn địa điểm trên bản đồ"
+                  value={location}
+                  readOnly
+                  className="form-input"
+                  style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Số người tối đa</label>
               <input
-                type="text"
-                placeholder="Chọn địa điểm trên bản đồ"
-                value={location}
-                readOnly
+                type="number"
+                placeholder="VD: 10"
+                value={maxParticipants}
+                onChange={(e) => setMaxParticipants(e.target.value)}
                 className="form-input"
-                style={{ cursor: 'pointer', backgroundColor: 'transparent' }}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Thời lượng (phút)</label>
+              <input
+                type="number"
+                placeholder="VD: 120"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="form-input"
               />
             </div>
           </div>
-
-          <div className="form-group">
-            <label>Số người tối đa</label>
-            <input
-              type="number"
-              placeholder="VD: 10"
-              value={maxParticipants}
-              onChange={(e) => setMaxParticipants(e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Thời lượng (phút)</label>
-            <input
-              type="number"
-              placeholder="VD: 120"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              className="form-input"
-            />
-          </div>
-        </div>
+        )}
 
         {/* Preview ảnh đã chọn */}
         {imagePreview && (
@@ -233,14 +243,14 @@ function CreatePost({ onPostCreated, isProfilePost }) {
           disabled={uploading}
         >
           <ImageIcon size={18} />
-          <span>{uploading ? 'Đang tải...' : imagePreview ? 'Đổi ảnh' : 'Ảnh hoạt động'}</span>
+          <span>{uploading ? 'Đang tải...' : imagePreview ? 'Đổi ảnh' : (isProfilePost ? 'Thêm ảnh' : 'Ảnh hoạt động')}</span>
         </button>
         <button
           className="btn-submit"
           onClick={handleSubmit}
-          disabled={loading || uploading || !title}
+          disabled={loading || uploading || (isProfilePost ? (!content || content.trim() === '') : (!title || title.trim() === ''))}
         >
-          {loading ? 'Đang đăng...' : 'Đăng hoạt động'}
+          {loading ? 'Đang đăng...' : (isProfilePost ? 'Đăng trạng thái' : 'Đăng hoạt động')}
         </button>
       </div>
 

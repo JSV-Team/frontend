@@ -508,6 +508,39 @@
   background: #fecaca;
 }
 
+.action-btn-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--admin-border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-muted);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn-circle:hover {
+  background: #f1f5f9;
+  color: var(--admin-primary);
+  border-color: var(--admin-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 83, 184, 0.15);
+}
+
+.action-btn-circle.active {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fecaca;
+}
+
+.action-btn-circle.active:hover {
+  background: #fecaca;
+  transform: translateY(-2px);
+}
+
 /* Post Management - Grid & Cards */
 .post-grid {
   display: grid;

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
+import { buildAvatarUrl } from '../../services/profileService';
+
 import { useLocation } from 'react-router-dom';
 import {
   Search, Eye, Shield, ShieldOff, MoreVertical,
@@ -50,6 +52,7 @@ const UserManagement = () => {
             id: u.user_id || u.id,
             name: u.full_name || u.username || u.name,
             email: u.email,
+            avatar_url: u.avatar_url,
             status: u.status || 'active',
             joined: dateStr,
             posts: u.posts || 0
@@ -91,7 +94,6 @@ const UserManagement = () => {
       console.error("Error toggling user status:", error);
     }
   };
-
 
 
   const filteredUsers = users.filter(user => {
@@ -156,34 +158,65 @@ const UserManagement = () => {
               <tr key={user.id}>
                 <td>
                   <div className="user-profile-cell">
-                    <div className="avatar">
-                      {user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                    <div className="avatar" style={{
+                      background: user.avatar_url 
+                        ? `url(${buildAvatarUrl(user.avatar_url)}) center/cover no-repeat, linear-gradient(135deg, #6366f1, #3b82f6)` 
+                        : 'linear-gradient(135deg, #6366f1, #3b82f6)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      fontSize: '14px'
+                    }}>
                     </div>
-                    <div className="info">
-                      <h4>{user.name}</h4>
-                      <p>{user.email}</p>
+                      <div className="info">
+                        <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e293b', margin: 0 }}>
+                          {user.name}
+                          {user.id === 1 && <Shield size={12} color="#3b82f6" fill="#3b82f6" />}
+                        </h4>
+                      <p style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Mail size={12} /> {user.email}
+                      </p>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span className={`status-badge ${user.status.toLowerCase()}`}>
+                  <span className={`status-badge ${user.status.toLowerCase()}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    {user.status === 'active' ? <UserCheck size={14} /> : <UserX size={14} />}
                     {getStatusLabel(user.status)}
                   </span>
                 </td>
-                <td>{user.joined}</td>
-                <td style={{ fontWeight: '600' }}>{user.posts}</td>
                 <td>
-                  <div className="action-btns">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b', fontSize: '13px' }}>
+                    <Calendar size={14} /> {user.joined}
+                  </div>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '700', color: '#0f172a' }}>
+                    <Hash size={14} color="#94a3b8" /> {user.posts}
+                  </div>
+                </td>
+                <td>
+                  <div className="action-btns" style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      className="action-btn-circle" 
+                      title="Xem chi tiết"
+                      onClick={() => window.location.href = `/profile/${user.username || user.id}`}
+                    >
+                      <Eye size={16} />
+                    </button>
                     <button
-                      className={`action-btn-text ${user.status === 'banned' ? 'warning' : ''}`}
+                      className={`action-btn-circle ${user.status === 'banned' ? 'active' : ''}`}
                       title={user.status === 'banned' ? 'Mở cấm người dùng' : 'Cấm người dùng'}
                       onClick={() => handleToggleStatus(user.id, user.status)}
+                      style={{ 
+                        color: user.status === 'banned' ? '#10b981' : '#ef4444',
+                        background: user.status === 'banned' ? '#dcfce7' : '#fee2e2'
+                      }}
                     >
-                      {user.status === 'banned' ? 'Mở cấm' : 'Cấm'}
+                      {user.status === 'banned' ? <ShieldOff size={16} /> : <Shield size={16} />}
                     </button>
-
-
-
                   </div>
                 </td>
               </tr>

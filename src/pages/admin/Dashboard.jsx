@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import apiConfig from '../../config/apiConfig';
 import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar,
-  PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer
 } from 'recharts';
 import {
   Users, FileText, Activity, AlertTriangle,
-  TrendingUp, TrendingDown, Clock, MousePointer2,
-  RefreshCw, Calendar, ChevronRight, LayoutDashboard,
-  Bell, Search, User, LogOut, ArrowUpRight, ArrowDownRight
+  RefreshCw, Clock, User
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -22,47 +19,16 @@ const Dashboard = () => {
       { title: 'Hoạt động nhóm', value: '85', trend: '+ 12%', trendType: 'up' }
     ],
     activityData: {
-      Week: [
-        { name: 'T2', value: 30 },
-        { name: 'T3', value: 55 },
-        { name: 'T4', value: 85 },
-        { name: 'T5', value: 60 },
-        { name: 'T6', value: 95 },
-        { name: 'T7', value: 70 },
-        { name: 'CN', value: 110 }
-      ],
-
-      Month: [
-        { name: 'Jan', value: 420 },
-        { name: 'Feb', value: 380 },
-        { name: 'Mar', value: 510 },
-        { name: 'Apr', value: 460 },
-        { name: 'May', value: 620 },
-        { name: 'Jun', value: 580 },
-        { name: 'Jul', value: 640 },
-        { name: 'Aug', value: 590 },
-        { name: 'Sep', value: 610 },
-        { name: 'Oct', value: 720 },
-        { name: 'Nov', value: 680 },
-        { name: 'Dec', value: 750 }
-      ],
-
-      Year: [
-        { name: '2022', value: 6400 },
-        { name: '2023', value: 7100 },
-        { name: '2024', value: 8300 },
-        { name: '2025', value: 9100 },
-        { name: '2026', value: 9800 }
-      ]
+      Week: [],
+      Month: [],
+      Year: []
     },
-    reportData: [],
-      matchData: {
-        stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
-        recent: []
-      },
-    recentActivities: [
-      { user: 'Hệ thống', action: 'đang tải dữ liệu...', time: 'Vừa xong', dotColor: '#3853b8' }
-    ]
+    matchData: {
+      stats: { pending: 0, active: 0, rejected: 0, ended: 0 },
+      classification: [],
+      recent: []
+    },
+    recentActivities: []
   });
 
   const fetchStats = async () => {
@@ -199,12 +165,100 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-
       </div>
 
+      <div className="dashboard-main-grid" style={{ marginTop: '24px' }}>
+        <div className="glass-card" style={{ padding: '28px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+            <div style={{
+              width: '40px', height: '40px', borderRadius: '12px',
+              background: 'linear-gradient(135deg, #6366f1, #3b82f6)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
+            }}>
+              <Users size={20} />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>Quản lý Ghép đôi</h3>
+              <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', fontWeight: 500 }}>Dữ liệu ghép đôi hệ thống</p>
+            </div>
+          </div>
 
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '24px' }}>
+            {/* Tổng cặp ghép đôi */}
+            <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '20px' }}>
+              <h4 style={{ margin: '0 0 20px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Tổng cặp ghép đôi</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Đang hoạt động</span>
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#10b981' }}>{data.matchData?.stats?.active || 0}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Đang chờ</span>
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#f59e0b' }}>{data.matchData?.stats?.pending || 0}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 600 }}>Đã kết thúc</span>
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#64748b' }}>{data.matchData?.stats?.ended || 0}</span>
+                </div>
+                <div style={{ borderTop: '1px solid #e2e8f0', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '14px', color: '#0f172a', fontWeight: 800 }}>Tổng cộng</span>
+                  <span style={{ fontSize: '24px', fontWeight: 900, color: '#3b82f6' }}>
+                    {(data.matchData?.stats?.active || 0) + (data.matchData?.stats?.pending || 0) + (data.matchData?.stats?.ended || 0) + (data.matchData?.stats?.rejected || 0)}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-
+            {/* Ghép đôi gần đây */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>Ghép đôi gần đây</h4>
+              <div style={{ borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
+                  padding: '11px 20px', background: '#f8fafc',
+                  borderBottom: '1px solid #e2e8f0'
+                }}>
+                  {['Cặp đôi', 'Thời gian', 'Trạng thái'].map(h => (
+                    <span key={h} style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>{h}</span>
+                  ))}
+                </div>
+                {(data.matchData?.recent || []).length > 0 ? (
+                  data.matchData.recent.map((match, idx) => {
+                    const statusMap = {
+                      'Đang hoạt động': { bg: '#dcfce7', color: '#16a34a', dot: '#22c55e' },
+                      'Đang chờ': { bg: '#fff7ed', color: '#d97706', dot: '#f59e0b' },
+                      'Từ chối': { bg: '#fee2e2', color: '#dc2626', dot: '#ef4444' },
+                      'Kết thúc': { bg: '#f1f5f9', color: '#64748b', dot: '#94a3b8' },
+                    };
+                    const s = statusMap[match.status] || statusMap['Kết thúc'];
+                    return (
+                      <div key={idx} style={{
+                        display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr',
+                        padding: '12px 20px', alignItems: 'center',
+                        borderBottom: idx < data.matchData.recent.length - 1 ? '1px solid #f1f5f9' : 'none'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>{match.pair}</span>
+                        </div>
+                        <span style={{ fontSize: '12px', color: '#94a3b8' }}>{match.time}</span>
+                        <div style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '6px',
+                          padding: '4px 10px', borderRadius: '12px', background: s.bg
+                        }}>
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: s.dot }} />
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: s.color }}>{match.status}</span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>Chưa có dữ liệu</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
       <style>{`
@@ -296,7 +350,7 @@ const Dashboard = () => {
         .stat-trend-new.down { color: #ef4444; }
 
         /* Main Grids */
-        .dashboard-main-grid, .bottom-content-grid {
+        .dashboard-main-grid {
           display: grid;
           grid-template-columns: 1fr;
           gap: 24px;
@@ -437,159 +491,9 @@ const Dashboard = () => {
 
         @media (max-width: 1200px) {
           .stats-row { grid-template-columns: repeat(2, 1fr); }
-          .dashboard-main-grid, .bottom-content-grid { grid-template-columns: 1fr; }
+          .dashboard-main-grid { grid-template-columns: 1fr; }
         }
 
-        /* Matching Management Styles */
-        .match-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-
-        .match-mini-card {
-          background: #f8fafc;
-          padding: 12px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .match-mini-card .icon-box {
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .match-mini-card .icon-box.warning { background: #fff7ed; color: #f59e0b; }
-        .match-mini-card .icon-box.success { background: #f0fdf4; color: #10b981; }
-        .match-mini-card .icon-box.danger { background: #fee2e2; color: #ef4444; }
-        .match-mini-card .icon-box.muted { background: #f1f5f9; color: #64748b; }
-
-        .match-mini-card .info span {
-          font-size: 11px;
-          color: #64748b;
-          font-weight: 600;
-          display: block;
-        }
-
-        .match-mini-card .info h4 {
-          font-size: 16px;
-          font-weight: 800;
-          margin: 0;
-          color: #0f172a;
-        }
-
-        .match-body-grid {
-          display: grid;
-          grid-template-columns: 1fr 1.5fr;
-          gap: 24px;
-        }
-
-        .sub-title {
-          font-size: 14px;
-          font-weight: 700;
-          color: #0f172a;
-          margin-bottom: 16px;
-        }
-
-        .pie-overlay-labels {
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          width: 140px;
-        }
-
-        .overlay-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        .overlay-row .label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #64748b;
-        }
-
-        .overlay-row .dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-        }
-
-        .overlay-row .val {
-          color: #0f172a;
-          font-weight: 800;
-        }
-
-        .match-list-small {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .match-item-small {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 8px 0;
-        }
-
-        .match-avatars {
-          display: flex;
-          align-items: center;
-        }
-
-        .match-avatars img {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          border: 2px solid #fff;
-        }
-
-        .match-avatars img:last-child {
-          margin-left: -12px;
-        }
-
-        .match-info-content {
-          flex: 1;
-        }
-
-        .pair-name {
-          font-size: 13px;
-          font-weight: 700;
-          color: #0f172a;
-        }
-
-        .pair-time {
-          font-size: 11px;
-          color: #94a3b8;
-        }
-
-        .match-status-badge {
-          padding: 4px 10px;
-          border-radius: 8px;
-          font-size: 10px;
-          font-weight: 700;
-        }
-
-        .match-status-badge.đang-hoạt-động { background: #dcfce7; color: #10b981; }
-        .match-status-badge.đang-chờ { background: #fff7ed; color: #f59e0b; }
-        .match-status-badge.từ-chối { background: #fee2e2; color: #ef4444; }
-        .match-status-badge.kết-thúc { background: #f1f5f9; color: #64748b; }
       `}</style>
     </div>
   );

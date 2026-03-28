@@ -233,8 +233,11 @@ function AdminLayout() {
 
             {/* Profile */}
             <div className="admin-profile">
-              <div className="admin-profile__avatar">
-                {currentUser?.username?.charAt(0)?.toUpperCase() || "A"}
+              <div className="admin-profile__avatar" style={{
+                backgroundImage: currentUser?.avatar_url ? `url(${currentUser.avatar_url.startsWith('http') ? currentUser.avatar_url : apiConfig.API_URL + currentUser.avatar_url})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}>
               </div>
               <div className="admin-profile__meta">
                 <h4>{currentUser?.username || "Admin"}</h4>

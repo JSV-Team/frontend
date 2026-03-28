@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { postService } from "../../services/postService";
 import PostCard from "./PostCard";
+import CreatePost from "../../components/Post/CreatePost";
 import "./postsPage.css";
 
 export default function PostsPage() {
@@ -35,19 +36,10 @@ export default function PostsPage() {
       <div className="ps-card">
         <div className="ps-h1">Tạo bài đăng</div>
 
-        <div className="ps-createRow">
-          <input
-            className="ps-input"
-            placeholder="Nhập nội dung..."
-            value={content}
-            onFocus={() => navigate(`/profile/${profile.username}/posts/new`)}
-            onClick={() => navigate(`/profile/${profile.username}/posts/new`)}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <button className="ps-btn" onClick={() => navigate(`/profile/${profile.username}/posts/new`)}>
-            Đăng
-          </button>
-        </div>
+        <CreatePost 
+          isProfilePost={true} 
+          onPostCreated={fetchPosts} 
+        />
       </div>
 
       <div className="ps-card ps-feature">

@@ -86,7 +86,21 @@ export default function PostCard({
         </div>
       )}
 
-      {post.image && <img className="pc-img" src={post.image} alt="post" />}
+      {(post.image_url || post.image || (post.images && post.images[0])) && (
+        <div className="pc-images">
+          <img className="pc-img" src={post.image_url || post.image || post.images[0]} alt="post" />
+          {post.images && post.images.length > 1 && (
+            <div className="pc-additional-images">
+              {post.images.slice(1, 4).map((img, idx) => (
+                <img key={idx} className="pc-img-small" src={img} alt={`post ${idx + 2}`} />
+              ))}
+              {post.images.length > 4 && (
+                <div className="pc-more-images">+{post.images.length - 4}</div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {post.tags?.length ? (
         <div className="pc-tags">

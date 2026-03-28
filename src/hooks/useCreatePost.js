@@ -11,9 +11,16 @@ function useCreatePost(onSuccess) {
 
   // hàm đăng bài
   const createPost = async (content) => {
-    // nếu người dùng chưa nhập gì thì thôi
-    if (!content || !content.title) {
-      setError('Vui lòng nhập tiêu đề');
+    if (!content) return;
+    
+    // Validate based on post type
+    if (!content.isProfilePost && !content.title) {
+      setError('Vui lòng nhập tiêu đề hoạt động');
+      return;
+    }
+    
+    if (content.isProfilePost && !content.description) {
+      setError('Vui lòng nhập nội dung trạng thái');
       return;
     }
 
@@ -22,8 +29,10 @@ function useCreatePost(onSuccess) {
       setError(null);       // reset lỗi
 
       console.log('Sending post data:', content);
-      // gọi API đăng bài
-      const response = await postService.createPost(content);
+      // gọi API đăng bài - chọn API dựa trên mode
+      const response = content.isProfilePost 
+        ? await postService.createStatus(content)
+        : await postService.createPost(content);
       console.log('Post created successfully:', response);
 
      
