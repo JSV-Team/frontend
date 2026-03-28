@@ -2,6 +2,7 @@
 // Handles: empty state, searching state, match found state
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { AlertCircle, X } from 'lucide-react';
 import EmptyState from './EmptyState';
 import SearchingState from './SearchingState';
 import MatchFoundState from './MatchFoundState';
@@ -34,21 +35,24 @@ function MatchContent({
         {error && (
           <motion.div
             className="match-error-notification"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
           >
+            <div className="error-icon">
+              <AlertCircle size={20} />
+            </div>
             <div className="error-content">
               <span className="error-message">{error}</span>
-              <button
-                className="error-close-btn"
-                onClick={onClearError}
-                aria-label="Close error"
-              >
-                ✕
-              </button>
             </div>
+            <button
+              className="error-close-btn"
+              onClick={onClearError}
+              aria-label="Close error"
+            >
+              <X size={18} />
+            </button>
           </motion.div>
         )}
 
