@@ -268,8 +268,11 @@
   }
 
   .header-logo {
-    display: none;
-    /* Hide logo on very small screens to make room for tabs */
+    display: flex;
+  }
+
+  .header-logo h1 {
+    font-size: 1.25rem;
   }
 
   .nav-tabs {
