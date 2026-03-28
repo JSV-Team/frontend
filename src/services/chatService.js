@@ -35,7 +35,7 @@ export const chatService = {
     },
 
     // Lấy hoặc tạo cuộc hội thoại 1-1
-    getOrInitPrivateChat: async (userId, partnerId) => {
+    getOrInitPrivateChat: async (userId, partnerId, activityId = null) => {
         try {
             // Lưu ý: userId thực tế sẽ được backend lấy từ Token (req.user.user_id)
             const response = await fetch(`${API_BASE_URL}/chat/private`, {
@@ -44,7 +44,8 @@ export const chatService = {
                     'Content-Type': 'application/json',
                 }),
                 body: JSON.stringify({
-                    partnerId: Number(partnerId)
+                    partnerId: Number(partnerId),
+                    activityId: activityId
                 }),
             });
             const data = await response.json();
@@ -130,6 +131,25 @@ export const chatService = {
         } catch (error) {
             console.error('Lỗi khi lấy số tin nhắn chưa đọc:', error);
             return 0;
+        }
+    },
+
+    // Kiểm tra quyền nhắn tin cho host của activity
+    checkCanMessageHost: async (activityId) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/chat/check-can-message-host`, {
+                method: 'POST',
+                headers: authHeaders({
+                    'Content-Type': 'application/json',
+                }),
+                body: JSON.stringify({ activityId }),
+            });
+            const data = await response.json();
+            if (!response.ok) return { canMessage: false, message: data.message };
+            return data;
+        } catch (error) {
+            console.error('Lỗi khi kiểm tra quyền nhắn tin:', error);
+            return { canMessage: false, message: error.message };
         }
     }
 };

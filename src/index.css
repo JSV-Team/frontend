@@ -49,9 +49,9 @@
 [data-theme="dark"] {
   --color-bg-light: #111827;
   --color-surface: #1F2937;
-  --color-text-primary: #F9FAFB;
-  --color-text-secondary: #9CA3AF;
-  --color-text-muted: #6B7280;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #D1D5DB;
+  --color-text-muted: #9CA3AF;
   --color-border: #374151;
   --color-border-light: #1F2937;
 }
@@ -85,6 +85,23 @@
   background-color: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text-primary);
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block !important;
+}
+
+@media (max-width: 1024px) {
+  .mobile-only {
+    display: block !important;
+  }
+  .desktop-only {
+    display: none !important;
+  }
 }
 
 /* Reset & Base */

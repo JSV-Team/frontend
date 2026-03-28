@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
 import { activityService } from '../../services/activityService';
+import { useNotification } from '../../contexts/NotificationContext';
 import './PendingApproval.css';
 
 // Lấy user ID từ localStorage
@@ -21,6 +22,7 @@ function PendingApproval({ reload }) {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { success, error: showError } = useNotification();
     const userId = getUserId();
 
     const fetchPendingApprovals = async () => {
@@ -47,8 +49,9 @@ function PendingApproval({ reload }) {
             await activityService.processActivityRequest(requestId, action);
             // Xóa người dùng khỏi danh sách chờ sau khi duyệt/từ chối
             setRequests(prev => prev.filter(req => req.id !== requestId));
+            success(action === 'approve' ? 'Đã duyệt yêu cầu' : 'Đã từ chối yêu cầu');
         } catch (err) {
-            alert('Lỗi: ' + err.message);
+            showError('Lỗi: ' + err.message);
         }
     };
 

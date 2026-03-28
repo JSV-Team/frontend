@@ -1,4 +1,5 @@
 import apiConfig from '../config/apiConfig';
+import { buildAvatarUrl } from './apiProfileService';
 const API_BASE_URL = `${apiConfig.BASE_API}/posts`;
 
 export const postService = {
@@ -61,27 +62,20 @@ export const postService = {
       const data = await response.json();
       if (!response.ok) throw data;
 
-      // Helper to build full image URL
-      const buildImageUrl = (url) => {
-        if (!url) return null;
-        if (url.startsWith('http')) return url;
-        const baseUrl = apiConfig.API_URL || 'https://backend-1wyh.onrender.com';
-        const cleanBase = baseUrl.replace(/\/$/, '');
-        const cleanPath = url.startsWith('/') ? url : `/${url}`;
-        return `${cleanBase}${cleanPath}`;
-      };
 
       // Map backend fields to frontend fields
       return data.map(p => ({
         id: p.post_id || p.activity_id || p.status_id,
         user_id: p.user_id || p.creator_id,
+        username: p.username,
+        full_name: p.full_name,
         title: p.title || p.content,
         desc: p.description || p.extra_content || '',
         location: p.location || '',
         duration: p.duration_minutes || null,
         maxParticipants: p.max_participants || null,
         time: new Date(p.created_at).toLocaleString(),
-        image: buildImageUrl(p.image_url),
+        image: buildAvatarUrl(p.image_url),
         reactions: { like: p.reactions_count || 0 }, // Simplified for now
         comments: Array(p.comments_count || 0).fill({}), // Just to show the count
         shares: p.shares_count || 0,

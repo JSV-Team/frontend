@@ -5,6 +5,7 @@ import { Send, MoreVertical, LogOut, Info, Edit, Search, Image as ImageIcon, Plu
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
@@ -30,6 +31,7 @@ function Friends() {
   const userString = localStorage.getItem('user');
   const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
+  const { success, error: showError, warning } = useNotification();
   const [conversations, setConversations] = useState([]);
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
@@ -223,7 +225,7 @@ function Friends() {
     }, (response) => {
       // Callback từ server
       if (response.status === 'error') {
-        alert(response.error);
+        showError(response.error);
       }
     });
 
@@ -243,7 +245,7 @@ function Friends() {
       msgType: 'location',
     }, (response) => {
       if (response.status === 'error') {
-        alert(response.error);
+        showError(response.error);
       }
     });
     setShowLocationPicker(false);
@@ -282,12 +284,12 @@ function Friends() {
         imageUrl: data.data?.url || data.imageUrl
       }, (response) => {
         if (response.status === 'error') {
-          alert('Lỗi gửi ảnh: ' + response.error);
+          showError('Lỗi gửi ảnh: ' + response.error);
         }
       });
 
     } catch (err) {
-      alert('Lỗi upload: ' + err.message);
+      showError('Lỗi upload: ' + err.message);
     } finally {
       setUploadingImage(false);
       setImagePreview(''); // Xóa preview sau khi gửi xong
@@ -302,8 +304,9 @@ function Friends() {
       .then(() => {
         setConversations(prev => prev.filter(c => c.conversation_id !== activeConvId));
         setActiveConvId(null);
+        success('Đã rời nhóm thành công');
       })
-      .catch(err => alert('Lỗi: ' + err.message));
+      .catch(err => showError('Lỗi: ' + err.message));
   }
 
   // Hiện/ẩn panel thông tin nhóm và tải danh sách thành viên
@@ -329,7 +332,7 @@ function Friends() {
   const activeConv = conversations.find(c => c.conversation_id === activeConvId);
 
   return (
-    <div className="friends-page">
+    <div className={`friends-page ${activeConvId ? 'chat-active' : ''}`}>
       {/* Background effects - only visible in dark mode */}
       {theme === 'dark' && (
         <>
@@ -446,6 +449,13 @@ function Friends() {
               {/* Box Tựa đề lơ lửng trên cùng (Floating Header) */}
               <div className="floating-chat-header">
                 <div className="chat-header-info">
+                  <button 
+                    className="icon-btn back-btn mobile-only" 
+                    onClick={() => setActiveConvId(null)}
+                    style={{ marginRight: '12px' }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  </button>
                   <h3>{activeConv?.activity_title || 'Chat Nhóm'}</h3>
                 </div>
                 <div className="chat-actions">

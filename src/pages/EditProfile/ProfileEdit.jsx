@@ -25,6 +25,18 @@ export default function ProfileEdit() {
   const [uploading, setUploading] = useState(false);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [msg, setMsg] = useState({ type: "", text: "" });
+  
+  // Helper: Format date to YYYY-MM-DD for <input type="date">
+  const formatDateForInput = (dateValue) => {
+    if (!dateValue) return "";
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) return "";
+    
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
 
   // Map dữ liệu từ layout -> form
   useEffect(() => {
@@ -32,7 +44,7 @@ export default function ProfileEdit() {
       bio: profile?.bio || "",
       full_name: profile?.full_name || profile?.fullName || "",
       gender: profile?.gender || "",
-      dob: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-CA') : "",
+      dob: formatDateForInput(profile?.dob),
       location: profile?.location || "",
       email: profile?.email || "",
     });
@@ -42,7 +54,7 @@ export default function ProfileEdit() {
     bio: profile?.bio || "",
     full_name: profile?.full_name || profile?.fullName || "",
     gender: profile?.gender || "",
-    dob: profile?.dob ? new Date(profile.dob).toLocaleDateString('en-CA') : "",
+    dob: formatDateForInput(profile?.dob),
     location: profile?.location || "",
     email: profile?.email || "",
     interests: Array.isArray(interests) ? interests : [],

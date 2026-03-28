@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
 import apiConfig from "../../config/apiConfig";
+import LocationPicker from "../../components/common/LocationPicker";
+import { MapPin } from "lucide-react";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ export default function Register() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -229,14 +232,33 @@ export default function Register() {
 
             <div className="form-group">
               <label>Địa chỉ hoạt động (thường xuyên)</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="Nhập địa chỉ của bạn"
-              />
+              <div className="location-input-group">
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  placeholder="Nhập địa chỉ hoặc chọn từ bản đồ..."
+                  className="register-location-input"
+                />
+                <button 
+                  type="button" 
+                  className="map-icon-btn"
+                  onClick={() => setIsPickerOpen(true)}
+                  title="Chọn địa điểm từ bản đồ"
+                >
+                  <MapPin size={20} />
+                </button>
+              </div>
             </div>
+
+            {isPickerOpen && (
+              <LocationPicker
+                onClose={() => setIsPickerOpen(false)}
+                onConfirm={(addr) => setFormData(prev => ({ ...prev, location: addr }))}
+                initialLocation={formData.location}
+              />
+            )}
 
             <div className="form-group">
               <label>Mật khẩu</label>

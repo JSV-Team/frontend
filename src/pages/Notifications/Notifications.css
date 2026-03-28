@@ -273,3 +273,46 @@
 [data-theme="dark"] .notification-icon.default {
   background: var(--color-bg-light);
 }
+
+/* Base Responsive */
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: 12px;
+  }
+
+  .notifications-container {
+    max-width: 100%;
+    padding: 16px;
+    border-radius: 1.5rem;
+  }
+
+  .notifications-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .notifications-title {
+    font-size: 1.25rem;
+  }
+
+  .notification-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .notification-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .notification-text {
+    font-size: 0.8125rem;
+  }
+
+  .notifications-empty, 
+  .notifications-error, 
+  .notifications-loading {
+    padding: 32px 16px;
+  }
+}
+

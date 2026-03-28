@@ -39,6 +39,9 @@ export default function PostCard({
           <div className="pc-meta">
             Người dùng • {post.time}
             {post.updatedAt ? ` • (đã sửa ${post.updatedAt})` : ""}
+            <span className={`pc-badge ${post.type === 'status' ? 'status' : 'activity'}`}>
+              {post.type === 'status' ? 'TRẠNG THÁI' : 'HOẠT ĐỘNG'}
+            </span>
           </div>
         </div>
 

@@ -35,16 +35,14 @@ export default function PublicProfile() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const getTimeAgo = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return 'Vừa xong';
     const date = new Date(dateString);
     const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
-
-    if (diffInSeconds < 60) return 'Vừa xong';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} phút trước`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} giờ trước`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} ngày trước`;
-    return date.toLocaleDateString('vi-VN');
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return `${diff} giây trước`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+    return `${Math.floor(diff / 86400)} ngày trước`;
   };
 
   const fetchData = async () => {
@@ -103,7 +101,7 @@ export default function PublicProfile() {
     fetchData();
   }, [username]);
 
-  const handleStartChat = async (targetId = profile?.user_id) => {
+  const handleStartChat = async (targetId = profile?.user_id, activityId = null) => {
     if (!myId) {
       alert("Vui lòng đăng nhập để thực hiện chức năng này.");
       return;
@@ -112,13 +110,14 @@ export default function PublicProfile() {
     if (!targetId) return;
 
     try {
-      const conv = await chatService.getOrInitPrivateChat(myId, targetId);
+      // Pass activityId if provided to satisfy backend authorization checks
+      const conv = await chatService.getOrInitPrivateChat(myId, targetId, activityId);
       if (conv && conv.conversation_id) {
         navigate('/friends', { state: { openChatId: conv.conversation_id } });
       }
     } catch (err) {
       console.error("Lỗi khi mở cuộc trò chuyện:", err);
-      alert("Đã có lỗi xảy ra khi tạo cuộc hội thoại.");
+      alert(err.message || "Đã có lỗi xảy ra khi tạo cuộc hội thoại.");
     }
   };
 
@@ -256,7 +255,7 @@ export default function PublicProfile() {
               {hasStory && <div className="pp-story-indicator">Story</div>}
             </div>
             <div className="pp-actions">
-              <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
+              {/* Nút nhắn tin đã được gỡ bỏ theo yêu cầu */}
             </div>
           </div>
 
@@ -425,7 +424,7 @@ export default function PublicProfile() {
                                   {isJoining ? 'Đang gửi...' : 'Tham gia'}
                                 </button>
                               )}
-                              <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id)}>Nhắn tin</button>
+                              <button className="action-btn message-btn" onClick={() => handleStartChat(post.user_id, post.id)}>Nhắn tin</button>
                             </div>
                           </>
                         )}

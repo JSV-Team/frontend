@@ -48,7 +48,11 @@ export default function SidebarProfile({ profile, onLogout }) {
         {profile.dob && (
           <div className="sb-card">
             <div className="sb-row">
-              <span>Ngày sinh:</span> <b>{profile.dob ? new Date(profile.dob).toLocaleDateString('en-CA') : ""}</b>
+              <span>Ngày sinh:</span> <b>{(() => {
+                const d = new Date(profile.dob);
+                if (isNaN(d.getTime())) return "";
+                return d.toLocaleDateString('vi-VN');
+              })()}</b>
             </div>
           </div>
         )}

@@ -65,7 +65,7 @@ export default function Login() {
       <div className="page-content">
         <div className="left-content">
           <h1>VibeMatch</h1>
-          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.85)', marginTop: '20px', lineHeight: 1.6, maxWidth: '400px' }}>
+          <p className="login-subtitle">
             Khám phá, chia sẻ và kết nối với những người có cùng sở thích với bạn. Đăng nhập để tiếp tục hành trình của mình!
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function Login() {
           <p className="welcome-text">Trở lại và tiếp tục khám phá sở thích</p>
 
           <form className="login-form" onSubmit={handleSubmit}>
-            {errorMsg && <div style={{ color: "#ff4d4f", textAlign: "center", fontWeight: "bold", background: "rgba(255,77,79,0.1)", padding: "10px", borderRadius: "8px" }}>{errorMsg}</div>}
+            {errorMsg && <div className="login-error-msg">{errorMsg}</div>}
 
             <div className="form-group">
               <label>Email hoặc Tên đăng nhập</label>
@@ -92,7 +92,7 @@ export default function Login() {
 
             <div className="form-group">
               <label>Mật khẩu</label>
-              <div className="password-wrapper" style={{ position: 'relative', width: '100%' }}>
+              <div className="password-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -106,25 +106,24 @@ export default function Login() {
                   type="button"
                   className="show-btn"
                   onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}
                 >
                   {showPassword ? "Ẩn" : "Hiện"}
                 </button>
               </div>
             </div>
 
-            <div className="options" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', width: '100%' }}>
-              <label className="checkbox" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', cursor: 'pointer' }}>
+            <div className="login-options">
+              <label className="login-remember">
                 <input type="checkbox" name="remember" /> <span>Ghi nhớ tôi</span>
               </label>
               <a href="#" className="forgot-password">Quên mật khẩu?</a>
             </div>
 
-            <button type="submit" className="login-btn" disabled={isLoading} style={{ width: '100%' }}>
+            <button type="submit" className="login-btn" disabled={isLoading}>
               {isLoading ? "Đang xử lý..." : "Đăng nhập ngay"}
             </button>
 
-            <div className="signup-prompt" style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: '0.95rem' }}>
+            <div className="signup-prompt">
               Chưa có tài khoản?{" "}
               <a
                 href="#"

@@ -54,12 +54,17 @@
 .home-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
+  grid-template-areas: 
+    "sidebar create"
+    "sidebar feed";
   gap: 2rem;
   width: 100%;
+  align-items: start;
 }
 
 /* Left Sidebar */
 .home-sidebar {
+  grid-area: sidebar;
   position: sticky;
   top: calc(100px + 1rem);
   max-height: calc(100vh - 120px);
@@ -87,8 +92,14 @@
   background: #94a3b8;
 }
 
-/* Main Content Area */
-.home-content {
+/* Create Post Area */
+.home-create-post-area {
+  grid-area: create;
+}
+
+/* Posts Section Area */
+.posts-section {
+  grid-area: feed;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -101,13 +112,6 @@
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border-light);
-}
-
-/* Posts Section */
-.posts-section {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
 }
 
 /* ==================== POST CARD STYLES ==================== */
@@ -508,59 +512,7 @@
   border: 2px solid white;
 }
 
-/* ==================== FLOATING CHAT BUTTON ==================== */
-.floating-chat-btn {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-}
 
-.floating-chat-btn .chat-button {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  position: relative;
-  color: var(--color-text-muted);
-}
-
-.floating-chat-btn .chat-button:hover {
-  background: var(--color-bg-light);
-  transform: scale(1.05);
-}
-
-.floating-chat-btn .chat-button:hover svg {
-  color: var(--color-primary);
-}
-
-.floating-chat-btn-tooltip {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: var(--color-text-primary);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius-md);
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition-fast);
-}
-
-.floating-chat-btn .chat-button:hover .floating-chat-btn-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
 
 /* ==================== RESPONSIVE ==================== */
 /* Removed .home-sidebar media query specific to 1024px since sidebar is removed */
@@ -787,16 +739,26 @@
 
   .home-layout {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-areas: 
+      "create"
+      "sidebar"
+      "feed";
+    gap: 1.5rem;
+    padding: 0 10px;
   }
 
   .home-sidebar {
-    position: relative;
-    top: 0;
+    display: flex;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+    margin-top: 0;
   }
 
   .home-container {
     padding-top: 72px;
+    padding-bottom: 80px; /* Space for mobile nav */
   }
 
   .post-card {
@@ -878,6 +840,33 @@
   border-color: #374151;
 }
 
+/* More explicit text colors for dark mode post cards */
+[data-theme="dark"] .post-card h2.clickable-username,
+[data-theme="dark"] .post-card .user-info-top h2 {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .post-card .post-time {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .post-optional-meta,
+[data-theme="dark"] .post-optional-meta span {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .post-card .post-title {
+  color: var(--color-text-primary) !important;
+}
+
+[data-theme="dark"] .post-card .post-description {
+  color: var(--color-text-secondary) !important;
+}
+
+[data-theme="dark"] .dot-separator {
+  color: var(--color-text-muted) !important;
+}
+
 [data-theme="dark"] .post-card .avatar-inner {
   background: var(--color-surface);
 }
@@ -939,14 +928,4 @@
 [data-theme="dark"] .see-all-notifications:hover {
   background: rgba(205, 140, 140, 0.2);
 }
-
-[data-theme="dark"] .floating-chat-btn .chat-button {
-  background: #1f2937;
-  border-color: #374151;
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .floating-chat-btn .chat-button:hover {
-  background: #374151;
-  color: var(--color-primary);
-}
+

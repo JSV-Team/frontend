@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Notifications.css';
 import useNotifications from '../../hooks/useNotifications';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -7,6 +8,7 @@ import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
 
 function Notifications() {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const { 
     notifications, 
@@ -196,7 +198,10 @@ function Notifications() {
               <div
                 key={notification.notification_id}
                 className={`notification-item ${notification.is_read ? 'read' : 'unread'}`}
-                onClick={() => !notification.is_read && markAsRead(notification.notification_id)}
+                onClick={() => {
+                  if (!notification.is_read) markAsRead(notification.notification_id);
+                  navigate('/home');
+                }}
               >
                 {getNotificationIcon(notification.type)}
                 <div className="notification-content">

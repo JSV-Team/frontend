@@ -10,6 +10,7 @@ import apiConfig from "../../config/apiConfig";
 import MatchHeader from './MatchHeader';
 import MatchContent from './MatchContent';
 import MatchSidebar from './MatchSidebar';
+import NoInterestsModal from '../../components/NoInterestsModal/NoInterestsModal';
 import { useTheme } from '../../contexts/ThemeContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
@@ -25,6 +26,7 @@ function MatchContainer() {
   const [token, setToken] = useState(null);
   const [userInterests, setUserInterests] = useState([]);
   const [loadingInterests, setLoadingInterests] = useState(true);
+  const [showNoInterestsModal, setShowNoInterestsModal] = useState(false);
 
   // Get global match context
   const matchContext = useMatch();
@@ -150,6 +152,7 @@ function MatchContainer() {
     if (!userInterests || userInterests.length === 0) {
       console.log('❌ Cannot join - no interests');
       matchContext.setError('Bạn cần thêm ít nhất một sở thích để tham gia ghép đôi.');
+      setShowNoInterestsModal(true);
       return;
     }
 
@@ -222,44 +225,54 @@ function MatchContainer() {
     matchContext.clearMatch();
   };
 
+  // Handle go to personal profile (to fix validation errors)
+  const handleGoToProfile = () => {
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    } else {
+      navigate('/profile');
+    }
+  };
+
   // Combine errors from both sources
   const error = socketError || queueError || matchContext.error;
 
   return (
-    <motion.div
-      className="match-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* Background effects - only visible in dark mode */}
-      {theme === 'dark' && (
-        <>
-          <div className="home-aurora-bg">
-            <Aurora
-              colorStops={['#d666ff', '#e15b83', '#5227FF']}
-              blend={0.5}
-              amplitude={1.0}
-              speed={1.2}
-            />
-          </div>
-          <div className="home-particles-bg">
-            <Particles
-              particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
-              particleCount={200}
-              particleSpread={10}
-              speed={0.1}
-              particleBaseSize={400}
-              moveParticlesOnHover={false}
-              alphaParticles={true}
-              disableRotation={false}
-              sizeRandomness={1}
-              cameraDistance={20}
-              pixelRatio={1}
-            />
-          </div>
-        </>
-      )}
+    <>
+      <motion.div
+        className="match-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        {/* Background effects - only visible in dark mode */}
+        {theme === 'dark' && (
+          <>
+            <div className="home-aurora-bg">
+              <Aurora
+                colorStops={['#d666ff', '#e15b83', '#5227FF']}
+                blend={0.5}
+                amplitude={1.0}
+                speed={1.2}
+              />
+            </div>
+            <div className="home-particles-bg">
+              <Particles
+                particleColors={['#c653b6', '#8b5cf6', '#6366f1']}
+                particleCount={200}
+                particleSpread={10}
+                speed={0.1}
+                particleBaseSize={400}
+                moveParticlesOnHover={false}
+                alphaParticles={true}
+                disableRotation={false}
+                sizeRandomness={1}
+                cameraDistance={20}
+                pixelRatio={1}
+              />
+            </div>
+          </>
+        )}
 
       {/* Background effect - only visible in light mode */}
       {theme === 'light' && (
@@ -286,7 +299,7 @@ function MatchContainer() {
             onViewProfile={handleViewProfile}
             onClearMatch={handleClearMatch}
             onClearError={matchContext.clearError}
-            loadingInterests={loadingInterests}
+            onGoToProfile={handleGoToProfile}
           />
 
           <MatchSidebar
@@ -295,7 +308,14 @@ function MatchContainer() {
           />
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+
+      {/* No Interests Modal */}
+      <NoInterestsModal
+        isOpen={showNoInterestsModal}
+        onClose={() => setShowNoInterestsModal(false)}
+      />
+    </>
   );
 }
 

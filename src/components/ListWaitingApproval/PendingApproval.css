@@ -19,6 +19,27 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Scrollbar styling for Pending List */
+.pending-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pending-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pending-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+[data-theme="dark"] .pending-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .pending-item {
@@ -130,4 +151,60 @@
 
 [data-theme="dark"] .pending-empty {
     color: #9ca3af;
+}
+
+/* Responsive Customizations */
+@media (max-width: 480px) {
+    .pending-approval-container {
+        padding: 16px;
+    }
+
+    .pending-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    [data-theme="dark"] .pending-item {
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .pending-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .pending-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .pending-info {
+        align-items: center;
+        width: 100%;
+    }
+
+    .pending-name {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .pending-actions {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .action-btn svg {
+        width: 20px;
+        height: 20px;
+    }
 }

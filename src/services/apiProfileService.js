@@ -284,6 +284,10 @@ export const buildAvatarUrl = (url) => {
     cleanUrl = cleanUrl.replace(pattern, '');
   });
 
+  // Step 1b: Fix common protocol issues (e.g., missing colons like http// or https//)
+  if (cleanUrl.startsWith('http//')) cleanUrl = 'http://' + cleanUrl.slice(6);
+  if (cleanUrl.startsWith('https//')) cleanUrl = 'https://' + cleanUrl.slice(7);
+
   // Step 2: If it's already a full external URL (pravatar, ui-avatars, etc), return as-is
   if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
     // Force HTTPS in production

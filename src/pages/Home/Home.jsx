@@ -10,8 +10,10 @@ import useCurrentUser, { useCurrentUserId } from '../../hooks/useCurrentUser';
 import { Activity, Clock, Settings, Star, MessageSquare, Bell, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 import activityService from '../../services/activityService';
+import chatService from '../../services/chatService';
 import apiConfig from '../../config/apiConfig';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
@@ -21,6 +23,7 @@ import './Home.css';
 function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { success, error: showError, warning } = useNotification();
   const currentUser = useCurrentUser(); // Auto-updates when user changes
   const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
@@ -39,11 +42,11 @@ function Home() {
 
     try {
       await activityService.deleteActivity(activityId, CURRENT_USER_ID);
-      alert('Đã xóa bài viết thành công');
+      success('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {
       console.error('Lỗi khi xóa bài viết:', err);
-      alert('Lỗi: ' + (err.message || 'Không thể xóa bài viết'));
+      showError('Lỗi: ' + (err.message || 'Không thể xóa bài viết'));
     }
   };
 
@@ -55,14 +58,14 @@ function Home() {
       const data = await activityService.joinActivity(activityId, CURRENT_USER_ID);
 
       if (data.message && data.message.includes('thành công')) {
-        alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
+        success('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
         setPendingReload(prev => prev + 1);
       } else {
-        alert(data.message || 'Tham gia thất bại');
+        showError(data.message || 'Tham gia thất bại');
       }
     } catch (err) {
       console.error('Join error:', err);
-      alert('Lỗi kết nối: ' + err.message);
+      showError('Lỗi kết nối: ' + err.message);
     } finally {
       setJoiningIds(prev => {
         const s = new Set(prev);
@@ -88,37 +91,25 @@ function Home() {
     // Kiểm tra quyền nhắn tin (chỉ khi có activityId)
     if (activityId) {
       try {
-        const checkRes = await fetch(`${apiConfig.BASE_API}/chat/check-can-message-host`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ activityId, userId: CURRENT_USER_ID }),
-        });
-        const checkData = await checkRes.json();
+        const checkData = await chatService.checkCanMessageHost(activityId);
 
-        if (!checkRes.ok || !checkData.canMessage) {
-          alert(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
+        if (!checkData.canMessage) {
+          warning(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
           return;
         }
       } catch (err) {
         console.error('Lỗi kiểm tra quyền nhắn tin:', err);
-        alert('Lỗi: ' + err.message);
+        showError('Lỗi: ' + err.message);
         return;
       }
     }
 
     try {
-      const response = await fetch(`${apiConfig.BASE_API}/chat/private`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partnerId: hostId, userId: CURRENT_USER_ID }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
+      const data = await chatService.getOrInitPrivateChat(null, hostId, activityId);
       navigate('/friends', { state: { openChatId: data.conversation_id } });
     } catch (err) {
       console.error('Lỗi tạo chat riêng:', err);
-      alert('Lỗi: ' + err.message);
+      showError('Lỗi: ' + (err.message || 'Đã có lỗi xảy ra khi tạo cuộc hội thoại.'));
     }
   };
 
@@ -161,148 +152,144 @@ function Home() {
       )}
       <div className="home-main">
         <div className="home-layout">
-          {/* Left Sidebar - Pending Groups & Approvals */}
+          {/* Sidebar - Pending Groups & Approvals */}
           <aside className="home-sidebar">
-            {/* <NotificationsWidget userId={CURRENT_USER_ID} /> */}
             <PendingApproval reload={pendingReload} />
             <PendingGroups reload={pendingReload} />
           </aside>
 
-          {/* Right Content - Posts Feed */}
-          <div className="home-content">
+          {/* Create Post Area */}
+          <div className="home-create-post-area">
             <CreatePost onPostCreated={reloadPosts} />
+          </div>
 
-            <div className="posts-section">
-              {loading && <p className="loading">Đang tải...</p>}
-              {error && <p className="error">{error}</p>}
-              {!loading && !error && posts.length === 0 && (
-                <p className="no-posts">Chưa có bài viết nào</p>
-              )}
+          {/* Posts Feed Area */}
+          <div className="posts-section">
+            {loading && <p className="loading">Đang tải...</p>}
+            {error && <p className="error">{error}</p>}
+            {!loading && !error && posts.length === 0 && (
+              <p className="no-posts">Chưa có bài viết nào</p>
+            )}
 
-              {console.log('Posts in Home:', posts)}
-              {posts.map((post) => {
-                const postId = post.post_id || post.status_id || post.activity_id;
-                const isOwner = post.user_id === CURRENT_USER_ID;
-                const isJoining = joiningIds.has(postId);
+            {posts.map((post) => {
+              const postId = post.post_id || post.status_id || post.activity_id;
+              const postType = post.post_type || 'activity';
+              const isOwner = post.user_id === CURRENT_USER_ID;
+              const isJoining = joiningIds.has(postId);
+              const isActivity = postType === 'activity';
 
-                return (
-                  <div key={postId} className="post-card">
-                    <div className="post-header">
-                      <div className="post-user">
-                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
-                          <div className="avatar-inner">
-                            <img
-                              src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
-                              alt={post.username || 'User'}
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                        </div>
-                        <div className="user-info">
-                          <div className="user-info-top">
-                            <h2
-                              onClick={() => navigate(`/profile/${post.username}`)}
-                              style={{ cursor: 'pointer' }}
-                              className="clickable-username"
-                            >
-                              {post.full_name || post.username || 'Người dùng'}
-                            </h2>
-                            <span className="dot-separator">•</span>
-                            <span className="post-time">{getTimeAgo(post.created_at)}</span>
-                          </div>
-                          <div className="user-info-bottom">
-                            <span className="user-badge">{post.category || 'HOẠT ĐỘNG'}</span>
-                            <span className="dot-separator">•</span>
-                            <span className="online-dot" />
-                          </div>
+              return (
+                <div key={`${postType}_${postId}`} className="post-card">
+                  <div className="post-header">
+                    <div className="post-user">
+                      <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
+                        <div className="avatar-inner">
+                          <img
+                            src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
+                            alt={post.username || 'User'}
+                            referrerPolicy="no-referrer"
+                          />
                         </div>
                       </div>
-                      <div className="post-options-container" style={{ position: 'relative' }}>
-                        <button
-                          className="more-button"
-                          onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
-                        >
-                          <MoreHorizontal size={24} />
-                        </button>
-
-                        {activeMenuId === postId && isOwner && (
-                          <div className="post-options-menu" style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: '100%',
-                            background: 'white',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            zIndex: 10,
-                            padding: '8px 0',
-                            minWidth: '150px'
-                          }}>
-                            <button
-                              className="post-option-item"
-                              style={{
-                                width: '100%',
-                                padding: '8px 16px',
-                                textAlign: 'left',
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#dc3545',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                              }}
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                handleDeletePost(postId);
-                              }}
-                            >
-                              Xóa bài viết
-                            </button>
-                          </div>
-                        )}
-                        {/* Ẩn menu khi click ra ngoài (đơn giản hóa bằng cách thu menu lại nếu bấm vào chính nó lần nữa ở trên) */}
+                      <div className="user-info">
+                        <div className="user-info-top">
+                          <h2
+                            onClick={() => navigate(`/profile/${post.username}`)}
+                            style={{ cursor: 'pointer' }}
+                            className="clickable-username"
+                          >
+                            {post.full_name || post.username || 'Người dùng'}
+                          </h2>
+                          <span className="dot-separator">•</span>
+                          <span className="post-time">{getTimeAgo(post.created_at)}</span>
+                        </div>
+                        <div className="user-info-bottom">
+                          <span className="user-badge">{isActivity ? 'HOẠT ĐỘNG' : 'TRẠNG THÁI'}</span>
+                          <span className="dot-separator">•</span>
+                          <span className="online-dot" />
+                        </div>
                       </div>
                     </div>
+                    <div className="post-options-container" style={{ position: 'relative' }}>
+                      <button
+                        className="more-button"
+                        onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
+                      >
+                        <MoreHorizontal size={24} />
+                      </button>
 
-                    {/* Post info */}
-                    <div className="post-content-wrapper">
-                      <div className="post-text-content">
-                        <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
-                        {post.extra_content && (
-                          <p className="post-description">{post.extra_content}</p>
-                        )}
-                      </div>
-
-                      {(post.image_url || (post.images && post.images[0])) && (
-                        <div className="post-media-container">
-                          {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
-                          {console.log('Rendering image:', post.image_url || post.images[0])}
-                          <img
-                            src={buildAvatarUrl(post.image_url || post.images[0])}
-                            alt="Post"
-                            className="post-media-img"
-                          />
+                      {activeMenuId === postId && isOwner && (
+                        <div className="post-options-menu" style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: '100%',
+                          background: 'white',
+                          border: '1px solid #ddd',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                          zIndex: 10,
+                          padding: '8px 0',
+                          minWidth: '150px'
+                        }}>
+                          <button
+                            className="post-option-item"
+                            style={{
+                              width: '100%',
+                              padding: '8px 16px',
+                              textAlign: 'left',
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#dc3545',
+                              cursor: 'pointer',
+                              fontSize: '14px'
+                            }}
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              handleDeletePost(postId);
+                            }}
+                          >
+                            Xóa bài viết
+                          </button>
                         </div>
                       )}
                     </div>
+                  </div>
 
-                    {/* Post meta: địa điểm, số người (nếu có) */}
-                    {(post.location || post.max_participants) && (
-                      <div className="post-optional-meta">
-                        {post.location && <span>📍 {post.location}</span>}
-                        {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
-                        {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
+                  <div className="post-content-wrapper">
+                    <div className="post-text-content">
+                      <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
+                      {post.extra_content && (
+                        <p className="post-description">{post.extra_content}</p>
+                      )}
+                    </div>
+
+                    {post.image_url && (
+                      <div className="post-media-container">
+                        <img
+                          src={buildAvatarUrl(post.image_url)}
+                          alt="Post"
+                          className="post-media-img"
+                        />
                       </div>
                     )}
+                  </div>
 
-                    {/* Post Stats */}
-                    <div className="post-actions-divider" />
+                  {(post.location || post.max_participants) && (
+                    <div className="post-optional-meta">
+                      {post.location && <span>📍 {post.location}</span>}
+                      {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
+                      {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
+                    </div>
+                  )}
 
-                    <div className="post-actions-bar">
-                      {/* Chủ bài không thấy nút Tham gia */}
-                      {isOwner ? (
-                        <span className="post-creator-label">✓ Bài viết của bạn</span>
-                      ) : (
-                        <>
+                  <div className="post-actions-divider" />
+
+                  <div className="post-actions-bar">
+                    {isOwner ? (
+                      <span className="post-creator-label">✓ Bài viết của bạn</span>
+                    ) : (
+                      <>
+                        {isActivity && (
                           <button
                             className="action-btn join-btn"
                             onClick={() => handleJoinPost(postId)}
@@ -310,34 +297,24 @@ function Home() {
                           >
                             {isJoining ? 'Đang gửi...' : 'Tham gia'}
                           </button>
-                          <button
-                            className="action-btn message-btn"
-                            onClick={() => handleMessageHost(post.user_id, postId)}
-                          >
-                            Nhắn tin
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        )}
+                        <button
+                          className="action-btn message-btn"
+                          onClick={() => handleMessageHost(post.user_id, isActivity ? postId : null)}
+                        >
+                          Nhắn tin
+                        </button>
+                      </>
+                    )}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* Floating Chat Button */}
-      <div className="floating-chat-btn">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="chat-button"
-        >
-          <MessageSquare size={28} />
-          <span className="floating-chat-btn-tooltip">Khung chat</span>
-        </motion.button>
-      </div>
+
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import "./style.css";
-import heroImage from "./hero-hugging.jpg";
+import heroImage from "./hero-new.jpg";
 import thangminhImg from "./thangminh.png";
 import giangImg from "./giang.jpg";
 
@@ -323,17 +323,17 @@ function HeroSection({ onRegister, isLoggedIn, onGoHome }) {
             <img src={heroImage} alt="Hero Friends" className="hero__img" />
 
             <div className="hero__float hero__float--left">
-              <div className="hero__float-avatar hero__float-avatar--gold">H</div>
+              <div className="hero__float-avatar hero__float-avatar--gold">T</div>
               <div>
-                <p className="hero__float-name">Hà Linh</p>
+                <p className="hero__float-name">Tú Bà</p>
                 <p className="hero__float-match">98% phù hợp ⚡</p>
               </div>
             </div>
 
             <div className="hero__float hero__float--right">
-              <div className="hero__float-avatar hero__float-avatar--blue">M</div>
+              <div className="hero__float-avatar hero__float-avatar--blue">H</div>
               <div>
-                <p className="hero__float-name">Ngọc Mai</p>
+                <p className="hero__float-name">Hoàng Thảo</p>
                 <p className="hero__float-match">95% phù hợp 🎯</p>
               </div>
             </div>
@@ -456,9 +456,9 @@ function Testimonials() {
   const [current, setCurrent] = useState(0);
 
   const list = [
-    { names: "Thắng Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc phiêu lưu mới cùng nhau!" },
-    { names: "Giang vs ai đó", image: giangImg, rating: 5, quote: "Sau jven tôi đã gặp đc trân ái của đời mình,dùng vibematch rất vui" },
-    { names: "Mai & Đức", initials: "MD", rating: 5, quote: "Cùng đam mê nấu ăn và nhiếp ảnh, chúng mình đã kết nối trên VibeMatch và bây giờ cùng nhau tổ chức workshop mỗi tháng!" },
+    { names: "Hoàng Thảo và Tú Bà", image: heroImage, rating: 5, quote: "Nhờ dùng vibematch nên chúng tôi có những cuộc đi chơi vui vẻ với nhau và sau cuộc hẹn đó thì không biết còn cuộc hẹn nào không nhưng mọi người hãy dùng vibematch nhé!" },
+    { names: "Thắng và Minh", image: thangminhImg, rating: 5, quote: "Chúng mình gặp nhau trên VibeMatch nhờ cùng yêu thích chạy bộ buổi sáng. Giờ đây, mỗi ngày đều là một cuộc chạy đua với deadline mà mentor team tôi dí." },
+    { names: "Giang và ai đó", image: giangImg, rating: 5, quote: "Sau khi dùng Vibematch tôi đã gặp được chân ái của đời mình,dùng Vibematch mình đã được gặp gỡ rất nhiều người,nhất là anh Minh đẹp trai(Sau mỗi anh techlead là 1 anh đẹp trai khác đẹp hơn anh Minh) đã bị em lừa vào đời." },
   ];
 
   const prev = () => setCurrent((c) => (c === 0 ? list.length - 1 : c - 1));

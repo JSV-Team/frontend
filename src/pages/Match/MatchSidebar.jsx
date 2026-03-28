@@ -9,6 +9,8 @@ import { buildAvatarUrl } from '../../services/profileService';
 
 function MatchSidebar({ matchData, queueInfo }) {
   const [matchHistory, setMatchHistory] = useState([]);
+  const [filteredHistory, setFilteredHistory] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [totalMatches, setTotalMatches] = useState(0);
   const navigate = useNavigate();
@@ -45,6 +47,7 @@ function MatchSidebar({ matchData, queueInfo }) {
           console.log('✅ [MatchSidebar] Match history loaded:', response.data.length, 'matches');
           console.log('   Data:', response.data);
           setMatchHistory(response.data);
+          setFilteredHistory(response.data);
           setTotalMatches(response.data.length);
         } else {
           console.log('⚠️ [MatchSidebar] No match history data');
@@ -60,6 +63,23 @@ function MatchSidebar({ matchData, queueInfo }) {
 
     fetchMatchHistory();
   }, []);
+
+  // Handle search
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredHistory(matchHistory);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = matchHistory.filter(match => {
+      const fullName = (match.matched_full_name || '').toLowerCase();
+      const username = (match.matched_username || '').toLowerCase();
+      return fullName.includes(query) || username.includes(query);
+    });
+    
+    setFilteredHistory(filtered);
+  }, [searchQuery, matchHistory]);
 
   // Calculate compatibility percentage from match data
   const getCompatibilityPercentage = () => {
@@ -127,22 +147,37 @@ function MatchSidebar({ matchData, queueInfo }) {
   return (
     <motion.div
       className="match-sidebar"
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
     >
       {/* Recent Matches Section */}
       <div className="sidebar-section">
         <h3 className="sidebar-section-title">Lịch Sử Ghép Đôi</h3>
+        
+        {/* Search Bar */}
+        {matchHistory.length > 0 && (
+          <div className="match-search-container">
+            <input
+              type="text"
+              className="match-search-input"
+              placeholder="Tìm kiếm..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <span className="match-search-icon">🔍</span>
+          </div>
+        )}
+
         <div className="recent-matches-list">
           {isLoadingHistory ? (
             <p className="sidebar-empty-message">Đang tải...</p>
-          ) : matchHistory.length === 0 ? (
+          ) : filteredHistory.length === 0 ? (
             <p className="sidebar-empty-message">
-              Chưa có lịch sử ghép đôi
+              {searchQuery ? 'Không tìm thấy kết quả' : 'Chưa có lịch sử ghép đôi'}
             </p>
           ) : (
-            matchHistory.slice(0, 5).map((match) => (
+            filteredHistory.map((match) => (
               <div 
                 key={match.match_id} 
                 className="recent-match-item"
