@@ -5,6 +5,7 @@ import { Send, MoreVertical, LogOut, Info, Edit, Search, Image as ImageIcon, Plu
 import EmojiPicker from 'emoji-picker-react';
 import LocationPicker from '../../components/common/LocationPicker';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
@@ -30,6 +31,7 @@ function Friends() {
   const userString = localStorage.getItem('user');
   const currentUser = userString && userString !== "undefined" ? JSON.parse(userString) : null;
   const CURRENT_USER_ID = currentUser?.user_id;
+  const { success, error: showError, warning } = useNotification();
   const [conversations, setConversations] = useState([]);
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState(''); // State cho ô tìm kiếm
@@ -223,7 +225,7 @@ function Friends() {
     }, (response) => {
       // Callback từ server
       if (response.status === 'error') {
-        alert(response.error);
+        showError(response.error);
       }
     });
 
@@ -243,7 +245,7 @@ function Friends() {
       msgType: 'location',
     }, (response) => {
       if (response.status === 'error') {
-        alert(response.error);
+        showError(response.error);
       }
     });
     setShowLocationPicker(false);
@@ -282,12 +284,12 @@ function Friends() {
         imageUrl: data.data?.url || data.imageUrl
       }, (response) => {
         if (response.status === 'error') {
-          alert('Lỗi gửi ảnh: ' + response.error);
+          showError('Lỗi gửi ảnh: ' + response.error);
         }
       });
 
     } catch (err) {
-      alert('Lỗi upload: ' + err.message);
+      showError('Lỗi upload: ' + err.message);
     } finally {
       setUploadingImage(false);
       setImagePreview(''); // Xóa preview sau khi gửi xong
@@ -302,8 +304,9 @@ function Friends() {
       .then(() => {
         setConversations(prev => prev.filter(c => c.conversation_id !== activeConvId));
         setActiveConvId(null);
+        success('Đã rời nhóm thành công');
       })
-      .catch(err => alert('Lỗi: ' + err.message));
+      .catch(err => showError('Lỗi: ' + err.message));
   }
 
   // Hiện/ẩn panel thông tin nhóm và tải danh sách thành viên

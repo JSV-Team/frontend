@@ -6,10 +6,12 @@ import LocationPicker from '../common/LocationPicker';
 import apiConfig from '../../config/apiConfig';
 import { buildAvatarUrl } from '../../services/profileService';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import { useNotification } from '../../contexts/NotificationContext';
 import './Post.css';
 
 function CreatePost({ onPostCreated, isProfilePost }) {
   const currentUser = useCurrentUser(); // Auto-updates when user changes
+  const { success, error: showError, warning } = useNotification();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [location, setLocation] = useState('');
@@ -30,6 +32,7 @@ function CreatePost({ onPostCreated, isProfilePost }) {
     setDuration('');
     setImageUrl('');
     setImagePreview('');
+    success('Đăng hoạt động thành công! ✨');
     onPostCreated();
   });
 
@@ -88,11 +91,11 @@ function CreatePost({ onPostCreated, isProfilePost }) {
 
   const handleSubmit = () => {
     if (!title.trim()) {
-      alert('Vui lòng nhập tiêu đề hoạt động');
+      warning('Vui lòng nhập tiêu đề hoạt động');
       return;
     }
     if (uploading) {
-      alert('Ảnh đang được tải lên, vui lòng chờ...');
+      warning('Ảnh đang được tải lên, vui lòng chờ...');
       return;
     }
 

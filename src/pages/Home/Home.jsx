@@ -13,6 +13,7 @@ import activityService from '../../services/activityService';
 import chatService from '../../services/chatService';
 import apiConfig from '../../config/apiConfig';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import Particles from '../../components/Particles/Particles';
 import Aurora from '../../components/Aurora/Aurora';
 import Grainient from '../../components/Grainient/Grainient';
@@ -22,6 +23,7 @@ import './Home.css';
 function Home() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { success, error: showError, warning } = useNotification();
   const currentUser = useCurrentUser(); // Auto-updates when user changes
   const CURRENT_USER_ID = useCurrentUserId();
   const [reload, setReload] = useState(0);
@@ -40,11 +42,11 @@ function Home() {
 
     try {
       await activityService.deleteActivity(activityId, CURRENT_USER_ID);
-      alert('Đã xóa bài viết thành công');
+      success('Đã xóa bài viết thành công');
       reloadPosts();
     } catch (err) {
       console.error('Lỗi khi xóa bài viết:', err);
-      alert('Lỗi: ' + (err.message || 'Không thể xóa bài viết'));
+      showError('Lỗi: ' + (err.message || 'Không thể xóa bài viết'));
     }
   };
 
@@ -56,14 +58,14 @@ function Home() {
       const data = await activityService.joinActivity(activityId, CURRENT_USER_ID);
 
       if (data.message && data.message.includes('thành công')) {
-        alert('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
+        success('Đã gửi yêu cầu tham gia! Chờ chủ hoạt động duyệt.');
         setPendingReload(prev => prev + 1);
       } else {
-        alert(data.message || 'Tham gia thất bại');
+        showError(data.message || 'Tham gia thất bại');
       }
     } catch (err) {
       console.error('Join error:', err);
-      alert('Lỗi kết nối: ' + err.message);
+      showError('Lỗi kết nối: ' + err.message);
     } finally {
       setJoiningIds(prev => {
         const s = new Set(prev);
@@ -92,12 +94,12 @@ function Home() {
         const checkData = await chatService.checkCanMessageHost(activityId);
 
         if (!checkData.canMessage) {
-          alert(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
+          warning(checkData.message || 'Bạn cần được duyệt tham gia hoạt động mới có thể nhắn tin cho host');
           return;
         }
       } catch (err) {
         console.error('Lỗi kiểm tra quyền nhắn tin:', err);
-        alert('Lỗi: ' + err.message);
+        showError('Lỗi: ' + err.message);
         return;
       }
     }
@@ -107,7 +109,7 @@ function Home() {
       navigate('/friends', { state: { openChatId: data.conversation_id } });
     } catch (err) {
       console.error('Lỗi tạo chat riêng:', err);
-      alert('Lỗi: ' + (err.message || 'Đã có lỗi xảy ra khi tạo cuộc hội thoại.'));
+      showError('Lỗi: ' + (err.message || 'Đã có lỗi xảy ra khi tạo cuộc hội thoại.'));
     }
   };
 
