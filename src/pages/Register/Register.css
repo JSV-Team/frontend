@@ -344,6 +344,46 @@
   border: 1px solid rgba(82, 196, 26, 0.2);
 }
 
+/* Location Picker Styling */
+.location-input-group {
+  position: relative;
+  width: 100%;
+}
+
+.register-location-input {
+  padding-right: 60px !important;
+}
+
+.map-icon-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(108, 127, 255, 0.12);
+  border: 1px solid rgba(108, 127, 255, 0.25);
+  color: #6c7fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.map-icon-btn:hover {
+  background: rgba(108, 127, 255, 0.25);
+  border-color: #6c7fff;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 0 15px rgba(108, 127, 255, 0.3);
+}
+
+.map-icon-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
   .register-page .page-content {
