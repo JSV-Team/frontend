@@ -150,172 +150,164 @@ function Home() {
       )}
       <div className="home-main">
         <div className="home-layout">
-          {/* Left Sidebar - Pending Groups & Approvals */}
+          {/* Sidebar - Pending Groups & Approvals */}
           <aside className="home-sidebar">
-            {/* <NotificationsWidget userId={CURRENT_USER_ID} /> */}
             <PendingApproval reload={pendingReload} />
             <PendingGroups reload={pendingReload} />
           </aside>
 
-          {/* Right Content - Posts Feed */}
-          <div className="home-content">
+          {/* Create Post Area */}
+          <div className="home-create-post-area">
             <CreatePost onPostCreated={reloadPosts} />
+          </div>
 
-            <div className="posts-section">
-              {loading && <p className="loading">Đang tải...</p>}
-              {error && <p className="error">{error}</p>}
-              {!loading && !error && posts.length === 0 && (
-                <p className="no-posts">Chưa có bài viết nào</p>
-              )}
+          {/* Posts Feed Area */}
+          <div className="posts-section">
+            {loading && <p className="loading">Đang tải...</p>}
+            {error && <p className="error">{error}</p>}
+            {!loading && !error && posts.length === 0 && (
+              <p className="no-posts">Chưa có bài viết nào</p>
+            )}
 
-              {console.log('Posts in Home:', posts)}
-              {posts.map((post) => {
-                const postId = post.post_id || post.status_id || post.activity_id;
-                const postType = post.post_type || 'activity'; // default to activity for safety
-                const isOwner = post.user_id === CURRENT_USER_ID;
-                const isJoining = joiningIds.has(postId);
-                const isActivity = postType === 'activity';
+            {posts.map((post) => {
+              const postId = post.post_id || post.status_id || post.activity_id;
+              const postType = post.post_type || 'activity';
+              const isOwner = post.user_id === CURRENT_USER_ID;
+              const isJoining = joiningIds.has(postId);
+              const isActivity = postType === 'activity';
 
-                return (
-                  <div key={`${postType}_${postId}`} className="post-card">
-                    <div className="post-header">
-                      <div className="post-user">
-                        <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
-                          <div className="avatar-inner">
-                            <img
-                              src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
-                              alt={post.username || 'User'}
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                        </div>
-                        <div className="user-info">
-                          <div className="user-info-top">
-                            <h2
-                              onClick={() => navigate(`/profile/${post.username}`)}
-                              style={{ cursor: 'pointer' }}
-                              className="clickable-username"
-                            >
-                              {post.full_name || post.username || 'Người dùng'}
-                            </h2>
-                            <span className="dot-separator">•</span>
-                            <span className="post-time">{getTimeAgo(post.created_at)}</span>
-                          </div>
-                          <div className="user-info-bottom">
-                            <span className="user-badge">{isActivity ? 'HOẠT ĐỘNG' : 'TRẠNG THÁI'}</span>
-                            <span className="dot-separator">•</span>
-                            <span className="online-dot" />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="post-options-container" style={{ position: 'relative' }}>
-                        <button
-                          className="more-button"
-                          onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
-                        >
-                          <MoreHorizontal size={24} />
-                        </button>
-
-                        {activeMenuId === postId && isOwner && (
-                          <div className="post-options-menu" style={{
-                            position: 'absolute',
-                            right: 0,
-                            top: '100%',
-                            background: 'white',
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            zIndex: 10,
-                            padding: '8px 0',
-                            minWidth: '150px'
-                          }}>
-                            <button
-                              className="post-option-item"
-                              style={{
-                                width: '100%',
-                                padding: '8px 16px',
-                                textAlign: 'left',
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#dc3545',
-                                cursor: 'pointer',
-                                fontSize: '14px'
-                              }}
-                              onClick={() => {
-                                setActiveMenuId(null);
-                                handleDeletePost(postId);
-                              }}
-                            >
-                              Xóa bài viết
-                            </button>
-                          </div>
-                        )}
-                        {/* Ẩn menu khi click ra ngoài (đơn giản hóa bằng cách thu menu lại nếu bấm vào chính nó lần nữa ở trên) */}
-                      </div>
-                    </div>
-
-                    {/* Post info */}
-                    <div className="post-content-wrapper">
-                      <div className="post-text-content">
-                        <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
-                        {post.extra_content && (
-                          <p className="post-description">{post.extra_content}</p>
-                        )}
-                      </div>
-
-                      {post.image_url && (
-                        <div className="post-media-container">
-                          {/* Failsafe: Nếu bắt đầu bằng /uploads thì dùng full URL đến backend */}
-                          {console.log('Rendering image:', post.image_url)}
+              return (
+                <div key={`${postType}_${postId}`} className="post-card">
+                  <div className="post-header">
+                    <div className="post-user">
+                      <div className="avatar-container" onClick={() => navigate(`/profile/${post.username}`)} style={{ cursor: 'pointer' }}>
+                        <div className="avatar-inner">
                           <img
-                            src={buildAvatarUrl(post.image_url)}
-                            alt="Post"
-                            className="post-media-img"
+                            src={buildAvatarUrl(post.avatar_url) || 'https://i.pravatar.cc/150?img=1'}
+                            alt={post.username || 'User'}
+                            referrerPolicy="no-referrer"
                           />
                         </div>
-                      )}
-                    </div>
-
-                    {/* Post meta: địa điểm, số người (nếu có) */}
-                    {(post.location || post.max_participants) && (
-                      <div className="post-optional-meta">
-                        {post.location && <span>📍 {post.location}</span>}
-                        {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
-                        {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
                       </div>
-                    )}
-
-                    {/* Post Stats */}
-                    <div className="post-actions-divider" />
-
-                    <div className="post-actions-bar">
-                      {/* Chủ bài không thấy nút Tham gia */}
-                      {isOwner ? (
-                        <span className="post-creator-label">✓ Bài viết của bạn</span>
-                      ) : (
-                        <>
-                          {isActivity && (
-                            <button
-                              className="action-btn join-btn"
-                              onClick={() => handleJoinPost(postId)}
-                              disabled={isJoining}
-                            >
-                              {isJoining ? 'Đang gửi...' : 'Tham gia'}
-                            </button>
-                          )}
-                          <button
-                            className="action-btn message-btn"
-                            onClick={() => handleMessageHost(post.user_id, isActivity ? postId : null)}
+                      <div className="user-info">
+                        <div className="user-info-top">
+                          <h2
+                            onClick={() => navigate(`/profile/${post.username}`)}
+                            style={{ cursor: 'pointer' }}
+                            className="clickable-username"
                           >
-                            Nhắn tin
+                            {post.full_name || post.username || 'Người dùng'}
+                          </h2>
+                          <span className="dot-separator">•</span>
+                          <span className="post-time">{getTimeAgo(post.created_at)}</span>
+                        </div>
+                        <div className="user-info-bottom">
+                          <span className="user-badge">{isActivity ? 'HOẠT ĐỘNG' : 'TRẠNG THÁI'}</span>
+                          <span className="dot-separator">•</span>
+                          <span className="online-dot" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="post-options-container" style={{ position: 'relative' }}>
+                      <button
+                        className="more-button"
+                        onClick={() => setActiveMenuId(activeMenuId === postId ? null : postId)}
+                      >
+                        <MoreHorizontal size={24} />
+                      </button>
+
+                      {activeMenuId === postId && isOwner && (
+                        <div className="post-options-menu" style={{
+                          position: 'absolute',
+                          right: 0,
+                          top: '100%',
+                          background: 'white',
+                          border: '1px solid #ddd',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                          zIndex: 10,
+                          padding: '8px 0',
+                          minWidth: '150px'
+                        }}>
+                          <button
+                            className="post-option-item"
+                            style={{
+                              width: '100%',
+                              padding: '8px 16px',
+                              textAlign: 'left',
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#dc3545',
+                              cursor: 'pointer',
+                              fontSize: '14px'
+                            }}
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              handleDeletePost(postId);
+                            }}
+                          >
+                            Xóa bài viết
                           </button>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  <div className="post-content-wrapper">
+                    <div className="post-text-content">
+                      <h3 className="post-title">{post.content || 'Hoạt động'}</h3>
+                      {post.extra_content && (
+                        <p className="post-description">{post.extra_content}</p>
+                      )}
+                    </div>
+
+                    {post.image_url && (
+                      <div className="post-media-container">
+                        <img
+                          src={buildAvatarUrl(post.image_url)}
+                          alt="Post"
+                          className="post-media-img"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {(post.location || post.max_participants) && (
+                    <div className="post-optional-meta">
+                      {post.location && <span>📍 {post.location}</span>}
+                      {post.max_participants && <span>👥 Tối đa {post.max_participants} người</span>}
+                      {post.duration_minutes && <span>⏱ {post.duration_minutes} phút</span>}
+                    </div>
+                  )}
+
+                  <div className="post-actions-divider" />
+
+                  <div className="post-actions-bar">
+                    {isOwner ? (
+                      <span className="post-creator-label">✓ Bài viết của bạn</span>
+                    ) : (
+                      <>
+                        {isActivity && (
+                          <button
+                            className="action-btn join-btn"
+                            onClick={() => handleJoinPost(postId)}
+                            disabled={isJoining}
+                          >
+                            {isJoining ? 'Đang gửi...' : 'Tham gia'}
+                          </button>
+                        )}
+                        <button
+                          className="action-btn message-btn"
+                          onClick={() => handleMessageHost(post.user_id, isActivity ? postId : null)}
+                        >
+                          Nhắn tin
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
