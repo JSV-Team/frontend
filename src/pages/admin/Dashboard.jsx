@@ -148,6 +148,7 @@ const Dashboard = () => {
                     itemStyle={{ color: '#2563eb', fontWeight: 600 }}
                   />
                   <Line
+                    name="User"
                     type="monotone"
                     dataKey="value"
                     stroke="#2563eb"
@@ -284,7 +285,7 @@ const Dashboard = () => {
 
         .main-page-title {
           font-size: 26px;
-          font-weight: 800;
+          font-weight: 850;
           color: #1e293b;
           margin: 0 0 4px 0;
         }
@@ -500,5 +501,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-

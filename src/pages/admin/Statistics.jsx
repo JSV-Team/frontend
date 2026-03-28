@@ -15,7 +15,6 @@ const Statistics = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('Growth');
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportData, setReportData] = useState([]);
   const [reportLoading, setReportLoading] = useState(false);
@@ -67,8 +66,8 @@ const Statistics = () => {
 
   if (loading) {
     return (
-      <div className="admin-loading">
-        <div className="spinner"></div>
+      <div className="admin-loading-container">
+        <Activity className="spin" size={48} color="#6366f1" />
         <p>Đang chuẩn bị dữ liệu phân tích hệ thống...</p>
       </div>
     );
@@ -76,155 +75,124 @@ const Statistics = () => {
 
   if (error) {
     return (
-      <div className="admin-loading">
+      <div className="admin-error-container">
         <TrendingDown size={48} color="#f43f5e" />
         <h3>Ối! Có lỗi xảy ra</h3>
         <p>{error}</p>
-        <button onClick={() => window.location.reload()} className="premium-btn-outline">Thử lại</button>
+        <button onClick={() => window.location.reload()} className="premium-btn-retry">Thử lại</button>
       </div>
     );
   }
 
   if (!data) return null;
 
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="custom-tooltip">
-          <p className="label">{label}</p>
-          {payload.map((pld, index) => (
-            <div key={index} className="tooltip-item">
-              <div className="dot" style={{ backgroundColor: pld.fill || pld.stroke }}></div>
-              <span>{pld.name}: <strong>{pld.value}</strong></span>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
   return (
     <div className="statistics-page animate-fade-in">
-      <div className="dashboard-header-modern">
-        <div className="header-content">
-          <h2 className="premium-title">Thống kê Phân tích</h2>
-          <p className="premium-subtitle">Dữ liệu thời gian thực và xu hướng tăng trưởng hệ thống</p>
-        </div>
-        <div className="header-actions">
-          <div className="date-badge">
-            <Calendar size={14} />
-            <span>Tháng {new Date().getMonth() + 1}, {new Date().getFullYear()}</span>
-          </div>
-        </div>
+      <div className="dashboard-header-simple">
+        <h2 className="main-page-title">Thống kê Phân tích</h2>
+
       </div>
 
-      {/* Row 1: Growth Cards */}
-      <div className="premium-stats-row">
-        {data.growthStats.filter(stat => stat.type !== 'match').map((stat, idx) => {
-          const icons = [<Users size={24} />, <FileText size={24} />];
-          const colors = ['#6366f1', '#10b981'];
-          const isUp = stat.value.startsWith('+');
-          
-          return (
-            <div key={idx} className="premium-stat-card">
-              <div className="card-top">
-                <div className="stat-icon-wrapper" style={{ backgroundColor: `${colors[idx]}15`, color: colors[idx] }}>
-                  {icons[idx]}
-                </div>
-                <div className={`trend-tag ${isUp ? 'trend-up' : 'trend-down'}`}>
-                  {isUp ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                  {stat.value}
-                </div>
-              </div>
-              <div className="card-body">
-                <span className="stat-label-modern">{stat.title}</span>
-                <div className="stat-main-row">
-                  <h3 className="stat-value-modern">{stat.value.replace('+', '').replace('-', '')}</h3>
-                  <span className="stat-unit">%</span>
-                </div>
-                <p className="stat-helper">{stat.subtext}</p>
-              </div>
-              <div className="stat-progress-bg" style={{ backgroundColor: `${colors[idx]}10` }}>
-                <div className="stat-progress-bar" style={{ width: '65%', backgroundColor: colors[idx] }}></div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
-      <div className="statistics-main-grid">
-        {/* Row 2: Charts Area */}
-        <div className="premium-glass-card chart-main">
-          <div className="card-header-flex">
-            <div className="left">
-              <h3 className="card-title-modern">Tăng trưởng Người dùng & Bài viết</h3>
-              <p className="card-subtitle-modern">Số liệu tích lũy và tương tác qua các tháng</p>
+
+      {/* Row 2: Charts Grid 1:1 */}
+      <div className="statistics-charts-grid">
+        <div className="premium-glass-card-chart">
+          <div className="chart-header-flex">
+            <div>
+              <h3 className="chart-title">Tăng trưởng Người dùng & Bài viết</h3>
+              <p className="chart-subtitle">Số liệu tích lũy qua các tháng</p>
             </div>
-            <div className="right">
-              <div className="chart-legend-modern">
-                <div className="legend-item">
-                  <span className="dot" style={{ backgroundColor: '#6366f1' }}></span>
-                  <span>User</span>
-                </div>
-                <div className="legend-item">
-                  <span className="dot" style={{ backgroundColor: '#10b981' }}></span>
-                  <span>Post</span>
-                </div>
-              </div>
+            <div className="chart-legend-simple">
+              <span className="legend-item"><div className="dot" style={{ background: '#6366f1' }} /> User</span>
+              <span className="legend-item"><div className="dot" style={{ background: '#10b981' }} /> Post</span>
             </div>
           </div>
-          <div className="chart-box" style={{ height: '320px' }}>
+          <div className="chart-box" style={{ height: '320px', marginTop: '20px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.trends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f1f5f9' }} />
-                <Bar name="Người dùng" dataKey="users" fill="#6366f1" radius={[6, 6, 0, 0]} barSize={24} />
-                <Bar name="Bài viết" dataKey="posts" fill="#10b981" radius={[6, 6, 0, 0]} barSize={24} />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc' }}
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
+                />
+                <Bar name="User" dataKey="users" fill="#6366f1" radius={[4, 4, 0, 0]} barSize={20} />
+                <Bar name="Post" dataKey="posts" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-
-
-        {/* Row 3: Interests */}
-        <div className="premium-glass-card full-span">
-          <div className="card-header-flex no-border">
+        <div className="premium-glass-card-chart">
+          <div className="chart-header-flex">
             <div>
-              <h3 className="card-title-modern">Xếp hạng Sở thích Mới nổi</h3>
-              <p className="card-subtitle-modern">Khám phá điều cộng đồng đang quan tâm nhất</p>
+              <h3 className="chart-title">Tần suất Ghép đôi</h3>
+              <p className="chart-subtitle">Lượt ghép đôi mới theo thời gian</p>
             </div>
-            <button className="premium-btn-outline" onClick={fetchInterestReport}>
-              Xem báo cáo chi tiết <ChevronRight size={16} />
-            </button>
+            <div className="chart-action-circle">
+              <Activity size={18} color="#3b82f6" />
+            </div>
           </div>
-          <div className="interests-premium-grid">
-            {data.popularInterests.map((interest, idx) => (
-              <div key={idx} className="interest-modern-card" style={{ '--delay': `${idx * 0.1}s` }}>
-                <div className="interest-rank">{idx + 1}</div>
-                <div className="interest-icon-circle">
-                  <Hash size={18} />
-                </div>
-                <div className="interest-info">
-                  <h4 className="interest-name">{interest.name}</h4>
-                  <div className="interest-stats">
-                    <TrendingUp size={12} color="#10b981" />
-                    <span>{interest.value} tương tác</span>
-                  </div>
-                </div>
-                <div className="interest-meter">
-                  <div className="fill" style={{ width: `${100 - (idx * 15)}%`, backgroundColor: idx < 3 ? '#6366f1' : '#94a3b8' }}></div>
-                </div>
-              </div>
-            ))}
+          <div className="chart-box" style={{ height: '320px', marginTop: '20px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data.matchTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorMatchGreen" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)' }}
+                />
+                <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={3} fill="url(#colorMatchGreen)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Detailed Interest Report Modal */}
+      {/* Row 3: Emerging Interests */}
+      <div className="premium-glass-card-interests" style={{ marginTop: '32px' }}>
+        <div className="rankings-header-flex">
+          <div>
+            <h3 className="chart-title">Xếp hạng Sở thích Mới nổi</h3>
+            <p className="chart-subtitle">Khám phá điều cộng đồng đang quan tâm nhất</p>
+          </div>
+          <button className="view-report-premium" onClick={fetchInterestReport}>
+            Xem báo cáo chi tiết <ChevronRight size={16} />
+          </button>
+        </div>
+
+        <div className="interests-premium-grid">
+          {data.popularInterests && data.popularInterests.length > 0 ? (
+            data.popularInterests.slice(0, 4).map((interest, idx) => (
+              <div key={idx} className="interest-premium-card">
+                <div className="interest-rank-badge">{idx + 1}</div>
+                <div className="interest-icon-box">
+                  <Hash size={18} color="#6366f1" />
+                </div>
+                <div className="interest-details">
+                  <span className="interest-label-name">{interest.name}</span>
+                  <div className="interest-stat-row">
+                    <TrendingUp size={12} color="#10b981" />
+                    <span>{interest.value} lượt quan tâm</span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{ padding: '40px', gridColumn: '1 / -1', textAlign: 'center', color: '#94a3b8' }}>Chưa có dữ liệu.</div>
+          )}
+        </div>
+      </div>
+
+      {/* Interest Report Modal (Existing) */}
       {reportModalOpen && (
         <div className="report-modal-overlay" onClick={() => setReportModalOpen(false)}>
           <div className="report-modal-content" onClick={e => e.stopPropagation()}>
@@ -235,7 +203,6 @@ const Statistics = () => {
               </div>
               <button className="close-modal-btn" onClick={() => setReportModalOpen(false)}>×</button>
             </div>
-            
             <div className="modal-body-scroll">
               {reportLoading ? (
                 <div className="modal-loading-modern">
@@ -252,7 +219,7 @@ const Statistics = () => {
                     <div key={user.user_id} className="table-row">
                       <div className="col-user">
                         <img 
-                          src={buildAvatarUrl(user.avatar_url) || '/assets/default-avatar.png'} 
+                          src={buildAvatarUrl(user.avatar_url) || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'} 
                           alt="" 
                           className="mini-avatar" 
                           onError={(e) => { e.target.src = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'; }}
@@ -263,9 +230,9 @@ const Statistics = () => {
                         </div>
                       </div>
                       <div className="col-interests">
-                        {user.interests && user.interests.map((interest, j) => (
+                        {user.interests && user.interests.length > 0 ? user.interests.map((interest, j) => (
                           <span key={j} className="interest-tag-mini">{interest}</span>
-                        ))}
+                        )) : <span className="interest-tag-empty">Chưa có sở thích</span>}
                       </div>
                     </div>
                   ))}
@@ -279,326 +246,302 @@ const Statistics = () => {
 
       <style>{`
         .statistics-page {
-          padding-bottom: 40px;
+          padding: 24px;
+          background: #f8fafc;
+          min-height: 100vh;
         }
+
         .animate-fade-in {
-          animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+          animation: fadeIn 0.6s ease-out forwards;
         }
+
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(15px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
-        .dashboard-header-modern {
+        .dashboard-header-simple {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 32px;
+          margin-bottom: 24px;
         }
-        .premium-title {
-          font-size: 28px;
+
+        .main-page-title {
+          font-size: 26px;
           font-weight: 850;
           color: #1e293b;
-          margin: 0 0 4px 0;
-          letter-spacing: -0.5px;
-        }
-        .premium-subtitle {
-          color: #64748b;
           margin: 0;
-          font-size: 15px;
         }
-        .date-badge {
+
+        .header-meta {
           display: flex;
           align-items: center;
-          gap: 8px;
           background: #fff;
           padding: 8px 16px;
           border-radius: 99px;
           border: 1px solid #e2e8f0;
+          color: #64748b;
           font-size: 13px;
           font-weight: 600;
-          color: #475569;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        /* Stats Row */
-        .premium-stats-row {
+        /* Row 1: Growth Cards */
+        .growth-stats-row {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
-          margin-bottom: 32px;
-        }
-        .premium-stat-card {
-          background: #fff;
-          padding: 24px;
-          border-radius: 24px;
-          border: 1px solid #f1f5f9;
-          box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02);
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          overflow: hidden;
-          position: relative;
-        }
-        .premium-stat-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
-          border-color: #6366f120;
-        }
-        .card-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-        .stat-icon-wrapper {
-          width: 52px;
-          height: 52px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .trend-tag {
-          padding: 6px 12px;
-          border-radius: 99px;
-          font-size: 12px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-        .trend-up { background: #dcfce7; color: #15803d; }
-        .trend-down { background: #fee2e2; color: #b91c1c; }
-        
-        .stat-label-modern {
-          color: #64748b;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 8px;
-          display: block;
-        }
-        .stat-main-row {
-          display: flex;
-          align-items: baseline;
-          gap: 4px;
-          margin-bottom: 8px;
-        }
-        .stat-value-modern {
-          font-size: 32px;
-          font-weight: 850;
-          color: #1e293b;
-          margin: 0;
-        }
-        .stat-unit {
-          font-size: 18px;
-          font-weight: 700;
-          color: #94a3b8;
-        }
-        .stat-helper {
-          font-size: 12px;
-          color: #94a3b8;
-          margin: 0;
-        }
-        .stat-progress-bg {
-          height: 6px;
-          border-radius: 3px;
-          margin-top: 16px;
-          width: 100%;
-          overflow: hidden;
-        }
-        .stat-progress-bar {
-          height: 100%;
-          border-radius: 3px;
-        }
-
-        /* Glass Cards */
-        .statistics-main-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 24px;
-        }
-        .premium-glass-card {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(12px);
-          padding: 28px;
-          border-radius: 28px;
-          border: 1px solid rgba(255, 255, 255, 0.5);
-          box-shadow: 0 10px 30px -5px rgba(0,0,0,0.03);
-          box-sizing: border-box;
-        }
-        .full-span {
-          grid-column: span 2;
-        }
-        .card-header-flex {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
           margin-bottom: 24px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid #f1f5f9;
-        }
-        .no-border { border: none; }
-        .card-title-modern {
-          font-size: 18px;
-          font-weight: 800;
-          color: #1e293b;
-          margin: 0 0 4px 0;
-        }
-        .card-subtitle-modern {
-          color: #64748b;
-          font-size: 13px;
-          margin: 0;
-        }
-        .chart-legend-modern {
-          display: flex;
-          gap: 16px;
-        }
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 11px;
-          font-weight: 600;
-          color: #64748b;
-        }
-        .legend-item .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
         }
 
-        /* Interests Grid */
-        .interests-premium-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 16px;
-        }
-        .interest-modern-card {
+        .growth-card-premium {
           background: #fff;
-          padding: 16px;
           border-radius: 20px;
+          padding: 20px;
           border: 1px solid #f1f5f9;
-          display: flex;
-          align-items: center;
-          gap: 16px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
           position: relative;
-          transition: all 0.3s;
-          opacity: 0;
-          animation: slideInUp 0.6s forwards;
-          animation-delay: var(--delay);
           overflow: hidden;
         }
-        @keyframes slideInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+
+        .growth-label {
+          font-size: 13px;
+          font-weight: 700;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
-        .interest-modern-card:hover {
-          border-color: #6366f150;
-          background: #f8fafc;
+
+        .growth-main {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 10px 0;
         }
-        .interest-rank {
+
+        .growth-num {
           font-size: 32px;
           font-weight: 900;
-          color: #f1f5f9;
-          position: absolute;
-          right: 12px;
-          top: 0px;
-          line-height: 1;
+          color: #0f172a;
+          margin: 0;
         }
-        .interest-icon-circle {
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          background: #f8fafc;
+
+        .growth-indicator {
+          padding: 3px 6px;
+          border-radius: 6px;
           display: flex;
           align-items: center;
-          justify-content: center;
-          color: #6366f1;
-        }
-        .interest-info { flex: 1; }
-        .interest-name {
-          margin: 0 0 4px 0;
-          font-size: 15px;
+          font-size: 11px;
           font-weight: 700;
-          color: #1e293b;
         }
-        .interest-stats {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 12px;
+
+        .growth-indicator.up { background: #dcfce7; color: #15803d; }
+        .growth-indicator.down { background: #fee2e2; color: #b91c1c; }
+
+        .growth-helper {
+          font-size: 13px;
           color: #64748b;
-          font-weight: 500;
+          font-weight: 600;
+          margin: 0;
         }
-        .interest-meter {
+
+        .growth-progress-container {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          height: 3px;
+          height: 4px;
           background: #f1f5f9;
         }
-        .interest-meter .fill { height: 100%; }
 
-        /* Custom Tooltip */
-        .custom-tooltip {
+        .growth-progress-bar {
+          height: 100%;
+          transition: width 1s ease-in-out;
+        }
+
+        /* Row 2: Charts Area */
+        .statistics-charts-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 24px;
+        }
+
+        .premium-glass-card-chart {
           background: #fff;
-          padding: 12px 16px;
-          border-radius: 14px;
-          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-          border: 1px solid #e2e8f0;
+          border-radius: 24px;
+          border: 1px solid #f1f5f9;
+          padding: 24px;
+          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
         }
-        .custom-tooltip .label {
+
+        .chart-header-flex {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+
+        .chart-title {
+          font-size: 18px;
+          font-weight: 850;
           color: #1e293b;
-          font-weight: 800;
-          font-size: 13px;
-          margin: 0 0 8px 0;
-          border-bottom: 1px solid #f1f5f9;
-          padding-bottom: 4px;
+          margin: 0 0 2px 0;
         }
-        .tooltip-item {
+
+        .chart-subtitle {
+          font-size: 13px;
+          color: #94a3b8;
+          margin: 0;
+          font-weight: 500;
+        }
+
+        .chart-legend-simple {
+          display: flex;
+          gap: 12px;
+        }
+
+        .legend-item {
           display: flex;
           align-items: center;
-          gap: 8px;
-          margin-bottom: 4px;
-          font-size: 12px;
+          gap: 4px;
+          font-size: 11px;
+          font-weight: 700;
           color: #64748b;
         }
-        .tooltip-item .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-        .tooltip-item strong { color: #1e293b; }
 
-        .premium-btn-outline {
-          padding: 8px 16px;
-          border-radius: 99px;
-          border: 1px solid #e2e8f0;
-          background: #fff;
-          color: #475569;
-          font-size: 13px;
-          font-weight: 600;
+        .legend-item .dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 2px;
+        }
+
+        .chart-action-circle {
+          width: 36px;
+          height: 36px;
+          background: #f1f5f9;
+          border-radius: 10px;
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: center;
+        }
+
+        /* Row 3: Interests Area */
+        .premium-glass-card-interests {
+          background: #fff;
+          border-radius: 24px;
+          border: 1px solid #f1f5f9;
+          padding: 24px;
+        }
+
+        .rankings-header-flex {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .view-report-premium {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 8px 16px;
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #64748b;
           cursor: pointer;
-          transition: all 0.2s;
         }
-        .premium-btn-outline:hover {
+
+        .interests-premium-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+        }
+
+        .interest-premium-card {
+          background: #fff;
+          border-radius: 16px;
+          padding: 14px 16px;
+          border: 1px solid #f1f5f9;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          position: relative;
+        }
+
+        .interest-rank-badge {
+          position: absolute;
+          top: -10px;
+          right: 15px;
+          font-size: 32px;
+          font-weight: 900;
+          color: #f1f5f9;
+          z-index: 0;
+          line-height:1;
+        }
+
+        .interest-icon-box {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
           background: #f8fafc;
-          border-color: #cbd5e1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
         }
 
-        .spinner {
-          width: 50px;
-          height: 50px;
-          border: 5px solid #6366f110;
-          border-left-color: #6366f1;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
+        .interest-details { z-index: 1; }
+
+        .interest-label-name {
+          display: block;
+          font-size: 15px;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 2px;
         }
 
-        /* Modal Styles */
+        .interest-stat-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 600;
+        }
+
+        /* Loader & Error */
+        .admin-loading-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: calc(100vh - 100px);
+          gap: 12px;
+        }
+        .admin-error-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: calc(100vh - 100px);
+          gap: 12px;
+          text-align: center;
+        }
+        .premium-btn-retry {
+          padding: 8px 24px;
+          background: #6366f1;
+          color: #fff;
+          border: none;
+          border-radius: 99px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .report-modal-overlay {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
@@ -620,11 +563,6 @@ const Statistics = () => {
           flex-direction: column;
           overflow: hidden;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-          animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes modalScaleIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
         }
         .modal-header-premium {
           padding: 24px 32px;
@@ -633,83 +571,35 @@ const Statistics = () => {
           justify-content: space-between;
           align-items: center;
         }
-        .modal-header-premium .title-area {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        .modal-header-premium h3 {
-          margin: 0;
-          font-size: 20px;
-          font-weight: 800;
-          color: #1e293b;
-        }
-        .close-modal-btn {
-          font-size: 28px;
-          background: none;
-          border: none;
-          color: #94a3b8;
-          cursor: pointer;
-          line-height: 1;
-        }
-        .modal-body-scroll {
-          padding: 32px;
-          overflow-y: auto;
-          flex: 1;
-        }
-        .user-interest-table {
-          width: 100%;
-        }
+        .modal-header-premium .title-area { display: flex; align-items: center; gap: 12px; }
+        .modal-header-premium h3 { margin: 0; font-size: 20px; font-weight: 800; }
+        .close-modal-btn { font-size: 28px; background: none; border: none; color: #94a3b8; cursor: pointer; }
+        .modal-body-scroll { padding: 32px; overflow-y: auto; flex: 1; }
+        
+        .user-interest-table { width: 100%; }
         .table-header {
           display: grid;
           grid-template-columns: 240px 1fr;
-          padding: 0 16px 12px 16px;
+          padding-bottom: 12px;
           border-bottom: 2px solid #f1f5f9;
-          color: #64748b;
+          color: #94a3b8;
           font-size: 11px;
-          font-weight: 700;
+          font-weight: 800;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
         }
         .table-row {
           display: grid;
           grid-template-columns: 240px 1fr;
-          padding: 16px;
+          padding: 16px 0;
           border-bottom: 1px solid #f1f5f9;
           align-items: center;
-          transition: background 0.2s;
         }
-        .table-row:hover { background: #f8fafc; }
-        .col-user {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        .user-meta-mini {
-          display: flex;
-          flex-direction: column;
-        }
-        .user-meta-mini .p-name {
-          font-weight: 700;
-          color: #1e293b;
-          font-size: 14px;
-        }
-        .user-meta-mini .p-id {
-          font-size: 11px;
-          color: #94a3b8;
-        }
-        .mini-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 12px;
-          object-fit: cover;
-          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-        .col-interests {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
+        .mini-avatar { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; }
+        .col-user { display: flex; align-items: center; gap: 12px; }
+        .user-meta-mini { display: flex; flex-direction: column; }
+        .user-meta-mini .p-name { font-weight: 700; color: #1e293b; font-size: 14px; }
+        .user-meta-mini .p-id { font-size: 11px; color: #94a3b8; }
+        .col-interests { display: flex; flex-wrap: wrap; gap: 6px; }
         .interest-tag-mini {
           background: #6366f110;
           color: #6366f1;
@@ -717,34 +607,11 @@ const Statistics = () => {
           border-radius: 99px;
           font-size: 11px;
           font-weight: 700;
-          border: 1px solid #6366f120;
-        }
-        .modal-loading-modern {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 60px 0;
-          gap: 16px;
-          color: #64748b;
-          font-weight: 600;
-        }
-        .mini-spinner {
-          width: 32px;
-          height: 32px;
-          border: 3px solid #6366f120;
-          border-left-color: #6366f1;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-        .empty-report {
-          text-align: center;
-          padding: 40px 0;
-          color: #94a3b8;
         }
 
-        @keyframes spin {
-          to { transform: rotate(360deg); }
+        @media (max-width: 1200px) {
+          .statistics-charts-grid { grid-template-columns: 1fr; }
+          .interests-premium-grid { grid-template-columns: repeat(2, 1fr); }
         }
       `}</style>
     </div>
