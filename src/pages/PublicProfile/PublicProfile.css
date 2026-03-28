@@ -699,7 +699,12 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .pp-container {
-    padding: 12px;
+    padding: 0 1rem;
+    max-width: 100%;
+  }
+
+  .pp-cover {
+    height: 140px;
   }
 
   .pp-header-content {
@@ -709,21 +714,25 @@
   .pp-header-top-row {
     flex-direction: column;
     align-items: center;
-    margin-top: -70px;
-    margin-bottom: 20px;
-    gap: 15px;
+    margin-top: -50px;
+    margin-bottom: 15px;
+    gap: 12px;
   }
   
   .pp-avatar-ring {
+    width: 100px;
+    height: 100px;
     margin-bottom: 0px;
-    margin-left: 0;
-    margin-right: 0;
+  }
+  
+  .pp-fullname {
+    font-size: 1.25rem;
   }
   
   .pp-user-info {
     text-align: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
     width: 100%;
   }
   
@@ -736,9 +745,10 @@
   
   .pp-btn {
     flex: 1;
-    max-width: 200px;
-    padding: 12px 15px;
-    font-size: 14px;
+    max-width: 160px;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    border-radius: 10px;
   }
 
   .pp-tabs {
@@ -746,13 +756,25 @@
     justify-content: center;
     margin-left: auto;
     margin-right: auto;
+    gap: 5px;
+    padding: 4px;
   }
 
   .pp-tab {
     flex: 1;
-    padding: 10px 10px;
+    padding: 8px 5px;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pp-container {
+    padding: 0 0.75rem;
+  }
+  
+  .pp-cover {
+    height: 120px;
   }
 }
 
