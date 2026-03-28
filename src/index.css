@@ -87,6 +87,23 @@
   color: var(--color-text-primary);
 }
 
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block !important;
+}
+
+@media (max-width: 1024px) {
+  .mobile-only {
+    display: block !important;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+}
+
 /* Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;

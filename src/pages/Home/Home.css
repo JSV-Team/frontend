@@ -788,15 +788,16 @@
   .home-layout {
     grid-template-columns: 1fr;
     gap: 1rem;
+    padding: 0 10px;
   }
 
   .home-sidebar {
-    position: relative;
-    top: 0;
+    display: none; /* Hide sidebars on mobile feed to keep it clean */
   }
 
   .home-container {
     padding-top: 72px;
+    padding-bottom: 80px; /* Space for mobile nav */
   }
 
   .post-card {

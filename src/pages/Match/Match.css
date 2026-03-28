@@ -683,53 +683,100 @@
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 @media (max-width: 768px) {
-  .match-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .match-sidebar {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
   .match-container {
     padding-top: 80px;
+    padding-bottom: 80px; /* Space for bottom nav */
   }
 
   .match-main {
     padding: 0 1rem;
   }
 
+  .match-layout {
+    display: block; /* Stack everything */
+  }
+
+  .match-sidebar {
+    display: none; /* Hide sidebar on mobile */
+  }
+
   .match-header-title {
     font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .match-header-description {
+    font-size: 0.9rem;
+    text-align: center;
   }
 
   .match-content {
-    padding: 1.5rem;
-    min-height: 400px;
+    padding: 1.5rem 1rem;
+    min-height: auto;
+    border-radius: var(--radius-xl, 12px);
   }
 
   .match-card {
     max-width: 100%;
+    padding: 1.5rem 1rem;
   }
 
-  .match-layout {
-    gap: 1rem;
+  .match-avatar-container {
+    width: 120px;
+    height: 120px;
   }
 
   .queue-info {
-    gap: 1rem;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .queue-info-value {
+    font-size: 1.25rem;
   }
 
   .match-actions {
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .btn {
     width: 100%;
   }
+
+  .empty-state-icon {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
 }
+
+@media (max-width: 480px) {
+  .match-container {
+    padding-top: 70px;
+  }
+
+  .match-header-title {
+    font-size: 1.25rem;
+  }
+
+  .empty-state-title {
+    font-size: 1.25rem;
+  }
+
+  .match-avatar-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .interest-score-badge {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+
 
 /* ==================== DARK MODE ==================== */
 [data-theme="dark"] .match-container {
