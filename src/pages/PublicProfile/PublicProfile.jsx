@@ -255,7 +255,7 @@ export default function PublicProfile() {
               {hasStory && <div className="pp-story-indicator">Story</div>}
             </div>
             <div className="pp-actions">
-              <button className="pp-btn pp-btn-primary pp-btn-message" onClick={() => handleStartChat()}>Nhắn tin</button>
+              {/* Nút nhắn tin đã được gỡ bỏ theo yêu cầu */}
             </div>
           </div>
 
