@@ -148,6 +148,7 @@ const Dashboard = () => {
                     itemStyle={{ color: '#2563eb', fontWeight: 600 }}
                   />
                   <Line
+                    name="User"
                     type="monotone"
                     dataKey="value"
                     stroke="#2563eb"
