@@ -22,6 +22,7 @@ function MatchContent({
   onViewProfile,
   onClearMatch,
   onClearError,
+  onGoToProfile,
 }) {
   return (
     <motion.div
@@ -34,17 +35,34 @@ function MatchContent({
         {/* Error notification */}
         {error && (
           <motion.div
-            className="match-error-notification"
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+            className={`match-error-notification ${error.includes('cập nhật') ? 'blocking-error' : ''}`}
+            initial={{ opacity: 0, y: -20, scale: 0.95, x: "-50%" }}
+            animate={{ opacity: 1, y: "-50%", scale: 1, x: "-50%" }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 }, x: "-50%" }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            style={{ 
+              position: 'absolute', 
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%)' 
+            }}
           >
             <div className="error-icon">
-              <AlertCircle size={20} />
+              <AlertCircle size={24} />
             </div>
-            <div className="error-content">
-              <span className="error-message">{error}</span>
+            <div className="error-content-wrapper">
+              <div className="error-content">
+                <span className="error-message">{error}</span>
+              </div>
+              
+              {error.includes('cập nhật') && (
+                <button 
+                  className="btn-fix-error"
+                  onClick={onGoToProfile}
+                >
+                  Cập Nhật Ngay
+                </button>
+              )}
             </div>
             <button
               className="error-close-btn"

@@ -229,6 +229,15 @@ function MatchContainer() {
     matchContext.clearMatch();
   };
 
+  // Handle go to personal profile (to fix validation errors)
+  const handleGoToProfile = () => {
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    } else {
+      navigate('/profile');
+    }
+  };
+
   // Combine errors from both sources
   const error = socketError || queueError || matchContext.error;
 
@@ -294,6 +303,7 @@ function MatchContainer() {
             onViewProfile={handleViewProfile}
             onClearMatch={handleClearMatch}
             onClearError={matchContext.clearError}
+            onGoToProfile={handleGoToProfile}
           />
 
           <MatchSidebar
